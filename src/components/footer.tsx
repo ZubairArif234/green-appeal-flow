@@ -6,11 +6,25 @@ export const Footer = () => {
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/logo.png" 
+                alt="AI Medical Denial Assistant Logo" 
+                className="h-8 w-auto"
+                onError={(e) => {
+                  // Fallback to original design if logo doesn't exist
+                  e.currentTarget.style.display = 'none';
+                  const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (fallback) {
+                    fallback.classList.remove('hidden');
+                    fallback.classList.add('flex');
+                  }
+                }}
+              />
+              <div className="hidden w-8 h-8 rounded-lg bg-gradient-primary items-center justify-center">
                 <span className="text-primary-foreground font-bold text-sm">AI</span>
               </div>
-              <span className="text-lg font-bold text-foreground">Medical Denial Assistant</span>
+              
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed">
               Transforming medical claim denials into successful appeals with AI-powered guidance.

@@ -22,6 +22,9 @@ All colors MUST be HSL.
     --primary-foreground: 0 0% 100%;
     --primary-light: 136 24% 45%;
     --primary-dark: 136 24% 28%;
+    --primary-50: 136 24% 95%;
+    --primary-100: 136 24% 90%;
+    --primary-200: 136 24% 80%;
 
     --secondary: 136 12% 95%;
     --secondary-foreground: 136 24% 36%;
@@ -86,6 +89,9 @@ All colors MUST be HSL.
     --primary-foreground: 136 24% 8%;
     --primary-light: 136 24% 70%;
     --primary-dark: 136 24% 55%;
+    --primary-50: 136 24% 15%;
+    --primary-100: 136 24% 20%;
+    --primary-200: 136 24% 30%;
 
     --secondary: 136 24% 15%;
     --secondary-foreground: 136 8% 96%;
@@ -128,5 +134,32 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Typography System */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  p, span, a, li, td, th, label, input, textarea, button {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Grid pattern utility */
+  .grid-pattern {
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  .grid-pattern-subtle {
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 }

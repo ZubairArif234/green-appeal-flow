@@ -1,20 +1,22 @@
-import { Upload, Brain, FileText, CheckCircle } from "lucide-react";
+import { FileText, Brain, CheckCircle } from "lucide-react";
 
 export const HowItWorks = () => {
   const steps = [
     {
       number: "01",
-      icon: Upload,
+      icon: FileText,
       title: "Upload Denial Documents",
       description: "Simply upload your denial documents or screenshots. Our system accepts PDFs, images, and scanned documents.",
-      details: "No PHI required - redacted screenshots work perfectly"
+      details: "No PHI required - redacted screenshots work perfectly",
+      gradient: "from-primary to-primary-dark"
     },
     {
       number: "02", 
       icon: Brain,
       title: "AI Analyzes & Provides Guidance",
       description: "Our AI engine processes your denial using advanced coding logic grounded in CMS and AMA guidelines.",
-      details: "Get plain-English summaries, required corrections, and staff-ready instructions in seconds"
+      details: "Get plain-English summaries, required corrections, and staff-ready instructions in seconds",
+      gradient: "from-primary-dark to-primary"
     }
   ];
 
@@ -27,7 +29,7 @@ export const HowItWorks = () => {
             <span className="text-primary"> Works</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Transform your denial appeal process in two simple steps
+            Transform your denial appeal process with our streamlined AI-powered workflow
           </p>
         </div>
         
@@ -59,38 +61,40 @@ export const HowItWorks = () => {
                   index === 0 ? 'lg:mt-32' : 'lg:mt-8'
                 }`}
               >
-                {/* Circle with Icon */}
+                {/* Premium Icon Circle */}
                 <div className="relative">
-                  <div className="w-32 h-32 rounded-full bg-white shadow-elegant border-4 border-primary/20 flex items-center justify-center group hover:scale-110 transition-all duration-500">
-                    <div className="w-20 h-20 rounded-full bg-gradient-primary flex items-center justify-center">
-                      <step.icon className="w-10 h-10 text-white" />
+                  <div className="w-32 h-32 rounded-full bg-white shadow-2xl border border-gray-100 flex items-center justify-center group hover:scale-105 transition-all duration-300">
+                    <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${step.gradient} flex items-center justify-center shadow-lg`}>
+                      <step.icon className="w-10 h-10 text-white" strokeWidth={2} />
                     </div>
                   </div>
                   
-                  {/* Step Number */}
-                  <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-primary text-white text-lg font-bold flex items-center justify-center shadow-lg">
+                  {/* Premium Step Number */}
+                  <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-white border-2 border-primary text-primary text-lg font-bold flex items-center justify-center shadow-lg">
                     {step.number}
                   </div>
                 </div>
                 
-                {/* Content Card */}
-                <div className="bg-white rounded-3xl p-8 shadow-card border border-border/50 max-w-md hover:shadow-elegant transition-all duration-500 hover:-translate-y-2">
-                  <div className="space-y-4">
-                    <span className="inline-block text-sm font-bold text-primary bg-primary/10 px-4 py-2 rounded-full">
-                      STEP {step.number}
-                    </span>
+                {/* Premium Content Card */}
+                <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 max-w-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                  <div className="space-y-6">
+                    <div className="inline-flex items-center justify-center w-full">
+                      <span className="text-sm font-bold text-primary bg-primary/10 px-4 py-2 rounded-full">
+                        STEP {step.number}
+                      </span>
+                    </div>
                     
-                    <h3 className="text-2xl font-bold text-foreground">
+                    <h3 className="text-2xl font-bold text-gray-900 text-center">
                       {step.title}
                     </h3>
                     
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed text-center">
                       {step.description}
                     </p>
                     
-                    <div className="flex items-center gap-2 text-primary justify-center">
+                    <div className="flex items-center gap-2 text-primary justify-center pt-2">
                       <CheckCircle className="w-5 h-5" />
-                      <span className="text-sm font-medium">{step.details}</span>
+                      <span className="text-sm font-semibold">{step.details}</span>
                     </div>
                   </div>
                 </div>
