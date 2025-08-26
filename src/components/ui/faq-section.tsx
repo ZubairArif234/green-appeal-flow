@@ -54,7 +54,7 @@ export const FAQSection = () => {
                 value={`item-${index}`}
                 className="border border-border rounded-2xl px-6 bg-card hover:shadow-card transition-smooth"
               >
-                <AccordionTrigger className="text-left text-lg font-semibold text-foreground hover:text-primary transition-smooth py-6">
+                <AccordionTrigger className="text-left text-lg font-semibold text-black hover:text-primary transition-smooth py-6">
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground leading-relaxed pb-6">

@@ -41,19 +41,22 @@ export const ProblemSection = () => {
           {problems.map((problem, index) => (
             <div 
               key={index}
-              className="group p-6 rounded-2xl bg-card border border-border hover:shadow-card transition-smooth hover:-translate-y-1"
+              className="group p-8 rounded-3xl bg-primary border border-primary/20 hover:shadow-elegant transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] relative overflow-hidden"
             >
-              <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-smooth">
-                <problem.icon className="w-6 h-6 text-primary-foreground" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary-dark opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative z-10">
+                <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+                  <problem.icon className="w-8 h-8 text-white drop-shadow-sm" />
+                </div>
+                
+                <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-white/95 transition-colors duration-300">
+                  {problem.title}
+                </h3>
+                
+                <p className="text-white/90 leading-relaxed text-base group-hover:text-white transition-colors duration-300">
+                  {problem.description}
+                </p>
               </div>
-              
-              <h3 className="text-xl font-semibold text-foreground mb-3">
-                {problem.title}
-              </h3>
-              
-              <p className="text-muted-foreground leading-relaxed">
-                {problem.description}
-              </p>
             </div>
           ))}
         </div>

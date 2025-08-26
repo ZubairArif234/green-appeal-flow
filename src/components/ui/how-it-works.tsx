@@ -19,9 +19,9 @@ export const HowItWorks = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 bg-gradient-subtle">
+    <section id="how-it-works" className="py-20 bg-gradient-subtle relative overflow-hidden">
       <div className="container mx-auto px-6">
-        <div className="text-center space-y-6 mb-16">
+        <div className="text-center space-y-6 mb-20">
           <h2 className="text-4xl lg:text-5xl font-bold text-foreground">
             How It 
             <span className="text-primary"> Works</span>
@@ -31,49 +31,67 @@ export const HowItWorks = () => {
           </p>
         </div>
         
-        <div className="max-w-4xl mx-auto">
-          <div className="relative">
-            {/* Connection Line */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border transform -translate-x-0.5 hidden lg:block"></div>
-            
+        <div className="max-w-6xl mx-auto relative">
+          {/* Curved Path */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <svg 
+              width="100%" 
+              height="400" 
+              viewBox="0 0 800 400" 
+              className="hidden lg:block"
+            >
+              <path
+                d="M 100 350 Q 200 100 400 200 Q 600 300 700 50"
+                stroke="hsl(var(--primary))"
+                strokeWidth="3"
+                fill="none"
+                strokeDasharray="8,8"
+                className="opacity-30"
+              />
+            </svg>
+          </div>
+          
+          <div className="relative z-10 lg:grid lg:grid-cols-2 lg:gap-16 space-y-16 lg:space-y-0">
             {steps.map((step, index) => (
               <div 
                 key={index}
-                className={`flex items-center gap-8 mb-16 ${
-                  index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'
+                className={`flex flex-col items-center text-center space-y-6 ${
+                  index === 0 ? 'lg:mt-32' : 'lg:mt-8'
                 }`}
               >
-                {/* Content */}
-                <div className="flex-1 space-y-4">
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm font-bold text-primary bg-primary/10 px-3 py-1 rounded-full">
-                      STEP {step.number}
-                    </span>
+                {/* Circle with Icon */}
+                <div className="relative">
+                  <div className="w-32 h-32 rounded-full bg-white shadow-elegant border-4 border-primary/20 flex items-center justify-center group hover:scale-110 transition-all duration-500">
+                    <div className="w-20 h-20 rounded-full bg-gradient-primary flex items-center justify-center">
+                      <step.icon className="w-10 h-10 text-white" />
+                    </div>
                   </div>
                   
-                  <h3 className="text-3xl font-bold text-foreground">
-                    {step.title}
-                  </h3>
-                  
-                  <p className="text-lg text-muted-foreground leading-relaxed">
-                    {step.description}
-                  </p>
-                  
-                  <div className="flex items-center gap-2 text-primary">
-                    <CheckCircle className="w-5 h-5" />
-                    <span className="text-sm font-medium">{step.details}</span>
+                  {/* Step Number */}
+                  <div className="absolute -top-2 -right-2 w-10 h-10 rounded-full bg-primary text-white text-lg font-bold flex items-center justify-center shadow-lg">
+                    {step.number}
                   </div>
                 </div>
                 
-                {/* Icon */}
-                <div className="flex-shrink-0 relative">
-                  <div className="w-24 h-24 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-elegant">
-                    <step.icon className="w-12 h-12 text-primary-foreground" />
-                  </div>
-                  
-                  {/* Step number background */}
-                  <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center">
-                    {step.number}
+                {/* Content Card */}
+                <div className="bg-white rounded-3xl p-8 shadow-card border border-border/50 max-w-md hover:shadow-elegant transition-all duration-500 hover:-translate-y-2">
+                  <div className="space-y-4">
+                    <span className="inline-block text-sm font-bold text-primary bg-primary/10 px-4 py-2 rounded-full">
+                      STEP {step.number}
+                    </span>
+                    
+                    <h3 className="text-2xl font-bold text-foreground">
+                      {step.title}
+                    </h3>
+                    
+                    <p className="text-muted-foreground leading-relaxed">
+                      {step.description}
+                    </p>
+                    
+                    <div className="flex items-center gap-2 text-primary justify-center">
+                      <CheckCircle className="w-5 h-5" />
+                      <span className="text-sm font-medium">{step.details}</span>
+                    </div>
                   </div>
                 </div>
               </div>
