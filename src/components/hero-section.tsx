@@ -43,7 +43,7 @@ export const HeroSection = () => {
             <div className="space-y-6">
               <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm">
                 <CheckCircle className="w-4 h-4 text-primary mr-2" />
-                <span className="text-sm font-semibold text-primary">AI-Powered Medical Appeals</span>
+                <span className="text-sm font-semibold text-primary">A Product of Cove Health</span>
               </div>
               
               <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 leading-tight">
