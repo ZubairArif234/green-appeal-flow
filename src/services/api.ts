@@ -1,5 +1,5 @@
 // API configuration and base setup
-const API_BASE_URL = 'http://localhost:8001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://deniel-assistance-be.onrender.com/api';
 
 export interface ApiResponse<T = any> {
   success: boolean;
