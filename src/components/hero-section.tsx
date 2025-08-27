@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, Play } from "lucide-react";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-image.jpg";
 
 export const HeroSection = () => {
@@ -62,9 +63,12 @@ export const HeroSection = () => {
               <Button 
                 size="lg" 
                 className="bg-primary hover:bg-primary-dark text-white shadow-lg transition-all duration-300 text-lg px-8 py-4 rounded-xl group"
+                asChild
               >
-                Start Free Trial
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <Link to="/auth/signup">
+                  Start Free Trial
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </Button>
               <Button 
                 variant="outline" 

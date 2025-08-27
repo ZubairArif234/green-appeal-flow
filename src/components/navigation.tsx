@@ -1,6 +1,15 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { User, LogOut } from "lucide-react";
 
 export const Navigation = () => {
+  const { isAuthenticated, user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-6 py-4">
@@ -42,12 +51,37 @@ export const Navigation = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" className="hidden md:inline-flex">
-              Sign In
-            </Button>
-            <Button className="bg-gradient-primary hover:opacity-90 shadow-button transition-smooth">
-              Free Trial
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <div className="hidden md:flex items-center space-x-3">
+                  <User className="w-5 h-5 text-gray-600" />
+                  <span className="text-gray-700 font-medium">{user?.name}</span>
+                </div>
+                <Button variant="ghost" className="hidden md:inline-flex" asChild>
+                  <Link to="/appeal">Appeal Form</Link>
+                </Button>
+                <Button variant="ghost" className="hidden md:inline-flex" asChild>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Logout</span>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" className="hidden md:inline-flex" asChild>
+                  <Link to="/auth/login">Sign In</Link>
+                </Button>
+                <Button className="bg-gradient-primary hover:opacity-90 shadow-button transition-smooth" asChild>
+                  <Link to="/auth/signup">Free Trial</Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
