@@ -18,14 +18,14 @@ const Dashboard = () => {
   // No need to check authentication here since ProtectedRoute handles it
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-primary/5">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-xl font-bold text-primary">Mental Denial Analyzer</h1>
+                <h1 className="text-xl font-bold text-foreground">Mental Denial Analyzer</h1>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -90,9 +90,9 @@ const Dashboard = () => {
                 Ready to appeal a denial? Our AI-powered system will help you analyze your case and identify the best next steps.
               </p>
               <Link to="/appeal">
-                <Button className="bg-gradient-to-r from-primary via-green-600 to-primary-dark hover:from-primary-dark hover:via-green-700 hover:to-primary text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                <Button className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold px-6 py-3 rounded-xl shadow-button hover:shadow-elegant transition-all duration-300 transform hover:-translate-y-0.5">
                   <FileText className="w-5 h-5 mr-2" />
-                  Start New Appeal
+                  Start New Case
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
@@ -107,26 +107,26 @@ const Dashboard = () => {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Link to="/appeal">
-                  <Button variant="outline" className="h-20 w-full flex flex-col items-center justify-center hover:bg-primary/5 hover:border-primary/30 transition-all duration-200">
+                  <Button variant="outline" className="h-20 w-full flex flex-col items-center justify-center hover:bg-accent hover:border-primary/30 transition-all duration-200">
                     <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
                       <FileText className="w-4 h-4 text-primary" />
                     </div>
-                    <span>New Appeal</span>
+                    <span>New Case</span>
                   </Button>
                 </Link>
-                <Button variant="outline" className="h-20 flex flex-col items-center justify-center hover:bg-primary/5 hover:border-primary/30 transition-all duration-200">
+                <Button variant="outline" className="h-20 flex flex-col items-center justify-center hover:bg-accent hover:border-primary/30 transition-all duration-200">
                   <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
                     <User className="w-4 h-4 text-primary" />
                   </div>
                   <span>Update Profile</span>
                 </Button>
-                <Button variant="outline" className="h-20 flex flex-col items-center justify-center hover:bg-primary/5 hover:border-primary/30 transition-all duration-200">
+                <Button variant="outline" className="h-20 flex flex-col items-center justify-center hover:bg-accent hover:border-primary/30 transition-all duration-200">
                   <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
                     <Shield className="w-4 h-4 text-primary" />
                   </div>
                   <span>Security Settings</span>
                 </Button>
-                <Button variant="outline" className="h-20 flex flex-col items-center justify-center hover:bg-primary/5 hover:border-primary/30 transition-all duration-200">
+                <Button variant="outline" className="h-20 flex flex-col items-center justify-center hover:bg-accent hover:border-primary/30 transition-all duration-200">
                   <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
                     <Mail className="w-4 h-4 text-primary" />
                   </div>

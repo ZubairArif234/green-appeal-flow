@@ -1,7 +1,7 @@
 // API configuration and base setup
-const API_BASE_URL = 'https://deniel-assistance-be.onrender.com';
+const API_BASE_URL = 'http://localhost:8001';
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
   data?: T;
@@ -54,6 +54,71 @@ export interface ResetPasswordRequest {
   password: string;
 }
 
+export interface CreateCaseRequest {
+  currentClaim: string;
+  prevClaimDOS: string;
+  prevClaimCPT: string;
+  denialText?: string;
+  encounterText?: string;
+  primaryPayer?: string;
+  denialScreenShots?: File[];
+  encounterScreenShots?: File[];
+}
+
+export interface CaseResponse {
+  _id: string;
+  currentClaim: string;
+  prevClaimDOS: string;
+  prevClaimCPT: string;
+  denialScreenShots: string[];
+  encounterScreenShots: string[];
+  denialText?: string;
+  encounterText?: string;
+  primaryPayer?: string;
+  user: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AiAnalysisResponse {
+  _id: string;
+  case: string;
+  user: string;
+  analysis: {
+    flows: string[];
+    improvements: string[];
+  };
+  likes: string[];
+  dislikes: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LikeDislikeResponse {
+  analysisId: string;
+  liked?: boolean;
+  disliked?: boolean;
+  likesCount: number;
+  dislikesCount: number;
+}
+
+export interface AnalysisDetailsResponse {
+  analysis: AiAnalysisResponse;
+  userInteraction: {
+    hasLiked: boolean;
+    hasDisliked: boolean;
+    likesCount: number;
+    dislikesCount: number;
+  };
+}
+
+export interface CasesListResponse {
+  totalCount: number;
+  data: CaseResponse[];
+  page: number;
+  limit: number;
+}
+
 class ApiService {
   private baseURL: string;
 
@@ -67,9 +132,12 @@ class ApiService {
   ): Promise<ApiResponse<T>> {
     try {
       const url = `${this.baseURL}${endpoint}`;
-      const defaultHeaders = {
-        'Content-Type': 'application/json',
-      };
+      const defaultHeaders: Record<string, string> = {};
+
+      // Don't set Content-Type for FormData requests
+      if (!(options.body instanceof FormData)) {
+        defaultHeaders['Content-Type'] = 'application/json';
+      }
 
       // Add auth token if available
       const token = localStorage.getItem('auth_token');
@@ -100,6 +168,7 @@ class ApiService {
         message: data.message,
       };
     } catch (error) {
+      console.error('Request error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Network error occurred',
@@ -146,6 +215,71 @@ class ApiService {
   async getCurrentUser(): Promise<ApiResponse<any>> {
     return this.makeRequest<any>('/auth/me', {
       method: 'GET',
+    });
+  }
+
+  // Case endpoints
+  async createCase(caseData: CreateCaseRequest): Promise<ApiResponse<{user: CaseResponse, newAiAnalysis: AiAnalysisResponse}>> {
+    const formData = new FormData();
+    
+    // Add text fields
+    formData.append('currentClaim', caseData.currentClaim);
+    formData.append('prevClaimDOS', caseData.prevClaimDOS);
+    formData.append('prevClaimCPT', caseData.prevClaimCPT);
+    
+    if (caseData.denialText) formData.append('denialText', caseData.denialText);
+    if (caseData.encounterText) formData.append('encounterText', caseData.encounterText);
+    if (caseData.primaryPayer) formData.append('primaryPayer', caseData.primaryPayer);
+    
+    // Add file uploads
+    if (caseData.denialScreenShots) {
+      caseData.denialScreenShots.forEach((file) => {
+        formData.append('denialScreenShots', file);
+      });
+    }
+    
+    if (caseData.encounterScreenShots) {
+      caseData.encounterScreenShots.forEach((file) => {
+        formData.append('encounterScreenShots', file);
+      });
+    }
+
+    return this.makeRequest<{user: CaseResponse, newAiAnalysis: AiAnalysisResponse}>('/case', {
+      method: 'POST',
+      body: formData,
+    });
+  }
+
+  async getMyCases(page: number = 1, limit: number = 10): Promise<ApiResponse<CasesListResponse>> {
+    return this.makeRequest<CasesListResponse>(`/case/getMine?page=${page}&limit=${limit}`, {
+      method: 'GET',
+    });
+  }
+
+  async getAllCases(page: number = 1, limit: number = 10): Promise<ApiResponse<CasesListResponse>> {
+    return this.makeRequest<CasesListResponse>(`/case/getAll?page=${page}&limit=${limit}`, {
+      method: 'GET',
+    });
+  }
+
+  // Like an AI analysis
+  async likeAnalysis(analysisId: string): Promise<ApiResponse<LikeDislikeResponse>> {
+    return this.makeRequest<LikeDislikeResponse>(`/ai-analysis/${analysisId}/like`, {
+      method: 'POST'
+    });
+  }
+
+  // Dislike an AI analysis
+  async dislikeAnalysis(analysisId: string): Promise<ApiResponse<LikeDislikeResponse>> {
+    return this.makeRequest<LikeDislikeResponse>(`/ai-analysis/${analysisId}/dislike`, {
+      method: 'POST'
+    });
+  }
+
+  // Get analysis details with like/dislike status
+  async getAnalysisDetails(analysisId: string): Promise<ApiResponse<AnalysisDetailsResponse>> {
+    return this.makeRequest<AnalysisDetailsResponse>(`/ai-analysis/${analysisId}`, {
+      method: 'GET'
     });
   }
 

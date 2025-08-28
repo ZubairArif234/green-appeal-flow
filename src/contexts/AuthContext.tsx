@@ -26,6 +26,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
+    console.error('useAuth called outside AuthProvider. Current context:', context);
+    console.error('Stack trace:', new Error().stack);
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
@@ -60,14 +62,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.success && response.data) {
         setUser(response.data);
       } else {
+        console.log('Token validation failed:', response.error);
         // Token is invalid, remove it
-        apiService.removeAuthToken();
-        setToken(null);
+        logout();
       }
     } catch (error) {
       console.error('Failed to get current user:', error);
-      apiService.removeAuthToken();
-      setToken(null);
+      logout();
     } finally {
       setIsLoading(false);
     }

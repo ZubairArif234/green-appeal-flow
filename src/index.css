@@ -162,4 +162,89 @@ All colors MUST be HSL.
       linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
     background-size: 40px 40px;
   }
+
+  /* Custom animations for case form */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-10px) rotate(1deg);
+    }
+  }
+  
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(78, 108, 73, 0.1);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(78, 108, 73, 0.2);
+    }
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-glow {
+    animation: glow 3s ease-in-out infinite;
+  }
+  
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 25%,
+      rgba(78, 108, 73, 0.1) 50%,
+      transparent 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  .card-hover-effect {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .card-hover-effect:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Paper-like consultation form pattern */
+  .consultation-pattern {
+    background-image: 
+      radial-gradient(circle at 2px 2px, rgba(78, 108, 73, 0.08) 1px, transparent 0),
+      linear-gradient(45deg, rgba(78, 108, 73, 0.03) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(78, 108, 73, 0.03) 25%, transparent 25%);
+    background-size: 20px 20px, 40px 40px, 40px 40px;
+    background-position: 0 0, 0 0, 20px 20px;
+  }
+  
+  /* Organic blob shapes */
+  .blob-1 {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    animation: blob-morph 8s ease-in-out infinite;
+  }
+  
+  .blob-2 {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    animation: blob-morph 10s ease-in-out infinite reverse;
+  }
+  
+  @keyframes blob-morph {
+    0%, 100% {
+      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    }
+    50% {
+      border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    }
+  }
 }
