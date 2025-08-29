@@ -19,4 +19,19 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    exclude: ['date-fns/locale'],
+    include: ['date-fns'],
+  },
+  build: {
+    rollupOptions: {
+      external: (id) => {
+        // Ignore Stripe's internal locale imports
+        if (id.includes('stripe') && id.includes('./en')) {
+          return true;
+        }
+        return false;
+      }
+    }
+  },
 }));

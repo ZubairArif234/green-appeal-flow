@@ -6,6 +6,11 @@ interface User {
   name: string;
   email: string;
   isEmailVerified: boolean;
+  role: 'user' | 'admin';
+  isFreeTrialUser: boolean;
+  noOfCasesLeft: number;
+  planType?: string;
+  planId?: string;
 }
 
 interface AuthContextType {
@@ -19,6 +24,7 @@ interface AuthContextType {
   verifyEmail: (email: string, otp: string) => Promise<{ success: boolean; error?: string }>;
   forgotPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
   resetPassword: (email: string, otp: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -56,7 +62,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const getCurrentUser = async () => {
+  const getCurrentUser = async (skipLoading = false) => {
+    if (!skipLoading) setIsLoading(true);
     try {
       const response = await apiService.getCurrentUser();
       if (response.success && response.data) {
@@ -70,7 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.error('Failed to get current user:', error);
       logout();
     } finally {
-      setIsLoading(false);
+      if (!skipLoading) setIsLoading(false);
     }
   };
 
@@ -84,6 +91,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setToken(authToken);
         setUser(userData);
         apiService.setAuthToken(authToken);
+        
+        // After login, fetch complete user profile to ensure we have all fields
+        await getCurrentUser(true);
         
         return { success: true };
       } else {
@@ -208,6 +218,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     apiService.removeAuthToken();
   };
 
+  const refreshUser = async () => {
+    await getCurrentUser(true);
+  };
+
   const value: AuthContextType = {
     user,
     token,
@@ -219,6 +233,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     verifyEmail,
     forgotPassword,
     resetPassword,
+    refreshUser,
   };
 
   return (

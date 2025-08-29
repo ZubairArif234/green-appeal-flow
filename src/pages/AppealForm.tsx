@@ -1,4 +1,7 @@
 import { useState, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { apiService, CreateCaseRequest } from '@/services/api';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,13 +17,18 @@ interface FileWithId extends File {
 }
 
 const AppealForm = () => {
+  const navigate = useNavigate();
+  const { user, refreshUser } = useAuth();
   const [currentTab, setCurrentTab] = useState("upload");
-  const [formData, setFormData] = useState({
-    currentClaimDOS: "",
-    previousClaimDOS: "",
-    previousClaimCPTs: "",
+  const [formData, setFormData] = useState<CreateCaseRequest>({
+    currentClaim: "",
+    prevClaimDOS: "",
+    prevClaimCPT: "",
     denialText: "",
-    chartText: "",
+    encounterText: "",
+    primaryPayer: "",
+    denialScreenShots: [],
+    encounterScreenShots: []
   });
   const [denialFiles, setDenialFiles] = useState<FileWithId[]>([]);
   const [chartFiles, setChartFiles] = useState<FileWithId[]>([]);
@@ -29,36 +37,65 @@ const AppealForm = () => {
   const denialInputRef = useRef<HTMLInputElement>(null);
   const chartInputRef = useRef<HTMLInputElement>(null);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: keyof CreateCaseRequest, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const addFilesToState = (files: FileList | File[], setter: React.Dispatch<React.SetStateAction<FileWithId[]>>) => {
-    const newFiles = Array.from(files).map(file => ({
-      ...file,
-      id: Math.random().toString(36).substr(2, 9)
-    }));
+  const addFilesToState = (files: FileList | File[], setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots') => {
+    const newFiles = Array.from(files).map(file => {
+      const fileWithId = file as FileWithId;
+      fileWithId.id = Math.random().toString(36).substr(2, 9);
+      return fileWithId;
+    });
     
     setter(prev => {
       const existingNames = prev.map(f => f.name);
       const uniqueFiles = newFiles.filter(f => !existingNames.includes(f.name));
-      return [...prev, ...uniqueFiles];
+      const updatedFiles = [...prev, ...uniqueFiles];
+      
+      // Update formData with actual File objects (without the id property for API)
+      const filesForAPI = updatedFiles.map(f => {
+        const { id, ...fileData } = f;
+        return fileData as File;
+      });
+      
+      setFormData(prevForm => ({
+        ...prevForm,
+        [formField]: filesForAPI
+      }));
+      
+      return updatedFiles;
     });
   };
 
-  const removeFile = (fileId: string, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>) => {
-    setter(prev => prev.filter(f => f.id !== fileId));
+  const removeFile = (fileId: string, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots') => {
+    setter(prev => {
+      const updatedFiles = prev.filter(f => f.id !== fileId);
+      
+      // Update formData with actual File objects (without the id property for API)
+      const filesForAPI = updatedFiles.map(f => {
+        const { id, ...fileData } = f;
+        return fileData as File;
+      });
+      
+      setFormData(prevForm => ({
+        ...prevForm,
+        [formField]: filesForAPI
+      }));
+      
+      return updatedFiles;
+    });
   };
 
-  const handleFileUpload = (files: FileList | null, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>) => {
+  const handleFileUpload = (files: FileList | null, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots') => {
     if (!files) return;
     
     const validFiles = Array.from(files).filter(file => {
-      const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
       const maxSize = 10 * 1024 * 1024; // 10MB
       
       if (!validTypes.includes(file.type)) {
-        toast.error(`${file.name} is not a valid file type. Please upload PDF, JPG, or PNG files.`);
+        toast.error(`${file.name} is not a valid file type. Please upload images only (JPG, PNG, GIF, WebP).`);
         return false;
       }
       
@@ -71,8 +108,9 @@ const AppealForm = () => {
     });
 
     if (validFiles.length > 0) {
-      addFilesToState(validFiles, setter);
-      toast.success(`${validFiles.length} file(s) uploaded successfully!`);
+      console.log('Uploading files:', validFiles);
+      addFilesToState(validFiles, setter, formField);
+      toast.success(`${validFiles.length} image(s) uploaded successfully!`);
     }
   };
 
@@ -85,27 +123,41 @@ const AppealForm = () => {
   };
 
   const validateForm = () => {
-    if (!formData.currentClaimDOS.trim()) {
-      toast.error("Please enter the Current Claim DOS.");
+    // Check required fields
+    if (!formData.currentClaim.trim()) {
+      toast.error("Please enter the Current Claim information.");
       return false;
     }
 
+    if (!formData.prevClaimDOS.trim()) {
+      toast.error("Please enter the Previous Claim DOS.");
+      return false;
+    }
+
+    if (!formData.prevClaimCPT.trim()) {
+      toast.error("Please enter the Previous Claim CPT.");
+      return false;
+    }
+
+    // Check that user has provided SOME denial and encounter information
     if (currentTab === "upload") {
+      // Upload mode - require images
       if (denialFiles.length === 0) {
         toast.error("Please upload at least one denial screenshot.");
         return false;
       }
       if (chartFiles.length === 0) {
-        toast.error("Please upload chart/documentation files.");
+        toast.error("Please upload at least one encounter screenshot.");
         return false;
       }
     } else {
-      if (!formData.denialText.trim()) {
+      // Paste mode - require text
+      if (!formData.denialText?.trim()) {
         toast.error("Please paste the denial text.");
         return false;
       }
-      if (!formData.chartText.trim()) {
-        toast.error("Please paste the chart/documentation text.");
+      if (!formData.encounterText?.trim()) {
+        toast.error("Please paste the encounter/chart documentation text.");
         return false;
       }
     }
@@ -118,22 +170,35 @@ const AppealForm = () => {
 
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      toast.success("Appeal submitted successfully! We'll analyze your case and get back to you soon.");
+    try {
+      console.log('Submitting form data:', formData);
+      console.log('Denial files count:', formData.denialScreenShots?.length || 0);
+      console.log('Encounter files count:', formData.encounterScreenShots?.length || 0);
       
-      // Reset form
-      setFormData({
-        currentClaimDOS: "",
-        previousClaimDOS: "",
-        previousClaimCPTs: "",
-        denialText: "",
-        chartText: "",
-      });
-      setDenialFiles([]);
-      setChartFiles([]);
-    }, 2000);
+      const response = await apiService.createCase(formData);
+      
+      if (response.success && response.data) {
+        toast.success('Case created successfully with AI analysis!');
+        
+        // Refresh user data to update case count
+        await refreshUser();
+        
+        // Navigate to AI analysis page with the response data
+        navigate('/analysis', {
+          state: {
+            case: response.data.user, // Backend returns case as 'user' field
+            newAiAnalysis: response.data.newAiAnalysis
+          }
+        });
+      } else {
+        toast.error(response.error || 'Failed to create case');
+      }
+    } catch (error) {
+      toast.error('An unexpected error occurred');
+      console.error('Case creation error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const FileUploadZone = ({ 
@@ -172,7 +237,7 @@ const AppealForm = () => {
           </div>
           <div>
             <p className="text-base font-medium text-gray-900">Click to upload or drag & drop</p>
-            <p className="text-sm text-gray-500">PDF, JPG, PNG up to 10MB each</p>
+            <p className="text-sm text-gray-500">Images only (JPG, PNG, GIF) up to 10MB each</p>
           </div>
         </div>
         
@@ -180,7 +245,7 @@ const AppealForm = () => {
           ref={inputRef}
           type="file"
           multiple
-          accept=".pdf,.jpg,.jpeg,.png"
+          accept="image/*"
           onChange={(e) => onFileChange(e.target.files)}
           className="hidden"
         />
@@ -221,35 +286,35 @@ const AppealForm = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-primary/5">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/8">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-green-600 to-primary-dark bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl font-bold text-primary mb-4">
             Appeal Your Denial
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Provide the denial and supporting docs, and we'll help you identify next steps to resolve it.
           </p>
         </div>
 
         {/* Main Form Card */}
-        <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+        <Card className="shadow-2xl border border-primary/10 bg-white/95 backdrop-blur-sm rounded-2xl">
           <CardContent className="p-8">
             <Tabs value={currentTab} onValueChange={setCurrentTab} className="space-y-6">
               {/* Tab Navigation */}
               <div className="flex items-center justify-center">
-                <TabsList className="grid w-full max-w-md grid-cols-2 h-12 bg-gray-100 p-1 rounded-2xl">
+                <TabsList className="grid w-full max-w-md grid-cols-2 h-12 bg-primary/10 p-1 rounded-2xl">
                   <TabsTrigger 
                     value="upload" 
-                    className="rounded-xl font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md transition-all duration-200"
+                    className="rounded-xl font-semibold data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
                   >
                     <Upload className="w-4 h-4 mr-2" />
                     Upload Files
                   </TabsTrigger>
                   <TabsTrigger 
                     value="paste" 
-                    className="rounded-xl font-semibold data-[state=active]:bg-white data-[state=active]:shadow-md transition-all duration-200"
+                    className="rounded-xl font-semibold data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all duration-200"
                   >
                     <FileText className="w-4 h-4 mr-2" />
                     Paste Text
@@ -269,34 +334,44 @@ const AppealForm = () => {
                   </div>
                   <p className="text-gray-600">Provide claim and past visit details (No PHI)</p>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="currentDOS">Current Claim DOS *</Label>
+                      <Label htmlFor="currentClaim">Current Claim *</Label>
                       <Input
-                        id="currentDOS"
-                        value={formData.currentClaimDOS}
-                        onChange={(e) => handleInputChange("currentClaimDOS", e.target.value)}
+                        id="currentClaim"
+                        value={formData.currentClaim}
+                        onChange={(e) => handleInputChange("currentClaim", e.target.value)}
+                        placeholder="Enter current claim information"
+                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="prevClaimDOS">Previous Claim DOS *</Label>
+                      <Input
+                        id="prevClaimDOS"
+                        value={formData.prevClaimDOS}
+                        onChange={(e) => handleInputChange("prevClaimDOS", e.target.value)}
                         placeholder="MM/DD/YYYY"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="previousDOS">Previous Claim DOS</Label>
+                      <Label htmlFor="prevClaimCPT">Previous Claim CPT *</Label>
                       <Input
-                        id="previousDOS"
-                        value={formData.previousClaimDOS}
-                        onChange={(e) => handleInputChange("previousClaimDOS", e.target.value)}
-                        placeholder="MM/DD/YYYY (if applicable)"
+                        id="prevClaimCPT"
+                        value={formData.prevClaimCPT}
+                        onChange={(e) => handleInputChange("prevClaimCPT", e.target.value)}
+                        placeholder="CPT codes"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="previousCPTs">Previous Claim CPTs</Label>
+                      <Label htmlFor="primaryPayer">Primary Payer</Label>
                       <Input
-                        id="previousCPTs"
-                        value={formData.previousClaimCPTs}
-                        onChange={(e) => handleInputChange("previousClaimCPTs", e.target.value)}
-                        placeholder="CPT codes (if applicable)"
+                        id="primaryPayer"
+                        value={formData.primaryPayer || ""}
+                        onChange={(e) => handleInputChange("primaryPayer", e.target.value)}
+                        placeholder="Insurance provider"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                       />
                     </div>
@@ -315,11 +390,11 @@ const AppealForm = () => {
                     
                     <FileUploadZone
                       files={denialFiles}
-                      onFileChange={(files) => handleFileUpload(files, setDenialFiles)}
-                      onRemove={(fileId) => removeFile(fileId, setDenialFiles)}
+                      onFileChange={(files) => handleFileUpload(files, setDenialFiles, 'denialScreenShots')}
+                      onRemove={(fileId) => removeFile(fileId, setDenialFiles, 'denialScreenShots')}
                       inputRef={denialInputRef}
                       title=""
-                      subtitle="Upload one or more screenshots of the payer denial. (No PHI)"
+                      subtitle="Upload screenshots of the payer denial. Images only (JPG, PNG). (No PHI)"
                     />
                   </div>
 
@@ -329,16 +404,16 @@ const AppealForm = () => {
                       <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
                         Step 3
                       </Badge>
-                      <h3 className="text-lg font-semibold text-gray-900">Upload Documentation</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">Upload Encounter Screenshots</h3>
                     </div>
                     
                     <FileUploadZone
                       files={chartFiles}
-                      onFileChange={(files) => handleFileUpload(files, setChartFiles)}
-                      onRemove={(fileId) => removeFile(fileId, setChartFiles)}
+                      onFileChange={(files) => handleFileUpload(files, setChartFiles, 'encounterScreenShots')}
+                      onRemove={(fileId) => removeFile(fileId, setChartFiles, 'encounterScreenShots')}
                       inputRef={chartInputRef}
                       title=""
-                      subtitle="Upload encounter form, DX pointers, diagnosis list, and chart information. (No PHI)"
+                      subtitle="Upload screenshots of encounter forms, charts, etc. Images only (JPG, PNG). (No PHI)"
                     />
                   </div>
                 </div>
@@ -356,34 +431,44 @@ const AppealForm = () => {
                   </div>
                   <p className="text-gray-600">Provide claim and past visit details (No PHI)</p>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="currentDOS2">Current Claim DOS *</Label>
+                      <Label htmlFor="currentClaim2">Current Claim *</Label>
                       <Input
-                        id="currentDOS2"
-                        value={formData.currentClaimDOS}
-                        onChange={(e) => handleInputChange("currentClaimDOS", e.target.value)}
+                        id="currentClaim2"
+                        value={formData.currentClaim}
+                        onChange={(e) => handleInputChange("currentClaim", e.target.value)}
+                        placeholder="Enter current claim information"
+                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="prevClaimDOS2">Previous Claim DOS *</Label>
+                      <Input
+                        id="prevClaimDOS2"
+                        value={formData.prevClaimDOS}
+                        onChange={(e) => handleInputChange("prevClaimDOS", e.target.value)}
                         placeholder="MM/DD/YYYY"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="previousDOS2">Previous Claim DOS</Label>
+                      <Label htmlFor="prevClaimCPT2">Previous Claim CPT *</Label>
                       <Input
-                        id="previousDOS2"
-                        value={formData.previousClaimDOS}
-                        onChange={(e) => handleInputChange("previousClaimDOS", e.target.value)}
-                        placeholder="MM/DD/YYYY (if applicable)"
+                        id="prevClaimCPT2"
+                        value={formData.prevClaimCPT}
+                        onChange={(e) => handleInputChange("prevClaimCPT", e.target.value)}
+                        placeholder="CPT codes"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="previousCPTs2">Previous Claim CPTs</Label>
+                      <Label htmlFor="primaryPayer2">Primary Payer</Label>
                       <Input
-                        id="previousCPTs2"
-                        value={formData.previousClaimCPTs}
-                        onChange={(e) => handleInputChange("previousClaimCPTs", e.target.value)}
-                        placeholder="CPT codes (if applicable)"
+                        id="primaryPayer2"
+                        value={formData.primaryPayer || ""}
+                        onChange={(e) => handleInputChange("primaryPayer", e.target.value)}
+                        placeholder="Insurance provider"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                       />
                     </div>
@@ -402,7 +487,7 @@ const AppealForm = () => {
                     <p className="text-gray-600">Paste the payer denial text or letter contents. (No PHI)</p>
                     
                     <Textarea
-                      value={formData.denialText}
+                      value={formData.denialText || ""}
                       onChange={(e) => handleInputChange("denialText", e.target.value)}
                       placeholder="Paste the payer denial text or letter contents here..."
                       className="min-h-[220px] rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
@@ -415,13 +500,13 @@ const AppealForm = () => {
                       <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
                         Step 3
                       </Badge>
-                      <h3 className="text-lg font-semibold text-gray-900">Paste Documentation</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">Paste Encounter text</h3>
                     </div>
                     <p className="text-gray-600">Paste encounter form, DX pointers, diagnosis list, and chart information. (No PHI)</p>
                     
                     <Textarea
-                      value={formData.chartText}
-                      onChange={(e) => handleInputChange("chartText", e.target.value)}
+                      value={formData.encounterText || ""}
+                      onChange={(e) => handleInputChange("encounterText", e.target.value)}
                       placeholder="Paste relevant chart notes, op notes, labs, referral/auth info, etc..."
                       className="min-h-[220px] rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                     />
@@ -433,13 +518,13 @@ const AppealForm = () => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-6 border-t border-gray-200">
                 <div className="flex items-center space-x-2 text-sm text-gray-500">
                   <AlertCircle className="w-4 h-4" />
-                  <span>PDF, JPG, PNG up to 10MB each</span>
+                  <span>Images only (JPG, PNG, GIF) up to 10MB each • Provide files, text, or both</span>
                 </div>
                 
                 <Button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="bg-gradient-to-r from-primary via-green-600 to-primary-dark hover:from-primary-dark hover:via-green-700 hover:to-primary text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                  className="bg-primary hover:bg-primary-dark text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
                 >
                   {isSubmitting ? (
                     <>

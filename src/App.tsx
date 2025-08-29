@@ -11,6 +11,10 @@ import Dashboard from "./pages/Dashboard";
 import AppealForm from "./pages/AppealForm";
 import CaseForm from "./pages/CaseForm";
 import AiAnalysis from "./pages/AiAnalysis";
+import Plans from "./pages/Plans";
+import AdminDashboard from "./pages/AdminDashboard";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCancel from "./pages/PaymentCancel";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/auth/Login";
 import SignUp from "./pages/auth/SignUp";
@@ -30,9 +34,13 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/appeal" element={<ProtectedRoute><CaseForm /></ProtectedRoute>} />
-              <Route path="/case/new" element={<ProtectedRoute><CaseForm /></ProtectedRoute>} />
+              <Route path="/appeal" element={<ProtectedRoute><AppealForm /></ProtectedRoute>} />
+              <Route path="/case/new" element={<ProtectedRoute><AppealForm /></ProtectedRoute>} />
               <Route path="/analysis" element={<ProtectedRoute><ErrorBoundary><AiAnalysis /></ErrorBoundary></ProtectedRoute>} />
+              <Route path="/plans" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+              <Route path="/success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
+              <Route path="/cancel" element={<ProtectedRoute><PaymentCancel /></ProtectedRoute>} />
               <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/signup" element={<SignUp />} />
               <Route path="/auth/verify-email" element={<VerifyEmail />} />

@@ -112,6 +112,68 @@ export interface AnalysisDetailsResponse {
   };
 }
 
+export interface PlanRequest {
+  title: string;
+  description: string;
+  type: string;
+  amount: number;
+  currency: string;
+  duration?: string;
+}
+
+export interface PlanResponse {
+  product: {
+    id: string;
+    name: string;
+    description: string;
+    metadata: Record<string, string>;
+    active: boolean;
+  };
+  price: {
+    id: string;
+    unit_amount: number;
+    currency: string;
+    recurring: {
+      interval: string;
+    };
+  };
+}
+
+export interface PaymentRequest {
+  productId: string;
+}
+
+export interface PaymentResponse {
+  url: string;
+}
+
+export interface UserProfile {
+  _id: string;
+  name: string;
+  email: string;
+  role: 'user' | 'admin';
+  isFreeTrialUser: boolean;
+  noOfCasesLeft: number;
+  planType?: string;
+  planId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UsersListResponse {
+  totalCount: { count: number };
+  data: UserProfile[];
+}
+
+export interface PlansListResponse {
+  products: {
+    data: Record<string, unknown>[];
+  };
+  prices: {
+    data: Record<string, unknown>[];
+  };
+}
+
 export interface CasesListResponse {
   totalCount: number;
   data: CaseResponse[];
@@ -212,8 +274,8 @@ class ApiService {
     });
   }
 
-  async getCurrentUser(): Promise<ApiResponse<any>> {
-    return this.makeRequest<any>('/auth/me', {
+  async getCurrentUser(): Promise<ApiResponse<UserProfile>> {
+    return this.makeRequest<UserProfile>('/auth/me', {
       method: 'GET',
     });
   }
@@ -294,6 +356,57 @@ class ApiService {
 
   getAuthToken(): string | null {
     return localStorage.getItem('auth_token');
+  }
+
+  // Plan endpoints (Admin only)
+  async createPlan(planData: PlanRequest): Promise<ApiResponse<PlanResponse>> {
+    return this.makeRequest<PlanResponse>('/plan', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(planData),
+    });
+  }
+
+  async getAllPlans(): Promise<ApiResponse<PlansListResponse>> {
+    return this.makeRequest<PlansListResponse>('/plan', {
+      method: 'GET',
+    });
+  }
+
+  async getSinglePlan(planId: string): Promise<ApiResponse<PlanResponse>> {
+    return this.makeRequest<PlanResponse>(`/plan/${planId}`, {
+      method: 'GET',
+    });
+  }
+
+  async updatePlan(planId: string, planData: Partial<PlanRequest>): Promise<ApiResponse<PlanResponse>> {
+    return this.makeRequest<PlanResponse>(`/plan/${planId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(planData),
+    });
+  }
+
+  // Payment endpoints
+  async createPaymentSession(paymentData: PaymentRequest): Promise<ApiResponse<PaymentResponse>> {
+    return this.makeRequest<PaymentResponse>('/payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(paymentData),
+    });
+  }
+
+  // Admin endpoints
+  async getAllUsers(page: number = 1, limit: number = 10): Promise<ApiResponse<UsersListResponse>> {
+    return this.makeRequest<UsersListResponse>(`/user?page=${page}&limit=${limit}`, {
+      method: 'GET',
+    });
   }
 }
 
