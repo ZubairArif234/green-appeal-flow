@@ -84,6 +84,30 @@ export interface CaseResponse {
   updatedAt: string;
 }
 
+export interface TransactionResponse {
+  _id: string;
+  stripeSessionId?: string;
+  amountTotal?: number;
+  currency?: string;
+  paymentStatus?: string;
+  subscriptionId?: string;
+  type?: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TransactionsListResponse {
+  data: TransactionResponse[];
+  totalCount: number;
+  page: number;
+  limit: number;
+}
+
 export interface AiAnalysisResponse {
   _id: string;
   case: string;
@@ -216,16 +240,7 @@ export interface AdminStatsResponse {
     noOfCasesLeft: number;
     isFreeTrialUser: boolean;
   }[];
-  recentTransactions: {
-    _id: string;
-    currentClaim: string;
-    createdAt: string;
-    user: {
-      _id: string;
-      name: string;
-      email: string;
-    };
-  }[];
+  recentTransactions: TransactionResponse[];
 }
 
 class ApiService {
@@ -382,7 +397,7 @@ class ApiService {
     });
   }
 
-  async getAllTransactions(page: number = 1, limit: number = 10, search?: string): Promise<ApiResponse<CasesListResponse>> {
+  async getAllTransactions(page: number = 1, limit: number = 10, search?: string): Promise<ApiResponse<TransactionsListResponse>> {
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
@@ -392,7 +407,7 @@ class ApiService {
       params.append('search', search.trim());
     }
     
-    return this.makeRequest<CasesListResponse>(`/case/transactions?${params.toString()}`, {
+    return this.makeRequest<TransactionsListResponse>(`/case/transactions?${params.toString()}`, {
       method: 'GET',
     });
   }

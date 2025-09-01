@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { apiService, AdminStatsResponse, UsersListResponse, PlansListResponse, PlanRequest, CaseResponse } from '@/services/api';
+import { apiService, AdminStatsResponse, UsersListResponse, PlansListResponse, PlanRequest, CaseResponse, TransactionResponse, TransactionsListResponse } from '@/services/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -60,7 +60,7 @@ const AdminDashboard = () => {
   const [casesLoading, setCasesLoading] = useState(false);
   const [casesPage, setCasesPage] = useState(1);
   const [casesTotal, setCasesTotal] = useState(0);
-  const [transactions, setTransactions] = useState<CaseResponse[]>([]);
+  const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [transactionsLoading, setTransactionsLoading] = useState(false);
   const [transactionsPage, setTransactionsPage] = useState(1);
   const [transactionsTotal, setTransactionsTotal] = useState(0);
@@ -581,17 +581,7 @@ const AdminDashboard = () => {
                   </p>
             </div>
           </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/dashboard')}
-                className="group bg-gradient-to-r from-white via-white to-slate-50 border-slate-200/60 hover:border-primary/30 text-slate-700 hover:text-primary shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105"
-              >
-                <div className="p-1 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg mr-2 group-hover:from-primary/10 group-hover:to-primary/20 transition-all duration-300">
-                  <ArrowLeft className="w-3 h-3" />
-                </div>
-                <span className="font-medium">Back to Main Dashboard</span>
-              </Button>
+
             </div>
         </div>
       </div>
@@ -744,7 +734,7 @@ const AdminDashboard = () => {
           <Card>
               <CardHeader>
                     <CardTitle>Recent Transactions</CardTitle>
-                    <CardDescription>Latest case submissions</CardDescription>
+                    <CardDescription>Latest payment transactions</CardDescription>
             </CardHeader>
             <CardContent>
                     {adminStats?.recentTransactions && adminStats.recentTransactions.length > 0 ? (
@@ -756,11 +746,19 @@ const AdminDashboard = () => {
                                 {transaction.user.name}
                               </p>
                               <p className="text-sm text-gray-500 truncate max-w-48">
-                                {transaction.currentClaim}
+                                {transaction.amountTotal 
+                                  ? `$${(transaction.amountTotal / 100).toFixed(2)} ${(transaction.currency || 'USD').toUpperCase()}`
+                                  : 'Amount not available'
+                                }
                               </p>
                             </div>
                             <div className="text-right">
-                              <Badge variant="default">Case</Badge>
+                              <Badge 
+                                variant={transaction.paymentStatus === 'paid' ? "default" : "secondary"}
+                                className={transaction.paymentStatus === 'paid' ? "bg-green-600" : ""}
+                              >
+                                {transaction.type || 'Payment'}
+                              </Badge>
                               <p className="text-xs text-gray-500 mt-1">
                                 {formatDate(transaction.createdAt)}
                               </p>
@@ -1070,7 +1068,7 @@ const AdminDashboard = () => {
                             <TableHead>User</TableHead>
                             <TableHead>Email</TableHead>
                             <TableHead>Type</TableHead>
-                            <TableHead>Description</TableHead>
+                            <TableHead>Amount</TableHead>
                             <TableHead>Date</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Actions</TableHead>
@@ -1080,7 +1078,7 @@ const AdminDashboard = () => {
                           {transactions.map((transaction) => (
                             <TableRow key={transaction._id}>
                               <TableCell className="font-mono text-sm">
-                                {transaction._id.slice(-8)}
+                                {transaction.stripeSessionId ? transaction.stripeSessionId.slice(-8) : transaction._id.slice(-8)}
                               </TableCell>
                               <TableCell className="font-medium">
                                 {typeof transaction.user === 'object' ? transaction.user.name : 'Unknown User'}
@@ -1088,18 +1086,27 @@ const AdminDashboard = () => {
                               <TableCell>{typeof transaction.user === 'object' ? transaction.user.email : ''}</TableCell>
                               <TableCell>
                                 <Badge variant="default">
-                                  Case Submission
+                                  {transaction.type || 'Payment'}
                                 </Badge>
                               </TableCell>
                               <TableCell>
                                 <div className="max-w-48 truncate">
-                                  {transaction.currentClaim}
+                                  {transaction.amountTotal ? `$${(transaction.amountTotal / 100).toFixed(2)} ${(transaction.currency || 'USD').toUpperCase()}` : 'N/A'}
                                 </div>
                               </TableCell>
                               <TableCell>{formatDate(transaction.createdAt)}</TableCell>
                               <TableCell>
-                                <Badge variant="outline" className="text-green-600 border-green-600">
-                                  Completed
+                                <Badge 
+                                  variant="outline" 
+                                  className={
+                                    transaction.paymentStatus === 'paid' 
+                                      ? "text-green-600 border-green-600" 
+                                      : transaction.paymentStatus === 'pending'
+                                      ? "text-yellow-600 border-yellow-600"
+                                      : "text-red-600 border-red-600"
+                                  }
+                                >
+                                  {transaction.paymentStatus || 'Unknown'}
                                 </Badge>
                               </TableCell>
                               <TableCell>
