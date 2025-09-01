@@ -1,5 +1,5 @@
 // API configuration and base setup
-const API_BASE_URL = 'https://deniel-assistance-be.onrender.com';
+const API_BASE_URL = 'http://localhost:8001';
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -75,7 +75,11 @@ export interface CaseResponse {
   denialText?: string;
   encounterText?: string;
   primaryPayer?: string;
-  user: string;
+  user: string | {
+    _id: string;
+    name: string;
+    email: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -166,11 +170,22 @@ export interface UsersListResponse {
 }
 
 export interface PlansListResponse {
-  products: {
-    data: Record<string, unknown>[];
-  };
   prices: {
-    data: Record<string, unknown>[];
+    data: Array<{
+      id: string;
+      unit_amount: number;
+      currency: string;
+      recurring: {
+        interval: string;
+      };
+      product: {
+        id: string;
+        name: string;
+        description: string;
+        active: boolean;
+        metadata?: Record<string, string>;
+      };
+    }>;
   };
 }
 
@@ -179,6 +194,38 @@ export interface CasesListResponse {
   data: CaseResponse[];
   page: number;
   limit: number;
+}
+
+export interface AdminStatsResponse {
+  stats: {
+    totalUsers: number;
+    totalCases: number;
+    totalFeedbacks: number;
+    totalTransactions: number;
+    feedbackBreakdown: {
+      likes: number;
+      dislikes: number;
+    };
+  };
+  recentUsers: {
+    _id: string;
+    name: string;
+    email: string;
+    createdAt: string;
+    planType?: string;
+    noOfCasesLeft: number;
+    isFreeTrialUser: boolean;
+  }[];
+  recentTransactions: {
+    _id: string;
+    currentClaim: string;
+    createdAt: string;
+    user: {
+      _id: string;
+      name: string;
+      email: string;
+    };
+  }[];
 }
 
 class ApiService {
@@ -216,8 +263,19 @@ class ApiService {
       });
 
       const data = await response.json();
+      
+      // Add debugging for admin stats endpoint
+      if (endpoint.includes('admin-stats')) {
+        console.log('Admin stats response status:', response.status);
+        console.log('Admin stats response data:', data);
+      }
 
       if (!response.ok) {
+        console.error('API Error:', {
+          url,
+          status: response.status,
+          data
+        });
         return {
           success: false,
           error: data.message || `HTTP error! status: ${response.status}`,
@@ -324,6 +382,21 @@ class ApiService {
     });
   }
 
+  async getAllTransactions(page: number = 1, limit: number = 10, search?: string): Promise<ApiResponse<CasesListResponse>> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+    
+    if (search && search.trim()) {
+      params.append('search', search.trim());
+    }
+    
+    return this.makeRequest<CasesListResponse>(`/case/transactions?${params.toString()}`, {
+      method: 'GET',
+    });
+  }
+
   // Like an AI analysis
   async likeAnalysis(analysisId: string): Promise<ApiResponse<LikeDislikeResponse>> {
     return this.makeRequest<LikeDislikeResponse>(`/ai-analysis/${analysisId}/like`, {
@@ -391,6 +464,12 @@ class ApiService {
     });
   }
 
+  async deletePlan(planId: string): Promise<ApiResponse<{ message: string }>> {
+    return this.makeRequest<{ message: string }>(`/plan/${planId}`, {
+      method: 'DELETE',
+    });
+  }
+
   // Payment endpoints
   async createPaymentSession(paymentData: PaymentRequest): Promise<ApiResponse<PaymentResponse>> {
     return this.makeRequest<PaymentResponse>('/payment', {
@@ -403,8 +482,42 @@ class ApiService {
   }
 
   // Admin endpoints
-  async getAllUsers(page: number = 1, limit: number = 10): Promise<ApiResponse<UsersListResponse>> {
-    return this.makeRequest<UsersListResponse>(`/user?page=${page}&limit=${limit}`, {
+  async getAllUsers(page: number = 1, limit: number = 10, search?: string): Promise<ApiResponse<UsersListResponse>> {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+    
+    if (search && search.trim()) {
+      params.append('search', search.trim());
+    }
+    
+    return this.makeRequest<UsersListResponse>(`/user?${params.toString()}`, {
+      method: 'GET',
+    });
+  }
+
+  async getAdminStats(): Promise<ApiResponse<AdminStatsResponse>> {
+    console.log('Making admin stats request to:', `${this.baseURL}/user/admin-stats`);
+    const token = this.getAuthToken();
+    console.log('Using auth token:', token ? 'Present' : 'Missing');
+    
+    return this.makeRequest<AdminStatsResponse>('/user/admin-stats', {
+      method: 'GET',
+    });
+  }
+
+  async testDbContent(): Promise<ApiResponse<{
+    users: UserProfile[];
+    cases: CaseResponse[];
+    analysis: unknown[];
+  }>> {
+    console.log('Testing database content...');
+    return this.makeRequest<{
+      users: UserProfile[];
+      cases: CaseResponse[];
+      analysis: unknown[];
+    }>('/user/test-db', {
       method: 'GET',
     });
   }
