@@ -11,6 +11,8 @@ interface User {
   noOfCasesLeft: number;
   planType?: string;
   planId?: string;
+  subscriptionId?: string;
+  customerId?: string;
 }
 
 interface AuthContextType {

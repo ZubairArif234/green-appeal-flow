@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiService, CreateCaseRequest } from '@/services/api';
@@ -30,6 +30,12 @@ const AppealForm = () => {
     denialScreenShots: [],
     encounterScreenShots: []
   });
+
+  useEffect(()=>{
+if (user?.noOfCasesLeft < 1){
+  navigate("/dashboard")
+}
+  },[])
   const [denialFiles, setDenialFiles] = useState<FileWithId[]>([]);
   const [chartFiles, setChartFiles] = useState<FileWithId[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
