@@ -20,7 +20,7 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (credentials: LoginRequest) => Promise<{ success: boolean; error?: string }>;
+  login: (credentials: LoginRequest) => Promise<{ success: boolean; error?: string; user?: User }>;
   register: (userData: RegisterRequest) => Promise<{ success: boolean; error?: string; needsVerification?: boolean }>;
   logout: () => void;
   verifyEmail: (email: string, otp: string) => Promise<{ success: boolean; error?: string }>;
@@ -97,7 +97,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // After login, fetch complete user profile to ensure we have all fields
         await getCurrentUser(true);
         
-        return { success: true };
+        // Return the user data for redirect logic
+        return { success: true, user: userData };
       } else {
         return { 
           success: false, 

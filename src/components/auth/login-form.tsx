@@ -15,12 +15,12 @@ export const LoginForm = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
   // Get the intended destination from location state
-  const from = location.state?.from?.pathname || "/appeal";
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -56,7 +56,14 @@ export const LoginForm = () => {
     
     if (result.success) {
       toast.success("Login successful!");
-      navigate(from, { replace: true }); // Redirect to intended destination
+      
+      // Determine redirect based on user role from the login result
+      let redirectPath = from;
+      if (result.user?.role === 'admin') {
+        redirectPath = '/admin';
+      }
+      
+      navigate(redirectPath, { replace: true });
     } else {
       toast.error(result.error || "Login failed");
       // Set form errors if needed
