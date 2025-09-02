@@ -1426,7 +1426,7 @@ const AdminDashboard = () => {
                   </p>
                 </div>
               </div>
-              <Dialog>
+              {/* <Dialog>
                 <DialogTrigger asChild>
                   <Button className="group bg-gradient-to-r from-primary via-primary to-primary-dark text-white shadow-lg hover:shadow-xl border-0 hover:scale-105 transition-all duration-300">
                     <div className="p-1 bg-white/20 rounded-lg mr-2 group-hover:bg-white/30 transition-all duration-300">
@@ -1509,7 +1509,7 @@ const AdminDashboard = () => {
                     )}
                   </Button>
                 </DialogContent>
-              </Dialog>
+              </Dialog> */}
               
               {/* Edit Plan Dialog */}
               <Dialog open={!!editingPlan} onOpenChange={() => setEditingPlan(null)}>
@@ -1666,7 +1666,7 @@ const AdminDashboard = () => {
                       </div>
                     
                     <div className="space-y-3">
-                      <div className="flex space-x-2">
+                      {/* <div className="flex space-x-2">
                         <Button
                           size="sm"
                           variant="outline"
@@ -1697,7 +1697,7 @@ const AdminDashboard = () => {
                           <Trash2 className="w-3 h-3 mr-1" />
                           Delete
                         </Button>
-                    </div>
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>

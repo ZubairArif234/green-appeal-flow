@@ -439,9 +439,9 @@ const Dashboard = () => {
         </div>
 
         {/* User Cases and Transactions - Only for regular users */}
-        {user?.role === 'user' && (
+        {/* {user?.role === 'user' && (
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Cases */}
+           
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -498,7 +498,6 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Recent Transactions */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -543,7 +542,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </div>
-        )}
+        )} */}
         </div>
       </div>
     </div>
