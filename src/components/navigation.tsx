@@ -61,7 +61,7 @@ export const Navigation = () => {
                   <Link to="/appeal">Appeal Form</Link>
                 </Button>
                 <Button variant="ghost" className="hidden md:inline-flex" asChild>
-                  <Link to="/dashboard">Dashboard</Link>
+                  <Link to={user?.role === 'admin' ? '/admin' : '/dashboard'}>Dashboard</Link>
                 </Button>
                 <Button
                   variant="outline"

@@ -54,6 +54,11 @@ export interface ResetPasswordRequest {
   password: string;
 }
 
+export interface UpdateProfileRequest {
+  name: string;
+  email: string;
+}
+
 export interface CreateCaseRequest {
   currentClaim: string;
   prevClaimDOS: string;
@@ -138,6 +143,41 @@ export interface AnalysisDetailsResponse {
     likesCount: number;
     dislikesCount: number;
   };
+}
+
+export interface AiAnalysisWithDetailsResponse {
+  _id: string;
+  case: {
+    _id: string;
+    currentClaim: string;
+    prevClaimDOS: string;
+    prevClaimCPT: string;
+    primaryPayer?: string;
+    denialText?: string;
+    encounterText?: string;
+    createdAt: string;
+  };
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  analysis: {
+    flows?: string[];
+    improvements?: string[];
+    [key: string]: any;
+  };
+  likes: string[];
+  dislikes: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AiAnalysesListResponse {
+  data: AiAnalysisWithDetailsResponse[];
+  totalCount: number;
+  page: number;
+  limit: number;
 }
 
 export interface PlanRequest {
@@ -353,6 +393,13 @@ class ApiService {
     });
   }
 
+  async updateProfile(profileData: UpdateProfileRequest): Promise<ApiResponse<UserProfile>> {
+    return this.makeRequest<UserProfile>('/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+    });
+  }
+
   // Case endpoints
   async createCase(caseData: CreateCaseRequest): Promise<ApiResponse<{user: CaseResponse, newAiAnalysis: AiAnalysisResponse}>> {
     const formData = new FormData();
@@ -430,6 +477,13 @@ class ApiService {
   async getAnalysisDetails(analysisId: string): Promise<ApiResponse<AnalysisDetailsResponse>> {
     return this.makeRequest<AnalysisDetailsResponse>(`/ai-analysis/${analysisId}`, {
       method: 'GET'
+    });
+  }
+
+  // Get all AI analyses for admin
+  async getAllAiAnalyses(page: number = 1, limit: number = 10): Promise<ApiResponse<AiAnalysesListResponse>> {
+    return this.makeRequest<AiAnalysesListResponse>(`/ai-analysis/getAll?page=${page}&limit=${limit}`, {
+      method: 'GET',
     });
   }
 

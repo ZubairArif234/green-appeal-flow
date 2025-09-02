@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { apiService, AdminStatsResponse, UsersListResponse, PlansListResponse, PlanRequest, CaseResponse, TransactionResponse, TransactionsListResponse } from '@/services/api';
+import { apiService, AdminStatsResponse, UsersListResponse, PlansListResponse, PlanRequest, CaseResponse, TransactionResponse, TransactionsListResponse, AiAnalysesListResponse, AiAnalysisWithDetailsResponse } from '@/services/api';
+
+// Extended interface for AI analysis with additional case fields
+interface ExtendedAiAnalysisResponse extends AiAnalysisWithDetailsResponse {
+  case: AiAnalysisWithDetailsResponse['case'] & {
+    denialText?: string;
+    encounterText?: string;
+  };
+}
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -65,6 +73,18 @@ const AdminDashboard = () => {
   const [transactionsPage, setTransactionsPage] = useState(1);
   const [transactionsTotal, setTransactionsTotal] = useState(0);
   const [transactionsSearch, setTransactionsSearch] = useState('');
+  const [aiAnalyses, setAiAnalyses] = useState<AiAnalysisWithDetailsResponse[]>([]);
+  const [aiAnalysesLoading, setAiAnalysesLoading] = useState(false);
+  const [aiAnalysesPage, setAiAnalysesPage] = useState(1);
+  const [aiAnalysesTotal, setAiAnalysesTotal] = useState(0);
+  const [selectedAnalysis, setSelectedAnalysis] = useState<ExtendedAiAnalysisResponse | null>(null);
+  const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [selectedCase, setSelectedCase] = useState<CaseResponse | null>(null);
+  const [isCaseModalOpen, setIsCaseModalOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionResponse | null>(null);
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [plans, setPlans] = useState<Array<{
     id: string;
     unit_amount: number;
@@ -114,6 +134,12 @@ const AdminDashboard = () => {
       fetchDashboardData();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user?.role === 'admin' && activePage === 'feedback') {
+      fetchAiAnalyses();
+    }
+  }, [user, activePage]);
 
   const fetchDashboardData = async () => {
     setIsLoading(true);
@@ -207,6 +233,29 @@ const AdminDashboard = () => {
       console.error('Transactions fetch error:', error);
     } finally {
       setTransactionsLoading(false);
+    }
+  };
+
+  const fetchAiAnalyses = async (page: number = 1) => {
+    setAiAnalysesLoading(true);
+    try {
+      console.log('Fetching AI analyses with page:', page);
+      const analysesResponse = await apiService.getAllAiAnalyses(page, 10);
+      console.log('AI analyses response:', analysesResponse);
+      
+      if (analysesResponse.success && analysesResponse.data) {
+        setAiAnalyses(analysesResponse.data.data);
+        setAiAnalysesTotal(analysesResponse.data.totalCount);
+        setAiAnalysesPage(page);
+      } else {
+        console.error('Failed to get AI analyses:', analysesResponse.error);
+        toast.error(analysesResponse.error || 'Failed to load AI analyses');
+      }
+    } catch (error) {
+      toast.error('Failed to load AI analyses');
+      console.error('AI analyses fetch error:', error);
+    } finally {
+      setAiAnalysesLoading(false);
     }
   };
 
@@ -855,7 +904,14 @@ const AdminDashboard = () => {
                         <TableCell>{user.planType || "None"}</TableCell>
                         <TableCell>{formatDate(user.createdAt)}</TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="sm">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setIsUserModalOpen(true);
+                            }}
+                          >
                             <Eye className="w-4 h-4" />
                           </Button>
                         </TableCell>
@@ -958,7 +1014,14 @@ const AdminDashboard = () => {
                               <TableCell>{caseItem.primaryPayer || 'N/A'}</TableCell>
                               <TableCell>{formatDate(caseItem.createdAt)}</TableCell>
                               <TableCell>
-                                <Button variant="ghost" size="sm">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedCase(caseItem);
+                                    setIsCaseModalOpen(true);
+                                  }}
+                                >
                                   <Eye className="w-4 h-4" />
                                 </Button>
                               </TableCell>
@@ -1110,7 +1173,14 @@ const AdminDashboard = () => {
                                 </Badge>
                               </TableCell>
                               <TableCell>
-                                <Button variant="ghost" size="sm">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedTransaction(transaction);
+                                    setIsTransactionModalOpen(true);
+                                  }}
+                                >
                                   <Eye className="w-4 h-4" />
                                 </Button>
                               </TableCell>
@@ -1166,184 +1236,128 @@ const AdminDashboard = () => {
 
           {/* Feedback Page */}
           {activePage === 'feedback' && (
-            <div className="space-y-8">
-              {/* Premium Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-blue-50/30">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-indigo-500/5"></div>
-                  <CardContent className="p-6 relative z-10">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-600 mb-1">Total Feedbacks</p>
-                        <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                          {adminStats?.stats?.totalFeedbacks || 0}
-                        </p>
-                        <p className="text-xs text-slate-500 font-medium mt-1">User interactions</p>
-                      </div>
-                      <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <ThumbsUp className="w-6 h-6 text-blue-600" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-emerald-50/30">
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-green-500/5"></div>
-                  <CardContent className="p-6 relative z-10">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-600 mb-1">Positive Feedback</p>
-                        <p className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
-                          {adminStats?.stats?.feedbackBreakdown?.likes || 0}
-                        </p>
-                        <p className="text-xs text-slate-500 font-medium mt-1">Satisfied users</p>
-                      </div>
-                      <div className="p-3 bg-gradient-to-br from-emerald-100 to-green-100 rounded-2xl group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <ThumbsUp className="w-6 h-6 text-emerald-600" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-red-50/30">
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-rose-500/5"></div>
-                  <CardContent className="p-6 relative z-10">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-600 mb-1">Negative Feedback</p>
-                        <p className="text-3xl font-bold bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent">
-                          {adminStats?.stats?.feedbackBreakdown?.dislikes || 0}
-                        </p>
-                        <p className="text-xs text-slate-500 font-medium mt-1">Improvement areas</p>
-                      </div>
-                      <div className="p-3 bg-gradient-to-br from-red-100 to-rose-100 rounded-2xl group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <ThumbsDown className="w-6 h-6 text-red-600" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Premium Feedback Distribution Chart */}
-              <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-white via-white to-slate-50/30">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/3 via-transparent to-purple-500/3"></div>
-                <CardHeader className="relative z-10 pb-6">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl">
-                      <BarChart3 className="w-5 h-5 text-indigo-600" />
+                    <div className="p-2 bg-gradient-to-br from-primary/10 via-primary/5 to-primary/20 rounded-2xl shadow-sm">
+                      <ThumbsUp className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                        Feedback Distribution
-                      </CardTitle>
-                      <CardDescription className="text-slate-500 font-medium">
-                        Visual breakdown of user satisfaction metrics
-                      </CardDescription>
+                      <CardTitle className="text-xl font-bold">AI Analysis Feedback</CardTitle>
+                      <CardDescription>User feedback on AI responses and analysis details</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="relative z-10 pt-0">
-                  <div className="space-y-6">
-                    {/* Premium Chart Representation */}
-                    <div className="relative h-64 bg-gradient-to-br from-slate-50 to-indigo-50/30 rounded-2xl p-6 border border-slate-200/50">
-                      <div className="h-full flex items-end justify-center space-x-8">
-                        {/* Positive Bar */}
-                        <div className="flex flex-col items-center space-y-3">
-                          <div 
-                            className="bg-gradient-to-t from-emerald-500 via-emerald-400 to-emerald-300 rounded-t-xl shadow-lg relative overflow-hidden min-h-8 transition-all duration-1000 ease-out"
-                            style={{ 
-                              width: '60px',
-                              height: adminStats?.stats?.totalFeedbacks > 0 
-                                ? `${Math.max(20, (((adminStats?.stats?.feedbackBreakdown?.likes || 0) / adminStats.stats.totalFeedbacks) * 100) * 1.5)}%`
-                                : '20%'
-                            }}
-                          >
-                            <div className="absolute inset-0 bg-gradient-to-t from-emerald-600/20 to-transparent"></div>
-                            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-white font-bold text-sm">
-                              {adminStats?.stats?.feedbackBreakdown?.likes || 0}
-                            </div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-sm font-bold text-emerald-600">Positive</div>
-                            <div className="text-xs text-slate-500">
-                              {adminStats?.stats?.totalFeedbacks > 0 
-                                ? Math.round(((adminStats?.stats?.feedbackBreakdown?.likes || 0) / adminStats.stats.totalFeedbacks) * 100)
-                                : 0}%
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Negative Bar */}
-                        <div className="flex flex-col items-center space-y-3">
-                          <div 
-                            className="bg-gradient-to-t from-red-500 via-red-400 to-red-300 rounded-t-xl shadow-lg relative overflow-hidden min-h-8 transition-all duration-1000 ease-out"
-                            style={{ 
-                              width: '60px',
-                              height: adminStats?.stats?.totalFeedbacks > 0 
-                                ? `${Math.max(20, (((adminStats?.stats?.feedbackBreakdown?.dislikes || 0) / adminStats.stats.totalFeedbacks) * 100) * 1.5)}%`
-                                : '20%'
-                            }}
-                          >
-                            <div className="absolute inset-0 bg-gradient-to-t from-red-600/20 to-transparent"></div>
-                            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-white font-bold text-sm">
-                              {adminStats?.stats?.feedbackBreakdown?.dislikes || 0}
-                            </div>
-                          </div>
-                          <div className="text-center">
-                            <div className="text-sm font-bold text-red-600">Negative</div>
-                            <div className="text-xs text-slate-500">
-                              {adminStats?.stats?.totalFeedbacks > 0 
-                                ? Math.round(((adminStats?.stats?.feedbackBreakdown?.dislikes || 0) / adminStats.stats.totalFeedbacks) * 100)
-                                : 0}%
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Chart Grid Lines */}
-                      <div className="absolute inset-0 pointer-events-none">
-                        <div className="h-full w-full relative">
-                          {[...Array(5)].map((_, i) => (
-                            <div 
-                              key={i}
-                              className="absolute left-0 right-0 border-t border-slate-200/30"
-                              style={{ bottom: `${20 + (i * 20)}%` }}
-                            />
+                <CardContent>
+                  {aiAnalysesLoading ? (
+                    <div className="text-center py-8">
+                      <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+                      <p className="text-muted-foreground">Loading AI analyses...</p>
+                    </div>
+                  ) : aiAnalyses.length > 0 ? (
+                    <>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>User</TableHead>
+                            <TableHead>Current Claim</TableHead>
+                            <TableHead>Positive Feedback</TableHead>
+                            <TableHead>Negative Feedback</TableHead>
+                            <TableHead>Created</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {aiAnalyses.map((analysis) => (
+                            <TableRow key={analysis._id}>
+                              <TableCell>
+                                <div>
+                                  <div className="font-medium">{analysis.user.name}</div>
+                                  <div className="text-sm text-muted-foreground">{analysis.user.email}</div>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="max-w-xs">
+                                  <div className="text-sm font-medium truncate">{analysis.case.currentClaim}</div>
+                                  <div className="text-xs text-muted-foreground">
+                                    DOS: {new Date(analysis.case.prevClaimDOS).toLocaleDateString()}
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center space-x-2">
+                                  <ThumbsUp className="w-4 h-4 text-emerald-600" />
+                                  <span className="font-medium text-emerald-600">{analysis.likes.length}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center space-x-2">
+                                  <ThumbsDown className="w-4 h-4 text-red-600" />
+                                  <span className="font-medium text-red-600">{analysis.dislikes.length}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="text-sm">
+                                  {new Date(analysis.createdAt).toLocaleDateString()}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedAnalysis(analysis as ExtendedAiAnalysisResponse);
+                                    setIsAnalysisModalOpen(true);
+                                  }}
+                                >
+                                  <Eye className="w-4 h-4 mr-1" />
+                                  View
+                                </Button>
+                              </TableCell>
+                            </TableRow>
                           ))}
-                        </div>
-                      </div>
-                    </div>
+                        </TableBody>
+                      </Table>
 
-                    {/* Summary Stats */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200/50">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-semibold text-emerald-700">Satisfaction Rate</p>
-                            <p className="text-2xl font-bold text-emerald-600">
-                              {adminStats?.stats?.totalFeedbacks > 0 
-                                ? Math.round(((adminStats?.stats?.feedbackBreakdown?.likes || 0) / adminStats.stats.totalFeedbacks) * 100)
-                                : 0}%
-                            </p>
-                          </div>
-                          <TrendingUp className="w-6 h-6 text-emerald-500" />
+                      {/* Pagination */}
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="text-sm text-muted-foreground">
+                          Showing {((aiAnalysesPage - 1) * 10) + 1} to {Math.min(aiAnalysesPage * 10, aiAnalysesTotal)} of {aiAnalysesTotal} analyses
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fetchAiAnalyses(aiAnalysesPage - 1)}
+                            disabled={aiAnalysesPage <= 1 || aiAnalysesLoading}
+                          >
+                            Previous
+                          </Button>
+                          <span className="text-sm">
+                            Page {aiAnalysesPage} of {Math.ceil(aiAnalysesTotal / 10)}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fetchAiAnalyses(aiAnalysesPage + 1)}
+                            disabled={aiAnalysesPage >= Math.ceil(aiAnalysesTotal / 10) || aiAnalysesLoading}
+                          >
+                            Next
+                          </Button>
                         </div>
                       </div>
-                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200/50">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-semibold text-blue-700">Response Rate</p>
-                            <p className="text-2xl font-bold text-blue-600">
-                              {adminStats?.stats?.totalCases > 0 && adminStats?.stats?.totalFeedbacks > 0
-                                ? Math.round((adminStats.stats.totalFeedbacks / adminStats.stats.totalCases) * 100)
-                                : 0}%
-                            </p>
-                          </div>
-                          <Target className="w-6 h-6 text-blue-500" />
-                        </div>
-                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <ThumbsUp className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p>No AI analyses found</p>
+                      <Button onClick={() => fetchAiAnalyses(1)} variant="outline" className="mt-2">
+                        <Loader2 className="w-4 h-4 mr-2" />
+                        Reload Analyses
+                      </Button>
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -1667,10 +1681,464 @@ const AdminDashboard = () => {
                   </Button>
                       </div>
               )}
-                    </div>
+            </div>
           )}
-                  </div>
+        </div>
       </div>
+
+      {/* AI Analysis Details Modal */}
+      <Dialog open={isAnalysisModalOpen} onOpenChange={setIsAnalysisModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>AI Analysis Details</DialogTitle>
+          <DialogDescription>
+            Complete information about this AI analysis and user feedback
+          </DialogDescription>
+        </DialogHeader>
+        
+        {selectedAnalysis && (
+          <div className="space-y-6">
+            {/* User Information */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">User Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div>
+                    <span className="font-medium">Name:</span> {selectedAnalysis.user.name}
+                  </div>
+                  <div>
+                    <span className="font-medium">Email:</span> {selectedAnalysis.user.email}
+                  </div>
+                  <div>
+                    <span className="font-medium">Analysis Created:</span>{' '}
+                    {new Date(selectedAnalysis.createdAt).toLocaleString()}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Case Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div>
+                    <span className="font-medium">Current Claim:</span>{' '}
+                    <div className="text-sm mt-1">{selectedAnalysis.case.currentClaim}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium">Previous Claim DOS:</span>{' '}
+                    {new Date(selectedAnalysis.case.prevClaimDOS).toLocaleDateString()}
+                  </div>
+                  <div>
+                    <span className="font-medium">Previous Claim CPT:</span> {selectedAnalysis.case.prevClaimCPT}
+                  </div>
+                  {selectedAnalysis.case.primaryPayer && (
+                    <div>
+                      <span className="font-medium">Primary Payer:</span> {selectedAnalysis.case.primaryPayer}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Feedback Summary */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Feedback Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-3 p-3 bg-emerald-50 rounded-lg">
+                    <ThumbsUp className="w-5 h-5 text-emerald-600" />
+                    <div>
+                      <div className="font-medium text-emerald-700">Positive Feedback</div>
+                      <div className="text-2xl font-bold text-emerald-600">{selectedAnalysis.likes.length}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 p-3 bg-red-50 rounded-lg">
+                    <ThumbsDown className="w-5 h-5 text-red-600" />
+                    <div>
+                      <div className="font-medium text-red-700">Negative Feedback</div>
+                      <div className="text-2xl font-bold text-red-600">{selectedAnalysis.dislikes.length}</div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+                          {/* AI Analysis Content */}
+              <div className="grid grid-cols-1 gap-4">
+
+                {/* Improvements Card */}
+                {selectedAnalysis.analysis?.improvements && typeof selectedAnalysis.analysis.improvements === 'object' && Object.keys(selectedAnalysis.analysis.improvements).length > 0 && (
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center space-x-2">
+                        <div className="p-2 bg-green-100 rounded-lg">
+                          <TrendingUp className="w-5 h-5 text-green-600" />
+                        </div>
+                        <span>Suggested Improvements</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid gap-4">
+                        {Object.entries(selectedAnalysis.analysis.improvements).map(([category, details], index) => (
+                          <div key={category} className="p-4 bg-green-50 rounded-lg border border-green-200">
+                            <div className="flex items-start space-x-3">
+                              <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+                                <span className="text-xs font-bold text-green-600">{index + 1}</span>
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-green-800 mb-2 capitalize">
+                                  {category.replace(/([A-Z])/g, ' $1').replace(/[-_]/g, ' ').trim()}
+                                </h4>
+                                {typeof details === 'object' && details !== null ? (
+                                  <div className="space-y-2">
+                                    {Object.entries(details as Record<string, unknown>).map(([key, value]) => (
+                                      <div key={key} className="bg-white p-3 rounded border border-green-100">
+                                        <p className="font-medium text-green-700 text-sm capitalize mb-1">
+                                          {key.replace(/([A-Z])/g, ' $1').replace(/[-_]/g, ' ').trim()}:
+                                        </p>
+                                        <p className="text-sm text-slate-700 leading-relaxed">{String(value)}</p>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <p className="text-sm text-slate-700 leading-relaxed">{String(details)}</p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+
+
+                {/* Denial Information Card */}
+                {selectedAnalysis.case.denialText && (
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center space-x-2">
+                        <div className="p-2 bg-red-100 rounded-lg">
+                          <ThumbsDown className="w-5 h-5 text-red-600" />
+                        </div>
+                        <span>Denial Information</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                        <p className="text-sm text-slate-700 leading-relaxed">{selectedAnalysis.case.denialText}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Encounter Information Card */}
+                {selectedAnalysis.case.encounterText && (
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg flex items-center space-x-2">
+                        <div className="p-2 bg-purple-100 rounded-lg">
+                          <Users className="w-5 h-5 text-purple-600" />
+                        </div>
+                        <span>Encounter Information</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <p className="text-sm text-slate-700 leading-relaxed">{selectedAnalysis.case.encounterText}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+               
+
+                {/* Empty State */}
+                {(!selectedAnalysis.analysis || Object.keys(selectedAnalysis.analysis).length === 0) && 
+                 !selectedAnalysis.case.denialText && !selectedAnalysis.case.encounterText && (
+                  <Card>
+                    <CardContent className="text-center py-8">
+                      <FileText className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                      <p className="text-lg font-medium text-gray-600">No Analysis Data Available</p>
+                      <p className="text-sm text-gray-500">This case doesn't contain any AI analysis or additional information.</p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+
+    {/* User Details Modal */}
+    <Dialog open={isUserModalOpen} onOpenChange={setIsUserModalOpen}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>User Details</DialogTitle>
+          <DialogDescription>Complete user information and account details</DialogDescription>
+        </DialogHeader>
+        
+        {selectedUser && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="font-medium">Name:</label>
+                <p className="text-sm text-muted-foreground">{selectedUser.name}</p>
+              </div>
+              <div>
+                <label className="font-medium">Email:</label>
+                <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
+              </div>
+              <div>
+                <label className="font-medium">Role:</label>
+                <Badge variant="outline">{selectedUser.role}</Badge>
+              </div>
+              <div>
+                <label className="font-medium">Account Status:</label>
+                <Badge variant={selectedUser.isFreeTrialUser ? "outline" : "default"}>
+                  {selectedUser.isFreeTrialUser ? "Free Trial" : "Subscribed"}
+                </Badge>
+              </div>
+              <div>
+                <label className="font-medium">Cases Left:</label>
+                <p className="text-sm text-muted-foreground">{selectedUser.noOfCasesLeft}</p>
+              </div>
+              <div>
+                <label className="font-medium">Plan Type:</label>
+                <p className="text-sm text-muted-foreground">{selectedUser.planType || "None"}</p>
+              </div>
+              <div>
+                <label className="font-medium">Joined:</label>
+                <p className="text-sm text-muted-foreground">{new Date(selectedUser.createdAt).toLocaleString()}</p>
+              </div>
+              <div>
+                <label className="font-medium">User ID:</label>
+                <p className="text-xs font-mono text-muted-foreground">{selectedUser._id}</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+
+    {/* Case Details Modal */}
+    <Dialog open={isCaseModalOpen} onOpenChange={setIsCaseModalOpen}>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Case Details</DialogTitle>
+          <DialogDescription>Complete case information and claim details</DialogDescription>
+        </DialogHeader>
+        
+        {selectedCase && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">User Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div>
+                    <span className="font-medium">Name:</span> {typeof selectedCase.user === 'object' ? selectedCase.user.name : 'Unknown User'}
+                  </div>
+                  <div>
+                    <span className="font-medium">Email:</span> {typeof selectedCase.user === 'object' ? selectedCase.user.email : 'N/A'}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Case Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div>
+                    <span className="font-medium">Case ID:</span>
+                    <p className="text-xs font-mono">{selectedCase._id}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Created:</span> {new Date(selectedCase.createdAt).toLocaleString()}
+                  </div>
+                  <div>
+                    <span className="font-medium">Updated:</span> {new Date(selectedCase.updatedAt).toLocaleString()}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Claim Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div>
+                  <span className="font-medium">Current Claim:</span>
+                  <p className="text-sm mt-1 p-2 bg-slate-50 rounded">{selectedCase.currentClaim}</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <span className="font-medium">Previous Claim DOS:</span>
+                    <p className="text-sm text-muted-foreground">{selectedCase.prevClaimDOS}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Previous Claim CPT:</span>
+                    <p className="text-sm text-muted-foreground">{selectedCase.prevClaimCPT}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Primary Payer:</span>
+                    <p className="text-sm text-muted-foreground">{selectedCase.primaryPayer || 'N/A'}</p>
+                  </div>
+                </div>
+                {selectedCase.denialText && (
+                  <div>
+                    <span className="font-medium">Denial Text:</span>
+                    <p className="text-sm mt-1 p-2 bg-red-50 rounded border-l-4 border-red-200">{selectedCase.denialText}</p>
+                  </div>
+                )}
+                {selectedCase.encounterText && (
+                  <div>
+                    <span className="font-medium">Encounter Text:</span>
+                    <p className="text-sm mt-1 p-2 bg-blue-50 rounded border-l-4 border-blue-200">{selectedCase.encounterText}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {(selectedCase.denialScreenShots?.length > 0 || selectedCase.encounterScreenShots?.length > 0) && (
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Screenshots</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {selectedCase.denialScreenShots?.length > 0 && (
+                    <div>
+                      <span className="font-medium">Denial Screenshots ({selectedCase.denialScreenShots.length}):</span>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                        {selectedCase.denialScreenShots.map((screenshot, index) => (
+                          <img key={index} src={screenshot} alt={`Denial ${index + 1}`} className="w-full h-24 object-cover rounded border" />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {selectedCase.encounterScreenShots?.length > 0 && (
+                    <div>
+                      <span className="font-medium">Encounter Screenshots ({selectedCase.encounterScreenShots.length}):</span>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                        {selectedCase.encounterScreenShots.map((screenshot, index) => (
+                          <img key={index} src={screenshot} alt={`Encounter ${index + 1}`} className="w-full h-24 object-cover rounded border" />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+
+    {/* Transaction Details Modal */}
+    <Dialog open={isTransactionModalOpen} onOpenChange={setIsTransactionModalOpen}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Transaction Details</DialogTitle>
+          <DialogDescription>Complete transaction information and payment details</DialogDescription>
+        </DialogHeader>
+        
+        {selectedTransaction && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">User Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div>
+                    <span className="font-medium">Name:</span> {typeof selectedTransaction.user === 'object' ? selectedTransaction.user.name : 'Unknown User'}
+                  </div>
+                  <div>
+                    <span className="font-medium">Email:</span> {typeof selectedTransaction.user === 'object' ? selectedTransaction.user.email : 'N/A'}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Payment Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div>
+                    <span className="font-medium">Amount:</span>
+                    <p className="text-lg font-bold text-green-600">
+                      {selectedTransaction.amountTotal ? `$${(selectedTransaction.amountTotal / 100).toFixed(2)} ${(selectedTransaction.currency || 'USD').toUpperCase()}` : 'N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Status:</span>
+                    <Badge 
+                      variant="outline" 
+                      className={
+                        selectedTransaction.paymentStatus === 'paid' 
+                          ? "text-green-600 border-green-600" 
+                          : selectedTransaction.paymentStatus === 'pending'
+                          ? "text-yellow-600 border-yellow-600"
+                          : "text-red-600 border-red-600"
+                      }
+                    >
+                      {selectedTransaction.paymentStatus || 'Unknown'}
+                    </Badge>
+                  </div>
+                  <div>
+                    <span className="font-medium">Type:</span>
+                    <Badge variant="default">{selectedTransaction.type || 'Payment'}</Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Transaction Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <span className="font-medium">Transaction ID:</span>
+                    <p className="text-xs font-mono text-muted-foreground">{selectedTransaction._id}</p>
+                  </div>
+                  {selectedTransaction.stripeSessionId && (
+                    <div>
+                      <span className="font-medium">Stripe Session ID:</span>
+                      <p className="text-xs font-mono text-muted-foreground">{selectedTransaction.stripeSessionId}</p>
+                    </div>
+                  )}
+                  {selectedTransaction.subscriptionId && (
+                    <div>
+                      <span className="font-medium">Subscription ID:</span>
+                      <p className="text-xs font-mono text-muted-foreground">{selectedTransaction.subscriptionId}</p>
+                    </div>
+                  )}
+                  <div>
+                    <span className="font-medium">Created:</span>
+                    <p className="text-sm text-muted-foreground">{new Date(selectedTransaction.createdAt).toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Updated:</span>
+                    <p className="text-sm text-muted-foreground">{new Date(selectedTransaction.updatedAt).toLocaleString()}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
     </div>
   );
 };

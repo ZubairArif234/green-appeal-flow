@@ -27,6 +27,7 @@ interface AuthContextType {
   forgotPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
   resetPassword: (email: string, otp: string, password: string) => Promise<{ success: boolean; error?: string }>;
   refreshUser: () => Promise<void>;
+  updateProfile: (profileData: { name: string; email: string }) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -225,6 +226,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     await getCurrentUser(true);
   };
 
+  const updateProfile = async (profileData: { name: string; email: string }) => {
+    try {
+      const response = await apiService.updateProfile(profileData);
+      
+      if (response.success && response.data) {
+        // Update the user state with the new data
+        setUser(response.data);
+        return { success: true };
+      } else {
+        return { 
+          success: false, 
+          error: response.error || 'Profile update failed' 
+        };
+      }
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Profile update failed' 
+      };
+    }
+  };
+
   const value: AuthContextType = {
     user,
     token,
@@ -237,6 +260,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     forgotPassword,
     resetPassword,
     refreshUser,
+    updateProfile,
   };
 
   return (

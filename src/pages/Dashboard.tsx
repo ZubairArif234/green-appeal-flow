@@ -3,18 +3,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { User, Mail, Shield, LogOut, FileText, ArrowRight, Crown, CreditCard, AlertCircle, Eye, Calendar, DollarSign } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { User, Mail, Shield, LogOut, FileText, ArrowRight, Crown, CreditCard, AlertCircle, Eye, Calendar, DollarSign, Edit, Settings } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
-import { apiService, CaseResponse, TransactionResponse } from "@/services/api";
+import { apiService, CaseResponse, TransactionResponse, UpdateProfileRequest } from "@/services/api";
 
 const Dashboard = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, updateProfile } = useAuth();
   const navigate = useNavigate();
   const [userCases, setUserCases] = useState<CaseResponse[]>([]);
   const [userTransactions, setUserTransactions] = useState<TransactionResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [editingProfile, setEditingProfile] = useState({
+    name: user?.name || '',
+    email: user?.email || ''
+  });
 
   useEffect(() => {
     if (user?.role === 'user') {
@@ -58,6 +66,32 @@ const Dashboard = () => {
     }
   };
 
+  // Handle profile editing
+  const handleSaveProfile = async () => {
+    try {
+      const result = await updateProfile({
+        name: editingProfile.name,
+        email: editingProfile.email
+      });
+
+      if (result.success) {
+        toast.success('Profile updated successfully!');
+        setIsProfileModalOpen(false);
+      } else {
+        toast.error(result.error || 'Failed to update profile');
+      }
+    } catch (error) {
+      toast.error('Failed to update profile');
+    }
+  };
+
+  const handleProfileInputChange = (field: string, value: string) => {
+    setEditingProfile(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -67,16 +101,33 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <h1 className="text-xl font-bold text-foreground">Mental Denial Analyzer</h1>
+    <div className="min-h-screen bg-white">
+      {/* Header - Landing Page Style */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/logo.png" 
+                alt="Mental Denial Analyzer Logo" 
+                className="h-10 w-auto"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (fallback) {
+                    fallback.classList.remove('hidden');
+                    fallback.classList.add('flex');
+                  }
+                }}
+              />
+              <div className="hidden w-10 h-10 rounded-lg bg-primary items-center justify-center">
+                <span className="text-white font-bold text-sm">MDA</span>
               </div>
+              <h1 className="text-xl font-bold text-black">
+                Mental Denial Analyzer
+              </h1>
             </div>
+            
             <div className="flex items-center space-x-4">
               {user?.role === 'admin' && (
                 <Badge className="bg-primary text-white">
@@ -84,12 +135,24 @@ const Dashboard = () => {
                   Admin
                 </Badge>
               )}
-              <span className="text-gray-700">Welcome, {user?.name}!</span>
+              
+              {/* User Profile with Image */}
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">
+                    {user?.name?.charAt(0).toUpperCase() || 'U'}
+                  </span>
+                </div>
+                <span className="hidden md:block text-black font-medium">
+                  {user?.name}
+                </span>
+              </div>
+              
               <Button
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 border-gray-300 hover:border-primary hover:text-primary"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Logout</span>
@@ -97,27 +160,43 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </nav>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="pt-24 pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Hero Section */}
+        <div className="mb-8">
+          <div className="text-center mb-6">
+            <h1 className="text-4xl font-bold text-black mb-2">
+              Welcome back, {user?.name}!
+            </h1>
+            <p className="text-lg text-gray-600">
+              {user?.role === 'admin' 
+                ? 'Monitor your platform and manage users with powerful admin tools'
+                : 'Ready to turn medical denials into successful appeals with AI assistance'
+              }
+            </p>
+          </div>
+        </div>
+
         {/* Show Admin Dashboard link for Admins */}
         {user?.role === 'admin' && (
-          <div className="mb-6">
-            <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+          <div className="mb-8">
+            <Card className="border shadow-md bg-white">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <Crown className="w-6 h-6 text-primary" />
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-primary rounded-xl">
+                      <Crown className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-foreground">Administrator Access</h3>
-                      <p className="text-sm text-muted-foreground">Manage users, cases, and platform settings</p>
+                      <h3 className="text-xl font-bold text-black">Administrator Access</h3>
+                      <p className="text-gray-600">Manage users, cases, and platform settings</p>
                     </div>
                   </div>
                   <Link to="/admin">
-                    <Button className="bg-primary hover:bg-primary-dark">
+                    <Button className="bg-primary hover:bg-primary/90 text-white">
                       <Crown className="w-4 h-4 mr-2" />
                       Go to Admin Panel
                     </Button>
@@ -128,69 +207,92 @@ const Dashboard = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* User Profile Card */}
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <User className="w-5 h-5" />
-                <span>Profile Information</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-gray-500">Name</label>
-                <p className="text-lg">{user?.name}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">Email</label>
-                <div className="flex items-center space-x-2">
-                  <Mail className="w-4 h-4 text-gray-400" />
-                  <p className="text-lg">{user?.email}</p>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-500">Email Status</label>
-                <div className="flex items-center space-x-2">
-                  <Shield className={`w-4 h-4 ${user?.isEmailVerified ? 'text-green-500' : 'text-red-500'}`} />
-                  <p className={`text-sm ${user?.isEmailVerified ? 'text-green-600' : 'text-red-600'}`}>
-                    {user?.isEmailVerified ? 'Verified' : 'Not Verified'}
-                  </p>
-                </div>
-              </div>
-              {user?.role === 'user' && (
-                <>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Account Status</label>
-                    <div className="flex items-center space-x-2">
-                      <CreditCard className="w-4 h-4 text-primary" />
-                      <Badge variant={user.isFreeTrialUser ? "outline" : "default"}>
-                        {user.isFreeTrialUser ? "Free Trial" : "Subscribed"}
-                      </Badge>
-                    </div>
+          <div className="lg:col-span-1">
+            <Card className="border shadow-md bg-white">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center space-x-3">
+                  <div className="p-2 bg-primary rounded-lg">
+                    <User className="w-5 h-5 text-white" />
                   </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-500">Cases Remaining</label>
-                    <div className="flex items-center space-x-2">
-                      <FileText className="w-4 h-4 text-primary" />
-                      <p className="text-lg font-semibold">{user.noOfCasesLeft}</p>
-                    </div>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Main Dashboard Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Welcome Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Welcome to Mental Denial Analyzer</CardTitle>
+                  <span className="text-xl font-bold text-black">Profile Information</span>
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 mb-6">
+                <div className="space-y-6">
+                  <div className="text-center mb-6">
+                    <div className="w-20 h-20 mx-auto bg-primary rounded-full flex items-center justify-center mb-3">
+                      <span className="text-white font-bold text-2xl">
+                        {user?.name?.charAt(0).toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-black">{user?.name}</h3>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <label className="text-sm font-semibold text-gray-700">Email</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Mail className="w-4 h-4 text-gray-500" />
+                        <p className="text-black font-medium">{user?.email}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                      <label className="text-sm font-semibold text-green-700">Email Status</label>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Shield className={`w-4 h-4 ${user?.isEmailVerified ? 'text-green-600' : 'text-gray-500'}`} />
+                        <div className={`w-2 h-2 ${user?.isEmailVerified ? 'bg-green-600' : 'bg-gray-400'} rounded-full`}></div>
+                        <span className="text-green-700 font-medium">
+                          {user?.isEmailVerified ? 'Verified' : 'Not Verified'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {user?.role === 'user' && (
+                      <>
+                        <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                          <label className="text-sm font-semibold text-gray-700">Account Status</label>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <CreditCard className="w-4 h-4 text-gray-600" />
+                            <Badge className={`${
+                              user.isFreeTrialUser 
+                                ? "bg-gray-600" 
+                                : "bg-primary"
+                            } text-white`}>
+                              {user.isFreeTrialUser ? "Free Trial" : "Subscribed"}
+                            </Badge>
+                          </div>
+                        </div>
+                        
+                        <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                          <label className="text-sm font-semibold text-green-700">Cases Remaining</label>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <FileText className="w-4 h-4 text-green-600" />
+                            <span className="text-green-700 font-bold text-lg">{user.noOfCasesLeft}</span>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Main Dashboard Content */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Welcome Card */}
+            <Card className="border shadow-md bg-white">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-2xl font-bold text-black">
+                  Welcome to Mental Denial Analyzer
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 text-lg mb-8 leading-relaxed">
                   {user?.role === 'admin' 
                     ? 'Welcome back! Monitor platform activity and manage users from your admin panel.'
                     : 'Ready to appeal a denial? Our AI-powered system will help you analyze your case and identify the best next steps.'
@@ -199,11 +301,11 @@ const Dashboard = () => {
                 {user?.role === 'user' && (
                   <Button 
                     onClick={handleStartNewCase}
-                    className="bg-primary hover:bg-primary-dark text-primary-foreground font-semibold px-6 py-3 rounded-xl shadow-button hover:shadow-elegant transition-all duration-300 transform hover:-translate-y-0.5"
+                    className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-4 rounded-xl"
                   >
-                    <FileText className="w-5 h-5 mr-2" />
+                    <FileText className="w-5 h-5 mr-3" />
                     Start New Case
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    <ArrowRight className="w-4 h-4 ml-3" />
                   </Button>
                 )}
               </CardContent>
@@ -211,19 +313,19 @@ const Dashboard = () => {
 
             {/* Warning Card for Users with No Cases */}
             {user?.role === 'user' && user.noOfCasesLeft === 0 && (
-              <Card className="border-orange-200 bg-orange-50">
+              <Card className="border-gray-300 bg-gray-50">
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2 text-orange-800">
+                  <CardTitle className="flex items-center space-x-2 text-black">
                     <AlertCircle className="w-5 h-5" />
                     <span>Action Required</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-orange-700 mb-4">
+                  <p className="text-gray-700 mb-4">
                     You have no cases remaining. Upgrade to a paid plan to continue using our AI-powered denial analysis.
                   </p>
                   <Link to="/plans">
-                    <Button className="bg-orange-600 hover:bg-orange-700 text-white">
+                    <Button className="bg-primary hover:bg-primary/90 text-white">
                       <CreditCard className="w-4 h-4 mr-2" />
                       View Plans
                     </Button>
@@ -233,40 +335,103 @@ const Dashboard = () => {
             )}
 
             {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
+            <Card className="border shadow-md bg-white">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-bold text-black">
+                  Quick Actions
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                   {user?.role === 'user' && (
                     <>
                       <Button 
                         variant="outline" 
                         onClick={handleStartNewCase}
-                        className="h-20 flex flex-col items-center justify-center hover:bg-accent hover:border-primary/30 transition-all duration-200"
+                        className="h-24 flex flex-col items-center justify-center border border-green-200 bg-green-50 hover:bg-green-100"
                       >
-                        <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
-                          <FileText className="w-4 h-4 text-primary" />
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center mb-2">
+                          <FileText className="w-5 h-5 text-white" />
                         </div>
-                        <span>New Case</span>
+                        <span className="font-semibold text-black">New Case</span>
                       </Button>
                       <Link to="/plans">
-                        <Button variant="outline" className="h-20 w-full flex flex-col items-center justify-center hover:bg-accent hover:border-primary/30 transition-all duration-200">
-                          <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
-                            <CreditCard className="w-4 h-4 text-primary" />
+                        <Button variant="outline" className="h-24 w-full flex flex-col items-center justify-center border border-gray-200 bg-gray-50 hover:bg-gray-100">
+                          <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center mb-2">
+                            <CreditCard className="w-5 h-5 text-white" />
                           </div>
-                          <span>View Plans</span>
+                          <span className="font-semibold text-black">View Plans</span>
                         </Button>
                       </Link>
                     </>
                   )}
-                  <Button variant="outline" className="h-20 flex flex-col items-center justify-center hover:bg-accent hover:border-primary/30 transition-all duration-200">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
-                      <User className="w-4 h-4 text-primary" />
-                    </div>
-                    <span>Profile</span>
-                  </Button>
+                  
+                  {/* Profile Edit Dialog */}
+                  <Dialog open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        className="h-24 flex flex-col items-center justify-center border border-green-200 bg-green-50 hover:bg-green-100"
+                        onClick={() => {
+                          setEditingProfile({
+                            name: user?.name || '',
+                            email: user?.email || ''
+                          });
+                        }}
+                      >
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center mb-2">
+                          <Edit className="w-5 h-5 text-white" />
+                        </div>
+                        <span className="font-semibold text-black">Edit Profile</span>
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px] bg-white">
+                      <DialogHeader>
+                        <DialogTitle className="text-xl font-bold text-black">
+                          Edit Profile
+                        </DialogTitle>
+                        <DialogDescription className="text-gray-600">
+                          Make changes to your profile here. Click save when you're done.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="name" className="text-right font-semibold text-black">
+                            Name
+                          </Label>
+                          <Input
+                            id="name"
+                            value={editingProfile.name}
+                            onChange={(e) => handleProfileInputChange('name', e.target.value)}
+                            className="col-span-3 border-gray-300"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="email" className="text-right font-semibold text-black">
+                            Email
+                          </Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={editingProfile.email}
+                            onChange={(e) => handleProfileInputChange('email', e.target.value)}
+                            className="col-span-3 border-gray-300"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="outline" onClick={() => setIsProfileModalOpen(false)} className="border-gray-300">
+                          Cancel
+                        </Button>
+                        <Button 
+                          onClick={handleSaveProfile}
+                          className="bg-primary hover:bg-primary/90 text-white"
+                        >
+                          Save changes
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </CardContent>
             </Card>
@@ -379,6 +544,7 @@ const Dashboard = () => {
             </Card>
           </div>
         )}
+        </div>
       </div>
     </div>
   );
