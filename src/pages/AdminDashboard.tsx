@@ -39,7 +39,9 @@ import {
   LogOut,
   Target,
   Edit,
-  Trash2
+  Trash2,
+  Menu,
+  X
 } from 'lucide-react';
 
 interface User {
@@ -59,6 +61,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [activePage, setActivePage] = useState<ActivePage>('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersPage, setUsersPage] = useState(1);
@@ -411,11 +414,24 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 md:flex">
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="w-72 bg-gradient-to-b from-white via-white to-slate-50/80 shadow-2xl border-r border-slate-200/60 flex flex-col backdrop-blur-sm">
+      <div className={`
+        fixed inset-y-0 left-0 z-50 w-72 bg-gradient-to-b from-white via-white to-slate-50/80 shadow-2xl border-r border-slate-200/60 flex flex-col backdrop-blur-sm transform transition-transform duration-300 ease-in-out
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        md:translate-x-0 md:relative md:z-auto
+      `}>
       {/* Header */}
         <div className="p-8 border-b border-gradient-to-r from-transparent via-slate-200/40 to-transparent">
+          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
             <div className="relative">
               <img 
@@ -445,6 +461,14 @@ const AdminDashboard = () => {
               </h2>
               <p className="text-sm text-slate-500 font-medium">Mental Denial Analyzer</p>
             </div>
+            </div>
+            {/* Mobile Close Button */}
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="md:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
         </div>
 
@@ -635,8 +659,22 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-                {/* Page Content */}
-        <div className="p-8 space-y-8">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile Header */}
+        <div className="md:hidden bg-white border-b border-slate-200/60 px-4 py-3 flex items-center justify-between">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+          <h1 className="text-lg font-semibold text-slate-800">Admin Panel</h1>
+          <div className="w-10" /> {/* Spacer for centering */}
+        </div>
+
+        {/* Page Content */}
+        <div className="flex-1 p-4 md:p-8 space-y-6 md:space-y-8 w-full min-w-0">
           {/* Dashboard Page */}
           {activePage === 'dashboard' && (
             <div className="space-y-8">
@@ -839,12 +877,12 @@ const AdminDashboard = () => {
                   Manage user accounts and view their subscription status
                 </CardDescription>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                       <Input
                         placeholder="Search by email..."
                         value={usersSearch}
                         onChange={(e) => setUsersSearch(e.target.value)}
-                        className="w-64"
+                        className="w-full sm:w-64"
                       />
                       <Button 
                         onClick={() => fetchUsers(1, usersSearch)}
@@ -878,6 +916,7 @@ const AdminDashboard = () => {
                     </div>
                   ) : users.length > 0 ? (
                     <>
+                    <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -919,10 +958,11 @@ const AdminDashboard = () => {
                     ))}
                   </TableBody>
                 </Table>
+                    </div>
                       
                       {/* Pagination */}
-                      <div className="flex items-center justify-between mt-6">
-                        <div className="text-sm text-muted-foreground">
+                      <div className="flex flex-col sm:flex-row items-center justify-between mt-6 space-y-2 sm:space-y-0">
+                        <div className="text-sm text-muted-foreground text-center sm:text-left">
                           Showing {((usersPage - 1) * 10) + 1} to {Math.min(usersPage * 10, usersTotal)} of {usersTotal} users
                         </div>
                         <div className="flex items-center space-x-2">
@@ -983,6 +1023,7 @@ const AdminDashboard = () => {
                     </div>
                   ) : cases.length > 0 ? (
                     <>
+                    <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -1029,6 +1070,7 @@ const AdminDashboard = () => {
                           ))}
                         </TableBody>
                       </Table>
+                    </div>
                       
                       {/* Pagination */}
                       <div className="flex items-center justify-between mt-6">
@@ -1085,12 +1127,12 @@ const AdminDashboard = () => {
                         View case submissions as transaction history
                       </CardDescription>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                       <Input
                         placeholder="Search by user email..."
                         value={transactionsSearch}
                         onChange={(e) => setTransactionsSearch(e.target.value)}
-                        className="w-64"
+                        className="w-full sm:w-64"
                       />
                       <Button 
                         onClick={() => fetchTransactions(1, transactionsSearch)}
@@ -1124,6 +1166,7 @@ const AdminDashboard = () => {
                     </div>
                   ) : transactions.length > 0 ? (
                     <>
+                    <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -1188,6 +1231,7 @@ const AdminDashboard = () => {
                           ))}
                         </TableBody>
                       </Table>
+                    </div>
                       
                       {/* Pagination */}
                       <div className="flex items-center justify-between mt-6">
@@ -1257,6 +1301,7 @@ const AdminDashboard = () => {
                     </div>
                   ) : aiAnalyses.length > 0 ? (
                     <>
+                    <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -1319,6 +1364,7 @@ const AdminDashboard = () => {
                           ))}
                         </TableBody>
                       </Table>
+                    </div>
 
                       {/* Pagination */}
                       <div className="flex items-center justify-between mt-4">
@@ -2139,6 +2185,7 @@ const AdminDashboard = () => {
         )}
       </DialogContent>
     </Dialog>
+      </div>
     </div>
   );
 };
