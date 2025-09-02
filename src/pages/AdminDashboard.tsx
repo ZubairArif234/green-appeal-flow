@@ -94,7 +94,7 @@ const AdminDashboard = () => {
     currency: string;
     recurring: {
       interval: string;
-    };
+    } | null;
     product: {
       id: string;
       name: string;
@@ -1657,7 +1657,7 @@ const AdminDashboard = () => {
                       </div>
                       <div className="flex items-center justify-between mt-1">
                         <span className="text-sm text-slate-500 font-medium">
-                          per {plan.recurring.interval}
+                          per {plan.recurring?.interval || 'month'}
                         </span>
                         <span className="text-xs text-slate-400 uppercase font-semibold">
                           {plan.currency}
@@ -1676,7 +1676,7 @@ const AdminDashboard = () => {
                             description: plan.product.description,
                             amount: plan.unit_amount / 100,
                             currency: plan.currency,
-                            duration: plan.recurring.interval,
+                            duration: plan.recurring?.interval || 'month',
                             type: plan.product.metadata?.tier || ''
                           })}
                           className={`flex-1 border-slate-200 hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 ${
