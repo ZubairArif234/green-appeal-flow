@@ -657,7 +657,7 @@ const AdminDashboard = () => {
                     <p className="text-xs text-slate-500 font-medium mt-1">
                       Registered users
                     </p>
-                    <div className="flex space-x-2 mt-3">
+                    {/* <div className="flex space-x-2 mt-3">
                       <Button 
                         onClick={fetchDashboardData} 
                         size="sm" 
@@ -683,7 +683,7 @@ const AdminDashboard = () => {
                       >
                         Test DB
                       </Button>
-      </div>
+      </div> */}
             </CardContent>
           </Card>
 
