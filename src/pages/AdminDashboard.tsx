@@ -109,7 +109,7 @@ const AdminDashboard = () => {
     description: string;
     amount: number;
     currency: string;
-    duration: string;
+    duration?: string;
     type: string;
   } | null>(null);
   const [newPlan, setNewPlan] = useState<PlanRequest>({
@@ -1546,10 +1546,10 @@ const AdminDashboard = () => {
               </Dialog>
             </div>
 
-                            {plans.length > 0 ? (
+                            {plans?.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {plans.map((plan, index) => (
-                <Card key={plan.id} className={`group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 ${
+              {plans?.map((plan, index) => (
+                <Card key={plan?.id} className={`group relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 ${
                   index === 0 ? 'bg-gradient-to-br from-white via-white to-blue-50/30' : 
                   index === 1 ? 'bg-gradient-to-br from-white via-white to-emerald-50/30' :
                   'bg-gradient-to-br from-white via-white to-purple-50/30'
@@ -1580,12 +1580,12 @@ const AdminDashboard = () => {
                           'text-purple-600'
                         }`} />
                       </div>
-                      <Badge variant={plan.product.active ? "default" : "secondary"} className={`${
-                        plan.product.active 
+                      <Badge variant={plan?.product?.active ? "default" : "secondary"} className={`${
+                        plan?.product?.active 
                           ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-white border-0' 
                           : 'bg-slate-100 text-slate-600'
                       } shadow-sm`}>
-                        {plan.product.active ? "Active" : "Inactive"}
+                        {plan?.product?.active ? "Active" : "Inactive"}
                     </Badge>
             </div>
                     <CardTitle className={`text-xl font-bold ${
@@ -1593,10 +1593,10 @@ const AdminDashboard = () => {
                       index === 1 ? 'bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent' :
                       'bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent'
                     }`}>
-                      {plan.product.name}
+                      {plan?.product?.name}
                     </CardTitle>
                     <CardDescription className="text-slate-500 font-medium line-clamp-2">
-                      {plan.product.description}
+                      {plan?.product?.description}
                   </CardDescription>
                 </CardHeader>
                   
@@ -1607,12 +1607,12 @@ const AdminDashboard = () => {
                         index === 1 ? 'bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent' :
                         'bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent'
                       }`}>
-                        ${plan.unit_amount / 100}
+                        ${plan?.unit_amount / 100}
                       </div>
                       <div className="flex items-center justify-between mt-1">
-                        <span className="text-sm text-slate-500 font-medium">
-                          per {plan.recurring.interval}
-                        </span>
+                        {/* <span className="text-sm text-slate-500 font-medium">
+                          per {plan?.recurring?.interval}
+                        </span> */}
                         <span className="text-xs text-slate-400 uppercase font-semibold">
                           {plan.currency}
                         </span>
@@ -1630,7 +1630,7 @@ const AdminDashboard = () => {
                             description: plan.product.description,
                             amount: plan.unit_amount / 100,
                             currency: plan.currency,
-                            duration: plan.recurring.interval,
+                            // duration: plan.recurring.interval,
                             type: plan.product.metadata?.tier || ''
                           })}
                           className={`flex-1 border-slate-200 hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 ${
