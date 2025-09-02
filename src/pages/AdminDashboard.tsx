@@ -1656,9 +1656,9 @@ const AdminDashboard = () => {
                         ${plan?.unit_amount / 100}
                       </div>
                       <div className="flex items-center justify-between mt-1">
-                        <span className="text-sm text-slate-500 font-medium">
+                        {/* <span className="text-sm text-slate-500 font-medium">
                           per {plan?.recurring?.interval || 'month'}
-                        </span>
+                        </span> */}
                         <span className="text-xs text-slate-400 uppercase font-semibold">
                           {plan?.currency}
                         </span>

@@ -264,9 +264,9 @@ const Plans = () => {
                     <span className="text-4xl font-bold text-primary">
                       ${plan.price}
                     </span>
-                    <span className="text-muted-foreground">
+                    {/* <span className="text-muted-foreground">
                       /{plan.interval}
-                    </span>
+                    </span> */}
                   </div>
                 </CardHeader>
 

@@ -30,7 +30,7 @@ const PaymentSuccess = () => {
     };
 
     verifyPayment();
-  }, [sessionId, refreshUser]);
+  }, [sessionId]);
 
   if (isVerifying) {
     return (

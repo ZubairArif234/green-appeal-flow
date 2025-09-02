@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { apiService, CreateCaseRequest } from '@/services/api';
 import { Button } from "@/components/ui/button";
@@ -223,6 +223,8 @@ if (user?.noOfCasesLeft < 1){
     subtitle: string;
   }) => (
     <div className="space-y-4">
+    
+
       <div>
         <Label className="text-base font-semibold text-gray-900">{title}</Label>
         <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
@@ -295,7 +297,10 @@ if (user?.noOfCasesLeft < 1){
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/8">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="flex flex-col items-center text-center mb-8">
+            <div className="flex text-sm px-2 py-1 mb-4 bg-green-50 border text-green-600 border-green-600 rounded-full">
+        <Link to={"/dashboard"}>Go to dashboard</Link>
+      </div>
           <h1 className="text-4xl font-bold text-primary mb-4">
             Appeal Your Denial
           </h1>
