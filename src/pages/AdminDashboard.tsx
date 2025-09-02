@@ -550,7 +550,7 @@ const AdminDashboard = () => {
                 )}
               </button>
             </li>
-            <li>
+            {/* <li>
               <button
                 onClick={() => handlePageChange('plans')}
                 className={`group w-full flex items-center space-x-3 px-4 py-3.5 rounded-xl text-left transition-all duration-200 ${
@@ -567,7 +567,7 @@ const AdminDashboard = () => {
                   <div className="ml-auto w-2 h-2 bg-white rounded-full"></div>
                 )}
               </button>
-            </li>
+            </li> */}
             <li>
               <button
                 onClick={() => handlePageChange('feedback')}
@@ -637,7 +637,7 @@ const AdminDashboard = () => {
                   {activePage === 'users' && <Users className="w-6 h-6 text-primary" />}
                   {activePage === 'cases' && <FileText className="w-6 h-6 text-primary" />}
                   {activePage === 'transactions' && <CreditCard className="w-6 h-6 text-primary" />}
-                  {activePage === 'plans' && <Settings className="w-6 h-6 text-primary" />}
+                  {/* {activePage === 'plans' && <Settings className="w-6 h-6 text-primary" />} */}
                   {activePage === 'feedback' && <ThumbsUp className="w-6 h-6 text-primary" />}
               </div>
                 <div>
@@ -649,7 +649,7 @@ const AdminDashboard = () => {
                     {activePage === 'users' && 'Manage user accounts and subscription status'}
                     {activePage === 'cases' && 'View and manage all user case submissions'}
                     {activePage === 'transactions' && 'Track platform transactions and activities'}
-                    {activePage === 'plans' && 'Create and manage subscription plans'}
+                    {/* {activePage === 'plans' && 'Create and manage subscription plans'} */}
                     {activePage === 'feedback' && 'Analyze user feedback and satisfaction metrics'}
                   </p>
             </div>
@@ -1410,7 +1410,7 @@ const AdminDashboard = () => {
           )}
 
           {/* Plans Page */}
-          {activePage === 'plans' && (
+          {/* {activePage === 'plans' && (
             <div className="space-y-6">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center space-x-4">
@@ -1426,7 +1426,7 @@ const AdminDashboard = () => {
                   </p>
                 </div>
               </div>
-              {/* <Dialog>
+              <Dialog>
                 <DialogTrigger asChild>
                   <Button className="group bg-gradient-to-r from-primary via-primary to-primary-dark text-white shadow-lg hover:shadow-xl border-0 hover:scale-105 transition-all duration-300">
                     <div className="p-1 bg-white/20 rounded-lg mr-2 group-hover:bg-white/30 transition-all duration-300">
@@ -1509,9 +1509,8 @@ const AdminDashboard = () => {
                     )}
                   </Button>
                 </DialogContent>
-              </Dialog> */}
+              </Dialog>
               
-              {/* Edit Plan Dialog */}
               <Dialog open={!!editingPlan} onOpenChange={() => setEditingPlan(null)}>
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
@@ -1606,7 +1605,6 @@ const AdminDashboard = () => {
                     'bg-gradient-to-br from-purple-500/5 via-transparent to-violet-500/5'
                   }`}></div>
                   
-                  {/* Premium Plan Badge */}
                   {index === 1 && (
                     <div className="absolute -top-3 -right-3 bg-gradient-to-r from-amber-400 to-orange-400 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg transform rotate-12">
                       POPULAR
@@ -1656,9 +1654,9 @@ const AdminDashboard = () => {
                         ${plan?.unit_amount / 100}
                       </div>
                       <div className="flex items-center justify-between mt-1">
-                        {/* <span className="text-sm text-slate-500 font-medium">
+                        <span className="text-sm text-slate-500 font-medium">
                           per {plan?.recurring?.interval || 'month'}
-                        </span> */}
+                        </span>
                         <span className="text-xs text-slate-400 uppercase font-semibold">
                           {plan?.currency}
                         </span>
@@ -1666,7 +1664,7 @@ const AdminDashboard = () => {
                       </div>
                     
                     <div className="space-y-3">
-                      {/* <div className="flex space-x-2">
+                      <div className="flex space-x-2">
                         <Button
                           size="sm"
                           variant="outline"
@@ -1697,7 +1695,7 @@ const AdminDashboard = () => {
                           <Trash2 className="w-3 h-3 mr-1" />
                           Delete
                         </Button>
-                    </div> */}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -1728,7 +1726,7 @@ const AdminDashboard = () => {
                       </div>
               )}
             </div>
-          )}
+          )} */}
         </div>
       </div>
 
