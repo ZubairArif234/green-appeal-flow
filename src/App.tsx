@@ -9,7 +9,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import AppealForm from "./pages/AppealForm";
-import CaseForm from "./pages/CaseForm";
+
 import AiAnalysis from "./pages/AiAnalysis";
 import Plans from "./pages/Plans";
 import AdminDashboard from "./pages/AdminDashboard";
