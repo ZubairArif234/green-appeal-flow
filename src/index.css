@@ -287,4 +287,64 @@ All colors MUST be HSL.
     color: #dc2626;
     font-weight: 700;
   }
+
+  /* Loading Page Animations */
+  .loading-page-enter {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  .loading-page-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 300ms ease-out, transform 300ms ease-out;
+  }
+
+  .loading-page-exit {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .loading-page-exit-active {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 200ms ease-in, transform 200ms ease-in;
+  }
+
+  /* Progress bar animation */
+  .progress-bar {
+    transition: width 0.5s ease-out;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+  }
+
+  /* Step completion animation */
+  .step-complete {
+    animation: stepComplete 0.5s ease-out;
+  }
+
+  @keyframes stepComplete {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Pulse animation for current step */
+  .step-current {
+    animation: stepPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes stepPulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
 }

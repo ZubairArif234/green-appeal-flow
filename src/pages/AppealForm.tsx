@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, FileText, X, Check, AlertCircle, Send } from "lucide-react";
 import { toast } from "sonner";
+import LoadingPage from "@/components/LoadingPage";
 
 interface FileWithId extends File {
   id: string;
@@ -43,6 +44,8 @@ if (user?.noOfCasesLeft < 1){
   const [encounterFiles, setEncounterFiles] = useState<FileWithId[]>([]);
   const [diagnosisFiles, setDiagnosisFiles] = useState<FileWithId[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [currentLoadingStep, setCurrentLoadingStep] = useState("Preparing your case...");
 
   const denialInputRef = useRef<HTMLInputElement>(null);
   const encounterInputRef = useRef<HTMLInputElement>(null);
@@ -155,9 +158,13 @@ if (user?.noOfCasesLeft < 1){
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+    setLoadingProgress(0);
+    setCurrentLoadingStep("Preparing your case...");
     
     try {
       console.log('=== CONVERTING IMAGES TO BASE64 ===');
+      setCurrentLoadingStep("Processing uploaded files...");
+      setLoadingProgress(0.1);
       
       // Convert files to base64
       const convertFileToBase64 = (file: File): Promise<string> => {
@@ -175,6 +182,9 @@ if (user?.noOfCasesLeft < 1){
       };
 
       // Convert all files to base64
+      setCurrentLoadingStep("Converting images to base64...");
+      setLoadingProgress(0.2);
+      
       const denialImages = await Promise.all(
         denialFiles.map(async (file) => ({
           name: file.name,
@@ -183,6 +193,8 @@ if (user?.noOfCasesLeft < 1){
         }))
       );
 
+      setLoadingProgress(0.4);
+
       const encounterImages = await Promise.all(
         encounterFiles.map(async (file) => ({
           name: file.name,
@@ -190,6 +202,8 @@ if (user?.noOfCasesLeft < 1){
           base64: await convertFileToBase64(file)
         }))
       );
+
+      setLoadingProgress(0.6);
 
       const diagnosisImages = await Promise.all(
         diagnosisFiles.map(async (file) => ({
@@ -220,13 +234,28 @@ if (user?.noOfCasesLeft < 1){
 
       console.log('Request data:', requestData);
       
+      setCurrentLoadingStep("Sending data to AI for analysis...");
+      setLoadingProgress(0.7);
+      
       const response = await apiService.createCase(requestData);
       
+      setCurrentLoadingStep("AI is analyzing your case...");
+      setLoadingProgress(0.8);
+      
       if (response.success && response.data) {
+        setCurrentLoadingStep("Finalizing your analysis...");
+        setLoadingProgress(0.9);
+        
         toast.success('Case created successfully with AI analysis!');
         
         // Refresh user data to update case count
         await refreshUser();
+        
+        setCurrentLoadingStep("Redirecting to results...");
+        setLoadingProgress(1.0);
+        
+        // Small delay to show completion
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // Navigate to AI analysis page with the response data
         navigate('/analysis', {
@@ -243,6 +272,8 @@ if (user?.noOfCasesLeft < 1){
       console.error('Case creation error:', error);
     } finally {
       setIsSubmitting(false);
+      setLoadingProgress(0);
+      setCurrentLoadingStep("Preparing your case...");
     }
   };
 
@@ -334,6 +365,13 @@ if (user?.noOfCasesLeft < 1){
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/8">
+      {/* Loading Page */}
+      <LoadingPage 
+        isVisible={isSubmitting} 
+        currentStep={currentLoadingStep}
+        progress={loadingProgress}
+      />
+      
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Header */}
         <div className="flex flex-col items-center text-center mb-8">
@@ -620,12 +658,12 @@ if (user?.noOfCasesLeft < 1){
                 <Button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="bg-primary hover:bg-primary-dark text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                  className="bg-primary hover:bg-primary-dark text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                      Processing...
+                      {currentLoadingStep}
                     </>
                   ) : (
                     <>

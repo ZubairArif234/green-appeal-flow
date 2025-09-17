@@ -314,15 +314,15 @@ const AiAnalysis = () => {
         
         {/* Success Banner */}
         <div className="mb-8">
-          <Card className="bg-gradient-to-r from-green-50 to-primary/5 border-green-200 shadow-card">
+          <Card className="bg-gradient-to-r from-primary-50 to-primary/5 border-primary-200 shadow-card">
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
-                <div className="p-3 bg-green-100 rounded-full">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
+                <div className="p-3 bg-primary-100 rounded-full">
+                  <CheckCircle className="w-8 h-8 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-green-800">Case Analysis Complete!</h2>
-                  <p className="text-green-700 mt-1">
+                  <h2 className="text-2xl font-bold text-primary-900">Case Analysis Complete!</h2>
+                  <p className="text-primary-700 mt-1">
                     Your case has been successfully analyzed by our AI system. Review the insights below to improve your appeal strategy.
                   </p>
                 </div>
@@ -410,7 +410,7 @@ const AiAnalysis = () => {
           <div className="lg:col-span-2 space-y-6">
             
                          {/* AI Report Header - Similar to US Healthcare App */}
-            <div className="bg-gradient-to-r from-green-600 to-green-500 text-white rounded-2xl p-6 mb-6 shadow-lg">
+            <div className="bg-gradient-to-r from-primary to-primary-light text-primary-foreground rounded-2xl p-6 mb-6 shadow-lg">
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 bg-white/20 rounded-xl">
@@ -441,15 +441,15 @@ const AiAnalysis = () => {
                   </div>
                   <div className="flex items-center space-x-4">
                     {/* Like Button */}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleLike}
-                      disabled={likeLoading}
-                      className={`flex items-center space-x-2 transition-all duration-300 bg-white/20 border-white/50 text-white hover:bg-white/30 ${
-                        userInteraction.hasLiked ? 'bg-green-500 hover:bg-green-600 border-green-500' : ''
-                      }`}
-                    >
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleLike}
+                        disabled={likeLoading}
+                        className={`flex items-center space-x-2 transition-all duration-300 bg-white/20 border-white/50 text-white hover:bg-white/30 ${
+                          userInteraction.hasLiked ? 'bg-primary hover:bg-primary-dark border-primary' : ''
+                        }`}
+                      >
                       {likeLoading ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
                       ) : (
@@ -485,24 +485,24 @@ const AiAnalysis = () => {
 
             {/* Recommended Pathway - Similar to US Healthcare App */}
             {analysisData.analysis.recommended_pathway && (
-              <div className="analysis-section bg-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-green-500 bg-gradient-to-r from-green-50 to-white">
+              <div className="analysis-section bg-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-primary bg-gradient-to-r from-primary-50 to-white">
                 <div className="section-header">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Target className="w-6 h-6 text-green-600 section-icon" />
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <Target className="w-6 h-6 text-primary section-icon" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900">Recommended Pathway</h3>
                 </div>
                 <div className="space-y-4">
                   {analysisData.analysis.recommended_pathway.type && (
                     <div className="flex items-center space-x-3">
-                      <div className="flex items-center space-x-2 text-green-600 font-semibold text-lg">
+                      <div className="flex items-center space-x-2 text-primary font-semibold text-lg">
                         <CheckCircle className="w-6 h-6" />
                         <span>{analysisData.analysis.recommended_pathway.type}</span>
                       </div>
                     </div>
                   )}
                   {analysisData.analysis.recommended_pathway.instruction && (
-                    <div className="p-4 bg-green-50 rounded-xl border-l-4 border-green-500">
+                    <div className="p-4 bg-primary-50 rounded-xl border-l-4 border-primary">
                       <p className="text-gray-800 leading-relaxed font-medium highlight-important">
                         {analysisData.analysis.recommended_pathway.instruction}
                       </p>
@@ -659,10 +659,10 @@ const AiAnalysis = () => {
             {/* Legacy Improvements (fallback) */}
             {recommendationsArray.length > 0 && !analysisData.analysis.recommended_pathway && (
             <Card className="shadow-elegant bg-white/95 backdrop-blur-sm border border-primary/10 hover:border-primary/20 transition-all duration-500">
-              <CardHeader className="bg-gradient-to-r from-green-50 to-primary/5 border-b border-primary/10">
+              <CardHeader className="bg-gradient-to-r from-primary-50 to-primary/5 border-b border-primary/10">
                 <CardTitle className="flex items-center space-x-2 text-foreground">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Target className="w-5 h-5 text-green-600" />
+                  <div className="p-2 bg-primary-100 rounded-lg">
+                    <Target className="w-5 h-5 text-primary" />
                   </div>
                                      <span>AI Recommendations</span>
                    <Badge variant="secondary" className="ml-auto">
@@ -673,8 +673,8 @@ const AiAnalysis = () => {
               <CardContent className="p-6">
                   <div className="space-y-4">
                     {recommendationsArray.map((improvement, index) => (
-                      <div key={index} className="flex items-start space-x-3 p-4 bg-green-50/50 rounded-xl border border-green-100">
-                        <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm font-medium mt-0.5">
+                      <div key={index} className="flex items-start space-x-3 p-4 bg-primary-50/50 rounded-xl border border-primary-100">
+                        <div className="flex-shrink-0 w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center text-primary text-sm font-medium mt-0.5">
                           {index + 1}
                         </div>
                         <div className="flex-1">
