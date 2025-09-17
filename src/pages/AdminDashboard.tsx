@@ -1050,8 +1050,8 @@ const AdminDashboard = () => {
                                   {caseItem.currentClaim}
                                 </div>
                               </TableCell>
-                              <TableCell>{caseItem.prevClaimDOS}</TableCell>
-                              <TableCell>{caseItem.prevClaimCPT}</TableCell>
+                              <TableCell>{caseItem.previousClaimDOS || 'Not provided'}</TableCell>
+                              <TableCell>{caseItem.previousClaimCPT || 'Not provided'}</TableCell>
                               <TableCell>{caseItem.primaryPayer || 'N/A'}</TableCell>
                               <TableCell>{formatDate(caseItem.createdAt)}</TableCell>
                               <TableCell>
@@ -1326,7 +1326,7 @@ const AdminDashboard = () => {
                                 <div className="max-w-xs">
                                   <div className="text-sm font-medium truncate">{analysis.case.currentClaim}</div>
                                   <div className="text-xs text-muted-foreground">
-                                    DOS: {new Date(analysis.case.prevClaimDOS).toLocaleDateString()}
+                                    DOS: {analysis.case.previousClaimDOS ? new Date(analysis.case.previousClaimDOS).toLocaleDateString() : 'Not provided'}
                                   </div>
                                 </div>
                               </TableCell>
@@ -1773,10 +1773,10 @@ const AdminDashboard = () => {
                   </div>
                   <div>
                     <span className="font-medium">Previous Claim DOS:</span>{' '}
-                    {new Date(selectedAnalysis.case.prevClaimDOS).toLocaleDateString()}
+                    {selectedAnalysis.case.previousClaimDOS ? new Date(selectedAnalysis.case.previousClaimDOS).toLocaleDateString() : 'Not provided'}
                   </div>
                   <div>
-                    <span className="font-medium">Previous Claim CPT:</span> {selectedAnalysis.case.prevClaimCPT}
+                    <span className="font-medium">Previous Claim CPT:</span> {selectedAnalysis.case.previousClaimCPT || 'Not provided'}
                   </div>
                   {selectedAnalysis.case.primaryPayer && (
                     <div>
@@ -2027,11 +2027,11 @@ const AdminDashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <span className="font-medium">Previous Claim DOS:</span>
-                    <p className="text-sm text-muted-foreground">{selectedCase.prevClaimDOS}</p>
+                    <p className="text-sm text-muted-foreground">{selectedCase.previousClaimDOS || 'Not provided'}</p>
                   </div>
                   <div>
                     <span className="font-medium">Previous Claim CPT:</span>
-                    <p className="text-sm text-muted-foreground">{selectedCase.prevClaimCPT}</p>
+                    <p className="text-sm text-muted-foreground">{selectedCase.previousClaimCPT || 'Not provided'}</p>
                   </div>
                   <div>
                     <span className="font-medium">Primary Payer:</span>

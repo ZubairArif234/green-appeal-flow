@@ -22,13 +22,15 @@ const AppealForm = () => {
   const [currentTab, setCurrentTab] = useState("upload");
   const [formData, setFormData] = useState<CreateCaseRequest>({
     currentClaim: "",
-    prevClaimDOS: "",
-    prevClaimCPT: "",
+    previousClaimDOS: "",
+    previousClaimCPT: "",
+    primaryPayer: "",
     denialText: "",
     encounterText: "",
-    primaryPayer: "",
+    diagnosisText: "",
     denialScreenShots: [],
-    encounterScreenShots: []
+    encounterScreenShots: [],
+    diagnosisScreenShots: []
   });
 
   useEffect(()=>{
@@ -37,17 +39,19 @@ if (user?.noOfCasesLeft < 1){
 }
   },[])
   const [denialFiles, setDenialFiles] = useState<FileWithId[]>([]);
-  const [chartFiles, setChartFiles] = useState<FileWithId[]>([]);
+  const [encounterFiles, setEncounterFiles] = useState<FileWithId[]>([]);
+  const [diagnosisFiles, setDiagnosisFiles] = useState<FileWithId[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const denialInputRef = useRef<HTMLInputElement>(null);
-  const chartInputRef = useRef<HTMLInputElement>(null);
+  const encounterInputRef = useRef<HTMLInputElement>(null);
+  const diagnosisInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (field: keyof CreateCaseRequest, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const addFilesToState = (files: FileList | File[], setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots') => {
+  const addFilesToState = (files: FileList | File[], setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisScreenShots') => {
     const newFiles = Array.from(files).map(file => {
       const fileWithId = file as FileWithId;
       fileWithId.id = Math.random().toString(36).substr(2, 9);
@@ -57,43 +61,15 @@ if (user?.noOfCasesLeft < 1){
     setter(prev => {
       const existingNames = prev.map(f => f.name);
       const uniqueFiles = newFiles.filter(f => !existingNames.includes(f.name));
-      const updatedFiles = [...prev, ...uniqueFiles];
-      
-      // Update formData with actual File objects (without the id property for API)
-      const filesForAPI = updatedFiles.map(f => {
-        const { id, ...fileData } = f;
-        return fileData as File;
-      });
-      
-      setFormData(prevForm => ({
-        ...prevForm,
-        [formField]: filesForAPI
-      }));
-      
-      return updatedFiles;
+      return [...prev, ...uniqueFiles];
     });
   };
 
-  const removeFile = (fileId: string, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots') => {
-    setter(prev => {
-      const updatedFiles = prev.filter(f => f.id !== fileId);
-      
-      // Update formData with actual File objects (without the id property for API)
-      const filesForAPI = updatedFiles.map(f => {
-        const { id, ...fileData } = f;
-        return fileData as File;
-      });
-      
-      setFormData(prevForm => ({
-        ...prevForm,
-        [formField]: filesForAPI
-      }));
-      
-      return updatedFiles;
-    });
+  const removeFile = (fileId: string, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisScreenShots') => {
+    setter(prev => prev.filter(f => f.id !== fileId));
   };
 
-  const handleFileUpload = (files: FileList | null, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots') => {
+  const handleFileUpload = (files: FileList | null, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisScreenShots') => {
     if (!files) return;
     
     const validFiles = Array.from(files).filter(file => {
@@ -131,17 +107,12 @@ if (user?.noOfCasesLeft < 1){
   const validateForm = () => {
     // Check required fields
     if (!formData.currentClaim.trim()) {
-      toast.error("Please enter the Current Claim information.");
+      toast.error("Please enter the Current Claim Date of Service.");
       return false;
     }
 
-    if (!formData.prevClaimDOS.trim()) {
-      toast.error("Please enter the Previous Claim DOS.");
-      return false;
-    }
-
-    if (!formData.prevClaimCPT.trim()) {
-      toast.error("Please enter the Previous Claim CPT.");
+    if (!formData.primaryPayer.trim()) {
+      toast.error("Please enter the Primary Payer.");
       return false;
     }
 
@@ -152,7 +123,7 @@ if (user?.noOfCasesLeft < 1){
         toast.error("Please upload at least one denial screenshot.");
         return false;
       }
-      if (chartFiles.length === 0) {
+      if (encounterFiles.length === 0) {
         toast.error("Please upload at least one encounter screenshot.");
         return false;
       }
@@ -166,6 +137,10 @@ if (user?.noOfCasesLeft < 1){
         toast.error("Please paste the encounter/chart documentation text.");
         return false;
       }
+      if (!formData.diagnosisText?.trim()) {
+        toast.error("Please paste the diagnosis codes and DX pointers information.");
+        return false;
+      }
     }
 
     return true;
@@ -177,11 +152,70 @@ if (user?.noOfCasesLeft < 1){
     setIsSubmitting(true);
     
     try {
-      console.log('Submitting form data:', formData);
-      console.log('Denial files count:', formData.denialScreenShots?.length || 0);
-      console.log('Encounter files count:', formData.encounterScreenShots?.length || 0);
+      console.log('=== CONVERTING IMAGES TO BASE64 ===');
       
-      const response = await apiService.createCase(formData);
+      // Convert files to base64
+      const convertFileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const result = reader.result as string;
+            // Remove the data:image/...;base64, prefix
+            const base64 = result.split(',')[1];
+            resolve(base64);
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      };
+
+      // Convert all files to base64
+      const denialImages = await Promise.all(
+        denialFiles.map(async (file) => ({
+          name: file.name,
+          type: file.type,
+          base64: await convertFileToBase64(file)
+        }))
+      );
+
+      const encounterImages = await Promise.all(
+        encounterFiles.map(async (file) => ({
+          name: file.name,
+          type: file.type,
+          base64: await convertFileToBase64(file)
+        }))
+      );
+
+      const diagnosisImages = await Promise.all(
+        diagnosisFiles.map(async (file) => ({
+          name: file.name,
+          type: file.type,
+          base64: await convertFileToBase64(file)
+        }))
+      );
+
+      console.log('=== SUBMITTING CASE WITH BASE64 IMAGES ===');
+      console.log('Denial images:', denialImages.length);
+      console.log('Encounter images:', encounterImages.length);
+      console.log('Diagnosis images:', diagnosisImages.length);
+
+      // Create request data with base64 images
+      const requestData = {
+        currentClaim: formData.currentClaim,
+        previousClaimDOS: formData.previousClaimDOS || null,
+        previousClaimCPT: formData.previousClaimCPT || null,
+        primaryPayer: formData.primaryPayer,
+        denialText: formData.denialText || null,
+        encounterText: formData.encounterText || null,
+        diagnosisText: formData.diagnosisText || null,
+        denialImages,
+        encounterImages,
+        diagnosisImages
+      };
+
+      console.log('Request data:', requestData);
+      
+      const response = await apiService.createCase(requestData);
       
       if (response.success && response.data) {
         toast.success('Case created successfully with AI analysis!');
@@ -347,40 +381,40 @@ if (user?.noOfCasesLeft < 1){
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="currentClaim">Current Claim *</Label>
+                      <Label htmlFor="currentClaim">Current Claim Date of Service *</Label>
                       <Input
                         id="currentClaim"
                         value={formData.currentClaim}
                         onChange={(e) => handleInputChange("currentClaim", e.target.value)}
-                        placeholder="Enter current claim information"
-                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="prevClaimDOS">Previous Claim DOS *</Label>
-                      <Input
-                        id="prevClaimDOS"
-                        value={formData.prevClaimDOS}
-                        onChange={(e) => handleInputChange("prevClaimDOS", e.target.value)}
                         placeholder="MM/DD/YYYY"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="prevClaimCPT">Previous Claim CPT *</Label>
+                      <Label htmlFor="previousClaimDOS">Previous Claim Date of Service (If Applicable)</Label>
                       <Input
-                        id="prevClaimCPT"
-                        value={formData.prevClaimCPT}
-                        onChange={(e) => handleInputChange("prevClaimCPT", e.target.value)}
+                        id="previousClaimDOS"
+                        value={formData.previousClaimDOS || ""}
+                        onChange={(e) => handleInputChange("previousClaimDOS", e.target.value)}
+                        placeholder="MM/DD/YYYY"
+                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="previousClaimCPT">Previous Claim CPTs (If Applicable)</Label>
+                      <Input
+                        id="previousClaimCPT"
+                        value={formData.previousClaimCPT || ""}
+                        onChange={(e) => handleInputChange("previousClaimCPT", e.target.value)}
                         placeholder="CPT codes"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="primaryPayer">Primary Payer</Label>
+                      <Label htmlFor="primaryPayer">Primary Payer *</Label>
                       <Input
                         id="primaryPayer"
-                        value={formData.primaryPayer || ""}
+                        value={formData.primaryPayer}
                         onChange={(e) => handleInputChange("primaryPayer", e.target.value)}
                         placeholder="Insurance provider"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
@@ -389,45 +423,70 @@ if (user?.noOfCasesLeft < 1){
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Step 2: Upload Denial Screenshots */}
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                        Step 2
-                      </Badge>
-                      <h3 className="text-lg font-semibold text-gray-900">Upload Denial Screenshots</h3>
-                    </div>
-                    
-                    <FileUploadZone
-                      files={denialFiles}
-                      onFileChange={(files) => handleFileUpload(files, setDenialFiles, 'denialScreenShots')}
-                      onRemove={(fileId) => removeFile(fileId, setDenialFiles, 'denialScreenShots')}
-                      inputRef={denialInputRef}
-                      title=""
-                      subtitle="Upload screenshots of the payer denial. Images only (JPG, PNG). (No PHI)"
-                    />
+                {/* Step 2: Upload Denial Screenshots */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                      Step 2
+                    </Badge>
+                    <h3 className="text-lg font-semibold text-gray-900">Upload Denial Screenshots</h3>
                   </div>
-
-                  {/* Step 3: Upload Chart Documentation */}
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                        Step 3
-                      </Badge>
-                      <h3 className="text-lg font-semibold text-gray-900">Upload Encounter Screenshots</h3>
-                    </div>
-                    
-                    <FileUploadZone
-                      files={chartFiles}
-                      onFileChange={(files) => handleFileUpload(files, setChartFiles, 'encounterScreenShots')}
-                      onRemove={(fileId) => removeFile(fileId, setChartFiles, 'encounterScreenShots')}
-                      inputRef={chartInputRef}
-                      title=""
-                      subtitle="Upload screenshots of encounter forms, charts, etc. Images only (JPG, PNG). (No PHI)"
-                    />
-                  </div>
+                  <p className="text-gray-600">Upload screenshots of the payer denial. Images only (JPG, PNG). (No PHI)</p>
+                  <p className="text-gray-600">Ensure that the screenshot includes payer denial reason codes - no PHI</p>
+                  
+                  <FileUploadZone
+                    files={denialFiles}
+                    onFileChange={(files) => handleFileUpload(files, setDenialFiles, 'denialScreenShots')}
+                    onRemove={(fileId) => removeFile(fileId, setDenialFiles, 'denialScreenShots')}
+                    inputRef={denialInputRef}
+                    title=""
+                    subtitle=""
+                  />
                 </div>
+
+                {/* Step 3: Upload Clinical Documentation Screenshots */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                      Step 3
+                    </Badge>
+                    <h3 className="text-lg font-semibold text-gray-900">Upload Clinical Documentation Screenshots</h3>
+                  </div>
+                  <h4 className="text-base font-medium text-gray-800">Upload Encounter Screenshots</h4>
+                  <p className="text-gray-600">Upload screenshots of encounter forms, charts, etc. Images only (JPG, PNG). (No PHI)</p>
+                  <p className="text-gray-600">Upload screenshots of the provider's documentation from the visit (e.g., encounter notes, progress notes, or visit summary) - No PHI.</p>
+                  
+                  <FileUploadZone
+                    files={encounterFiles}
+                    onFileChange={(files) => handleFileUpload(files, setEncounterFiles, 'encounterScreenShots')}
+                    onRemove={(fileId) => removeFile(fileId, setEncounterFiles, 'encounterScreenShots')}
+                    inputRef={encounterInputRef}
+                    title=""
+                    subtitle=""
+                  />
+                </div>
+
+                {/* Step 4: Upload Diagnosis Codes and DX Pointers */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                      Step 4
+                    </Badge>
+                    <h3 className="text-lg font-semibold text-gray-900">Upload Diagnosis Codes and DX Pointers</h3>
+                  </div>
+                  <h4 className="text-base font-medium text-gray-800">Upload Encounter Screenshots</h4>
+                  <p className="text-gray-600">Upload screenshots showing both the diagnosis codes and the DX Pointers showing how they were linked to the specific CPTs billed - No PHI.</p>
+                  
+                  <FileUploadZone
+                    files={diagnosisFiles}
+                    onFileChange={(files) => handleFileUpload(files, setDiagnosisFiles, 'diagnosisScreenShots')}
+                    onRemove={(fileId) => removeFile(fileId, setDiagnosisFiles, 'diagnosisScreenShots')}
+                    inputRef={diagnosisInputRef}
+                    title=""
+                    subtitle=""
+                  />
+                </div>
+
               </TabsContent>
 
               {/* Paste Mode */}
@@ -444,40 +503,40 @@ if (user?.noOfCasesLeft < 1){
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="currentClaim2">Current Claim *</Label>
+                      <Label htmlFor="currentClaim2">Current Claim Date of Service *</Label>
                       <Input
                         id="currentClaim2"
                         value={formData.currentClaim}
                         onChange={(e) => handleInputChange("currentClaim", e.target.value)}
-                        placeholder="Enter current claim information"
-                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="prevClaimDOS2">Previous Claim DOS *</Label>
-                      <Input
-                        id="prevClaimDOS2"
-                        value={formData.prevClaimDOS}
-                        onChange={(e) => handleInputChange("prevClaimDOS", e.target.value)}
                         placeholder="MM/DD/YYYY"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="prevClaimCPT2">Previous Claim CPT *</Label>
+                      <Label htmlFor="previousClaimDOS2">Previous Claim Date of Service (If Applicable)</Label>
                       <Input
-                        id="prevClaimCPT2"
-                        value={formData.prevClaimCPT}
-                        onChange={(e) => handleInputChange("prevClaimCPT", e.target.value)}
+                        id="previousClaimDOS2"
+                        value={formData.previousClaimDOS || ""}
+                        onChange={(e) => handleInputChange("previousClaimDOS", e.target.value)}
+                        placeholder="MM/DD/YYYY"
+                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="previousClaimCPT2">Previous Claim CPTs (If Applicable)</Label>
+                      <Input
+                        id="previousClaimCPT2"
+                        value={formData.previousClaimCPT || ""}
+                        onChange={(e) => handleInputChange("previousClaimCPT", e.target.value)}
                         placeholder="CPT codes"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="primaryPayer2">Primary Payer</Label>
+                      <Label htmlFor="primaryPayer2">Primary Payer *</Label>
                       <Input
                         id="primaryPayer2"
-                        value={formData.primaryPayer || ""}
+                        value={formData.primaryPayer}
                         onChange={(e) => handleInputChange("primaryPayer", e.target.value)}
                         placeholder="Insurance provider"
                         className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
@@ -486,43 +545,60 @@ if (user?.noOfCasesLeft < 1){
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Step 2: Paste Denial Text */}
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                        Step 2
-                      </Badge>
-                      <h3 className="text-lg font-semibold text-gray-900">Paste Denial Text</h3>
-                    </div>
-                    <p className="text-gray-600">Paste the payer denial text or letter contents. (No PHI)</p>
-                    
-                    <Textarea
-                      value={formData.denialText || ""}
-                      onChange={(e) => handleInputChange("denialText", e.target.value)}
-                      placeholder="Paste the payer denial text or letter contents here..."
-                      className="min-h-[220px] rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                    />
+                {/* Step 2: Paste Denial Text */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                      Step 2
+                    </Badge>
+                    <h3 className="text-lg font-semibold text-gray-900">Paste Denial Text</h3>
                   </div>
-
-                  {/* Step 3: Paste Chart Text */}
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                        Step 3
-                      </Badge>
-                      <h3 className="text-lg font-semibold text-gray-900">Paste Encounter text</h3>
-                    </div>
-                    <p className="text-gray-600">Paste encounter form, DX pointers, diagnosis list, and chart information. (No PHI)</p>
-                    
-                    <Textarea
-                      value={formData.encounterText || ""}
-                      onChange={(e) => handleInputChange("encounterText", e.target.value)}
-                      placeholder="Paste relevant chart notes, op notes, labs, referral/auth info, etc..."
-                      className="min-h-[220px] rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                    />
-                  </div>
+                  <p className="text-gray-600">Paste the payer denial text or letter contents. (No PHI)</p>
+                  
+                  <Textarea
+                    value={formData.denialText || ""}
+                    onChange={(e) => handleInputChange("denialText", e.target.value)}
+                    placeholder="Paste the payer denial text or letter contents here..."
+                    className="min-h-[220px] rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                  />
                 </div>
+
+                {/* Step 3: Paste Encounter Text */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                      Step 3
+                    </Badge>
+                    <h3 className="text-lg font-semibold text-gray-900">Paste Encounter Text</h3>
+                  </div>
+                  <p className="text-gray-600">Paste encounter form, DX pointers, diagnosis list, and chart information. (No PHI)</p>
+                  
+                  <Textarea
+                    value={formData.encounterText || ""}
+                    onChange={(e) => handleInputChange("encounterText", e.target.value)}
+                    placeholder="Paste relevant chart notes, op notes, labs, referral/auth info, etc..."
+                    className="min-h-[220px] rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                  />
+                </div>
+
+                {/* Step 4: Paste Diagnosis Text */}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                      Step 4
+                    </Badge>
+                    <h3 className="text-lg font-semibold text-gray-900">Paste Diagnosis Text</h3>
+                  </div>
+                  <p className="text-gray-600">Paste diagnosis codes and DX pointers information. (No PHI)</p>
+                  
+                  <Textarea
+                    value={formData.diagnosisText || ""}
+                    onChange={(e) => handleInputChange("diagnosisText", e.target.value)}
+                    placeholder="Paste diagnosis codes and DX pointers information here..."
+                    className="min-h-[220px] rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                  />
+                </div>
+
               </TabsContent>
 
               {/* Submit Section */}

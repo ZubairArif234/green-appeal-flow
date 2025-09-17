@@ -1,6 +1,6 @@
 // API configuration and base setup
-const API_BASE_URL = ' https://deniel-assistance-be.onrender.com';
-
+// const API_BASE_URL = 'http://localhost:8001';
+const API_BASE_URL = 'https://deniel-assistance-be.onrender.com';
 export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
@@ -61,25 +61,29 @@ export interface UpdateProfileRequest {
 
 export interface CreateCaseRequest {
   currentClaim: string;
-  prevClaimDOS: string;
-  prevClaimCPT: string;
+  previousClaimDOS?: string;
+  previousClaimCPT?: string;
+  primaryPayer: string;
   denialText?: string;
   encounterText?: string;
-  primaryPayer?: string;
+  diagnosisText?: string;
   denialScreenShots?: File[];
   encounterScreenShots?: File[];
+  diagnosisScreenShots?: File[];
 }
 
 export interface CaseResponse {
   _id: string;
   currentClaim: string;
-  prevClaimDOS: string;
-  prevClaimCPT: string;
+  previousClaimDOS?: string;
+  previousClaimCPT?: string;
+  primaryPayer: string;
   denialScreenShots: string[];
   encounterScreenShots: string[];
+  diagnosisScreenShots?: string[];
   denialText?: string;
   encounterText?: string;
-  primaryPayer?: string;
+  diagnosisText?: string;
   user: string | {
     _id: string;
     name: string;
@@ -150,11 +154,12 @@ export interface AiAnalysisWithDetailsResponse {
   case: {
     _id: string;
     currentClaim: string;
-    prevClaimDOS: string;
-    prevClaimCPT: string;
-    primaryPayer?: string;
+    previousClaimDOS?: string;
+    previousClaimCPT?: string;
+    primaryPayer: string;
     denialText?: string;
     encounterText?: string;
+    diagnosisText?: string;
     createdAt: string;
   };
   user: {
@@ -401,34 +406,16 @@ class ApiService {
   }
 
   // Case endpoints
-  async createCase(caseData: CreateCaseRequest): Promise<ApiResponse<{user: CaseResponse, newAiAnalysis: AiAnalysisResponse}>> {
-    const formData = new FormData();
-    
-    // Add text fields
-    formData.append('currentClaim', caseData.currentClaim);
-    formData.append('prevClaimDOS', caseData.prevClaimDOS);
-    formData.append('prevClaimCPT', caseData.prevClaimCPT);
-    
-    if (caseData.denialText) formData.append('denialText', caseData.denialText);
-    if (caseData.encounterText) formData.append('encounterText', caseData.encounterText);
-    if (caseData.primaryPayer) formData.append('primaryPayer', caseData.primaryPayer);
-    
-    // Add file uploads
-    if (caseData.denialScreenShots) {
-      caseData.denialScreenShots.forEach((file) => {
-        formData.append('denialScreenShots', file);
-      });
-    }
-    
-    if (caseData.encounterScreenShots) {
-      caseData.encounterScreenShots.forEach((file) => {
-        formData.append('encounterScreenShots', file);
-      });
-    }
+  async createCase(caseData: any): Promise<ApiResponse<{user: CaseResponse, newAiAnalysis: AiAnalysisResponse}>> {
+    console.log('=== SENDING CASE DATA TO BACKEND ===');
+    console.log('Case data:', caseData);
+    console.log('Denial images count:', caseData.denialImages?.length || 0);
+    console.log('Encounter images count:', caseData.encounterImages?.length || 0);
+    console.log('Diagnosis images count:', caseData.diagnosisImages?.length || 0);
 
     return this.makeRequest<{user: CaseResponse, newAiAnalysis: AiAnalysisResponse}>('/case', {
       method: 'POST',
-      body: formData,
+      body: JSON.stringify(caseData),
     });
   }
 
