@@ -28,7 +28,8 @@ const AppealForm = () => {
     encounterText: "",
     primaryPayer: "",
     denialScreenShots: [],
-    encounterScreenShots: []
+    encounterScreenShots: [],
+    diagnosisCodes: []
   });
 
   useEffect(()=>{
@@ -38,16 +39,18 @@ if (user?.noOfCasesLeft < 1){
   },[])
   const [denialFiles, setDenialFiles] = useState<FileWithId[]>([]);
   const [chartFiles, setChartFiles] = useState<FileWithId[]>([]);
+  const [pointerFiles, setPointerFiles] = useState<FileWithId[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const denialInputRef = useRef<HTMLInputElement>(null);
   const chartInputRef = useRef<HTMLInputElement>(null);
+  const pointerInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (field: keyof CreateCaseRequest, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const addFilesToState = (files: FileList | File[], setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots') => {
+  const addFilesToState = (files: FileList | File[], setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisCodes') => {
     const newFiles = Array.from(files).map(file => {
       const fileWithId = file as FileWithId;
       fileWithId.id = Math.random().toString(36).substr(2, 9);
@@ -74,7 +77,7 @@ if (user?.noOfCasesLeft < 1){
     });
   };
 
-  const removeFile = (fileId: string, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots') => {
+  const removeFile = (fileId: string, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisCodes') => {
     setter(prev => {
       const updatedFiles = prev.filter(f => f.id !== fileId);
       
@@ -93,7 +96,7 @@ if (user?.noOfCasesLeft < 1){
     });
   };
 
-  const handleFileUpload = (files: FileList | null, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots') => {
+  const handleFileUpload = (files: FileList | null, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots'| 'diagnosisCodes') => {
     if (!files) return;
     
     const validFiles = Array.from(files).filter(file => {
@@ -177,7 +180,7 @@ if (user?.noOfCasesLeft < 1){
     setIsSubmitting(true);
     
     try {
-      console.log('Submitting form data:', formData);
+      console.log('Submitting form data:', formData , pointerFiles);
       console.log('Denial files count:', formData.denialScreenShots?.length || 0);
       console.log('Encounter files count:', formData.encounterScreenShots?.length || 0);
       
@@ -347,7 +350,7 @@ if (user?.noOfCasesLeft < 1){
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="currentClaim">Current Claim *</Label>
+                      <Label htmlFor="currentClaim">Current Claim Date of service*</Label>
                       <Input
                         id="currentClaim"
                         value={formData.currentClaim}
@@ -357,7 +360,7 @@ if (user?.noOfCasesLeft < 1){
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="prevClaimDOS">Previous Claim DOS *</Label>
+                      <Label htmlFor="prevClaimDOS">Previous Claim Date of service (If applicable)*</Label>
                       <Input
                         id="prevClaimDOS"
                         value={formData.prevClaimDOS}
@@ -367,7 +370,7 @@ if (user?.noOfCasesLeft < 1){
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="prevClaimCPT">Previous Claim CPT *</Label>
+                      <Label htmlFor="prevClaimCPT">Previous Claim CPT (If applicable)*</Label>
                       <Input
                         id="prevClaimCPT"
                         value={formData.prevClaimCPT}
@@ -405,7 +408,7 @@ if (user?.noOfCasesLeft < 1){
                       onRemove={(fileId) => removeFile(fileId, setDenialFiles, 'denialScreenShots')}
                       inputRef={denialInputRef}
                       title=""
-                      subtitle="Upload screenshots of the payer denial. Images only (JPG, PNG). (No PHI)"
+                      subtitle="Ensure that the screenshot includes the payer deniel reason codes - no PHI"
                     />
                   </div>
 
@@ -415,7 +418,7 @@ if (user?.noOfCasesLeft < 1){
                       <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
                         Step 3
                       </Badge>
-                      <h3 className="text-lg font-semibold text-gray-900">Upload Encounter Screenshots</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">Upload Clinical Documentation Screenshot</h3>
                     </div>
                     
                     <FileUploadZone
@@ -424,7 +427,26 @@ if (user?.noOfCasesLeft < 1){
                       onRemove={(fileId) => removeFile(fileId, setChartFiles, 'encounterScreenShots')}
                       inputRef={chartInputRef}
                       title=""
-                      subtitle="Upload screenshots of encounter forms, charts, etc. Images only (JPG, PNG). (No PHI)"
+                      subtitle="Upload screenshots of the provider's documentation from the visit (eg, encounter notes , progress notes , or visit summary) - No PHI"
+                    />
+                  </div>
+
+                  {/* Step 4: Upload Chart Documentation */}
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                        Step 4
+                      </Badge>
+                      <h3 className="text-lg font-semibold text-gray-900">Upload Diagnosis Codes and DX Pointers</h3>
+                    </div>
+                    
+                    <FileUploadZone
+                      files={pointerFiles}
+                      onFileChange={(files) => handleFileUpload(files, setPointerFiles, 'diagnosisCodes')}
+                      onRemove={(fileId) => removeFile(fileId, setPointerFiles, 'diagnosisCodes')}
+                      inputRef={pointerInputRef}
+                      title=""
+                      subtitle="Upload screenshots showing both the diagnosis codes and the DX pointers showing how they were linked to the specific CPT billed - No PHI"
                     />
                   </div>
                 </div>
