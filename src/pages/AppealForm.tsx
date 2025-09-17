@@ -440,7 +440,7 @@ if (user?.noOfCasesLeft < 1){
                     <h3 className="text-lg font-semibold text-gray-900">Upload Denial Screenshots</h3>
 
                   </div>
-                  <p className="text-gray-600">Upload screenshots of the payer denial. Images only (JPG, PNG). (No PHI)</p>
+                  {/* <p className="text-gray-600">Upload screenshots of the payer denial. Images only (JPG, PNG). (No PHI)</p> */}
                   <p className="text-gray-600">Ensure that the screenshot includes payer denial reason codes - no PHI</p>
                   
                   <FileUploadZone
@@ -462,7 +462,7 @@ if (user?.noOfCasesLeft < 1){
                     <h3 className="text-lg font-semibold text-gray-900">Upload Clinical Documentation Screenshots</h3>
                   </div>
                   <h4 className="text-base font-medium text-gray-800">Upload Encounter Screenshots</h4>
-                  <p className="text-gray-600">Upload screenshots of encounter forms, charts, etc. Images only (JPG, PNG). (No PHI)</p>
+                  {/* <p className="text-gray-600">Upload screenshots of encounter forms, charts, etc. Images only (JPG, PNG). (No PHI)</p> */}
                   <p className="text-gray-600">Upload screenshots of the provider's documentation from the visit (e.g., encounter notes, progress notes, or visit summary) - No PHI.</p>
                   
                   <FileUploadZone
