@@ -15,8 +15,8 @@ const LoadingPage: React.FC<LoadingPageProps> = ({
   if (!isVisible) return null;
 
   const steps = [
-    { id: 1, title: "Uploading Files", description: "Processing your uploaded images and text", icon: FileText },
-    { id: 2, title: "AI Analysis", description: "Our AI is analyzing your denial case", icon: Brain },
+    { id: 1, title: "Uploading Files", description: "Extracting claim and denial data, validating formats, and preparing analysis", icon: FileText },
+    { id: 2, title: "AI Analysis", description: "Reviewing denial codes, cross-checking with payer rules and CMS guidance", icon: Brain },
     { id: 3, title: "Generating Report", description: "Creating your personalized appeal strategy", icon: Sparkles },
     { id: 4, title: "Finalizing", description: "Preparing your analysis results", icon: CheckCircle }
   ];
@@ -33,8 +33,8 @@ const LoadingPage: React.FC<LoadingPageProps> = ({
               <Brain className="w-8 h-8 text-white animate-pulse" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">Processing Your Appeal</h2>
-              <p className="text-white/90 mt-1">Please wait while we analyze your case...</p>
+              <h2 className="text-2xl font-bold text-white">Analyzing Your Denial</h2>
+              <p className="text-white/90 mt-1">Reviewing your documentation to identify next steps...</p>
             </div>
           </div>
         </div>
@@ -137,9 +137,8 @@ const LoadingPage: React.FC<LoadingPageProps> = ({
               <div>
                 <h4 className="font-medium text-gray-900 text-sm">What's happening?</h4>
                 <p className="text-sm text-gray-600 mt-1">
-                  Our AI is analyzing your denial case, examining the provided documentation, 
-                  and generating personalized recommendations to help you successfully appeal your claim.
-                </p>
+                 Our AI is reviewing your denial claim details, and supporting documentation. It cross-references payer rules and CMS guidance to generate structured recommendations for either correcting the claim or preparing an appeal.
+                  </p>
               </div>
             </div>
           </div>

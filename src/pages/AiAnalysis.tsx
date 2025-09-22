@@ -246,6 +246,10 @@ const AiAnalysis = () => {
   console.log('Analysis Data:', analysisData);
   console.log('Recommendations Array:', recommendationsArray);
 
+  useEffect(()=>{
+window.scrollTo(0,0)
+  },[])
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background Elements */}
@@ -282,10 +286,10 @@ const AiAnalysis = () => {
                 <div className="p-1 bg-primary/10 rounded-lg">
                   <Brain className="w-5 h-5 text-primary" />
                 </div>
-                <h1 className="text-xl font-bold text-foreground">AI Analysis Results</h1>
+                <h1 className="text-xl font-bold text-foreground">Analysis Results</h1>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
+            {/* <div className="flex items-center space-x-3">
               <Button
                 variant="outline"
                 size="sm"
@@ -304,7 +308,7 @@ const AiAnalysis = () => {
                 <Download className="w-4 h-4 mr-2" />
                 Download
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -321,10 +325,10 @@ const AiAnalysis = () => {
                   <CheckCircle className="w-8 h-8 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-primary-900">Case Analysis Complete!</h2>
+                  <h2 className="text-2xl font-bold text-primary-900">Denial Analysis Complete!</h2>
                   <p className="text-primary-700 mt-1">
-                    Your case has been successfully analyzed by our AI system. Review the insights below to improve your appeal strategy.
-                  </p>
+                   Your denial has been successfully analyzed. pleas review our recommendation below.
+                    </p>
                 </div>
                 
               </div>
@@ -339,12 +343,12 @@ const AiAnalysis = () => {
             
             {/* Case Summary */}
             <Card className="shadow-elegant bg-white/95 backdrop-blur-sm border border-primary/10 hover:border-primary/20 transition-all duration-500">
-              <CardHeader className="bg-primary text-primary-foreground">
+              <CardHeader className="bg-primary rounded-t-lg text-primary-foreground">
                 <CardTitle className="flex items-center space-x-2">
                   <div className="p-1 bg-white/20 rounded-lg">
                     <FileText className="w-5 h-5" />
                   </div>
-                  <span>Case Summary</span>
+                  <span>Denial Summary</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
@@ -421,7 +425,7 @@ const AiAnalysis = () => {
                       {analysisData.analysis.report_title || 'AI Denial Analysis Report'}
                     </h2>
                     <p className="text-white/90 mt-1">
-                      Claim #: {analysisData.analysis.claim_number || 'N/A'} | Analysis completed in {analysisData.analysis.analysis_time || 'N/A'}
+                      Claim #: {analysisData.analysis.claim_number || 'N/A'} 
                     </p>
                   </div>
                 </div>
@@ -490,7 +494,7 @@ const AiAnalysis = () => {
                   <div className="p-2 bg-primary-100 rounded-lg">
                     <Target className="w-6 h-6 text-primary section-icon" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900">Recommended Pathway</h3>
+                  <h3 className="text-xl font-semibold text-gray-900">Recommended Action</h3>
                 </div>
                 <div className="space-y-4">
                   {analysisData.analysis.recommended_pathway.type && (
@@ -514,7 +518,7 @@ const AiAnalysis = () => {
 
             {/* Denial Summary - Similar to US Healthcare App */}
             {analysisData.analysis.denial_summary && (
-              <div className="analysis-section bg-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-blue-500 bg-gradient-to-r from-blue-50 to-white">
+              <div className="analysis-section bg-gradient-to-r from-orange-50 to-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-orange-500 ">
                 <div className="section-header">
                   <div className="p-2 bg-red-100 rounded-lg">
                     <FileText className="w-6 h-6 text-red-600 section-icon" />
@@ -522,13 +526,13 @@ const AiAnalysis = () => {
                   <h3 className="text-xl font-semibold text-gray-900">Denial Summary</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
+                  <div className="bg-orange-100 border border-gray-200 rounded-xl p-4 text-center">
                     <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Reason Code</div>
                     <div className="text-lg font-bold text-gray-900 code-display">
                       {analysisData.analysis.denial_summary.reason_code || 'N/A'}
                     </div>
                   </div>
-                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
+                  <div className="bg-orange-100 border border-gray-200 rounded-xl p-4 text-center">
                     <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Remark Code</div>
                     <div className="text-lg font-bold text-gray-900 code-display">
                       {analysisData.analysis.denial_summary.remark_code || 'N/A'}
@@ -540,18 +544,18 @@ const AiAnalysis = () => {
 
             {/* Root Cause Analysis - Similar to US Healthcare App */}
             {analysisData.analysis.root_cause_analysis && (
-              <div className="analysis-section bg-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-orange-500 bg-gradient-to-r from-orange-50 to-white">
+              <div className="analysis-section bg-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-yellow-500 bg-gradient-to-r from-yellow-50 to-white">
                 <div className="section-header">
-                  <div className="p-2 bg-orange-100 rounded-lg">
-                    <Target className="w-6 h-6 text-orange-600 section-icon" />
+                  <div className="p-2 bg-yellow-100 rounded-lg">
+                    <Target className="w-6 h-6 text-yellow-500 section-icon" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900">Root Cause Analysis</h3>
                 </div>
                 <div className="space-y-4">
                   {analysisData.analysis.root_cause_analysis.issue_identified && (
-                    <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
-                      <div className="text-sm font-semibold text-orange-800 mb-2">Issue Identified:</div>
-                      <div className="text-orange-900 font-medium leading-relaxed highlight-important">
+                    <div className="bg-yellowe-50 border border-yellow-200 rounded-xl p-4">
+                      <div className="text-sm font-semibold text-yellow-800 mb-2">Issue Identified:</div>
+                      <div className="text-yellow-900 font-medium leading-relaxed highlight-important">
                         {analysisData.analysis.root_cause_analysis.issue_identified}
                       </div>
                     </div>
@@ -578,11 +582,11 @@ const AiAnalysis = () => {
                   <h3 className="text-xl font-semibold text-gray-900">Staff Instructions</h3>
                 </div>
                 <div className="space-y-4">
-                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                    <div className="text-sm font-semibold text-gray-600 mb-2">
+                  <div className="bg-purple-50 border border-gray-200 rounded-xl p-4">
+                    <div className="text-sm font-semibold text-purple-600 mb-2">
                       1 {analysisData.analysis.staff_instructions.instruction_type || 'Submit Corrected Claim'}:
                     </div>
-                    <div className="text-gray-800 font-medium leading-relaxed highlight-important">
+                    <div className="text-purple-800 font-medium leading-relaxed highlight-important">
                       {analysisData.analysis.staff_instructions.detail || 'No specific instructions provided'}
                     </div>
                   </div>
@@ -693,7 +697,7 @@ const AiAnalysis = () => {
                 onClick={() => navigate('/dashboard')}
                 className="flex-1 bg-primary hover:bg-primary-dark text-primary-foreground"
               >
-                <ArrowRight className="w-4 h-4 mr-2" />
+                <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Dashboard
               </Button>
               <Button
@@ -702,7 +706,7 @@ const AiAnalysis = () => {
                 className="flex-1 border-primary/20 text-primary hover:bg-primary/5"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
-                Create New Case
+                Analyze New Denial
               </Button>
             </div>
           </div>

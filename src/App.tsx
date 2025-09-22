@@ -20,6 +20,7 @@ import Login from "./pages/auth/Login";
 import SignUp from "./pages/auth/SignUp";
 import VerifyEmail from "./pages/auth/VerifyEmail";
 import ResetPassword from "./pages/auth/ResetPassword";
+import PastClaims from "./pages/PastClaims";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/appeal" element={<ProtectedRoute><AppealForm /></ProtectedRoute>} />
+              <Route path="/history" element={<ProtectedRoute><PastClaims /></ProtectedRoute>} />
               <Route path="/case/new" element={<ProtectedRoute><AppealForm /></ProtectedRoute>} />
               <Route path="/analysis" element={<ProtectedRoute><ErrorBoundary><AiAnalysis /></ErrorBoundary></ProtectedRoute>} />
               <Route path="/plans" element={<ProtectedRoute><Plans /></ProtectedRoute>} />

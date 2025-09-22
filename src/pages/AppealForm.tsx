@@ -56,27 +56,27 @@ if (user?.noOfCasesLeft < 1){
   };
 
 
-  const addFilesToState = (files: FileList | File[], setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisScreenShots') => {
+  const addFilesToState = (
+  files: FileList | File[],
+  setter: React.Dispatch<React.SetStateAction<FileWithId[]>>,
+  formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisScreenShots'
+) => {
+  const newFiles = Array.from(files).map(file => {
+    const fileWithId = file as FileWithId;
+    fileWithId.id = Math.random().toString(36).substr(2, 9);
+    return fileWithId;
+  });
 
-    const newFiles = Array.from(files).map(file => {
-      const fileWithId = file as FileWithId;
-      fileWithId.id = Math.random().toString(36).substr(2, 9);
-      return fileWithId;
-    });
-    
-    setter(prev => {
-      const existingNames = prev.map(f => f.name);
-      const uniqueFiles = newFiles.filter(f => !existingNames.includes(f.name));
-      return [...prev, ...uniqueFiles];
-    });
-  };
+  setter(prev => [...prev, ...newFiles]);
+};
+
 
 
   const removeFile = (fileId: string, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisScreenShots') => {
     setter(prev => prev.filter(f => f.id !== fileId));
   };
 
-  const handleFileUpload = (files: FileList | null, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisScreenShots') => {
+  const handleFileUpload = (files: FileList | any | null, setter: React.Dispatch<React.SetStateAction<FileWithId[]>>, formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisScreenShots') => {
 
     if (!files) return;
     
@@ -103,6 +103,28 @@ if (user?.noOfCasesLeft < 1){
       toast.success(`${validFiles.length} image(s) uploaded successfully!`);
     }
   };
+  
+
+ const handlePaste = (
+  e: React.ClipboardEvent<HTMLInputElement>,
+  setter: React.Dispatch<React.SetStateAction<FileWithId[]>>,
+  formField: 'denialScreenShots' | 'encounterScreenShots' | 'diagnosisScreenShots'
+) => {
+  const items = e.clipboardData.items;
+  const files: File[] = [];
+
+  for (let i = 0; i < items.length; i++) {
+    if (items[i].type.startsWith("image/")) {
+      const file = items[i].getAsFile();
+      if (file) files.push(file);
+    }
+  }
+
+  if (files.length > 0) {
+    handleFileUpload(files, setter, formField);
+    e.currentTarget.value = ""; // ✅ clear the input text after paste
+  }
+};
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -277,91 +299,99 @@ if (user?.noOfCasesLeft < 1){
     }
   };
 
-  const FileUploadZone = ({ 
-    files, 
-    onFileChange, 
-    onRemove, 
-    inputRef, 
-    title, 
-    subtitle 
-  }: {
-    files: FileWithId[];
-    onFileChange: (files: FileList | null) => void;
-    onRemove: (fileId: string) => void;
-    inputRef: React.RefObject<HTMLInputElement>;
-    title: string;
-    subtitle: string;
-  }) => (
-    <div className="space-y-4">
+ const FileUploadZone = ({ 
+  files, 
+  onFileChange, 
+  onPasteChange,
+  onRemove, 
+  inputRef, 
+  title, 
+  subtitle 
+}: {
+  files: FileWithId[];
+  onFileChange: (files: FileList | null) => void;
+  onPasteChange: (e: React.ClipboardEvent<HTMLInputElement>) => void;
+  onRemove: (fileId: string) => void;
+  inputRef: React.RefObject<HTMLInputElement>;
+  title: string;
+  subtitle: string;
+}) => (
+  <div className="space-y-4">
+    <div>
+      <Label className="text-base font-semibold text-gray-900">{title}</Label>
+      <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
+    </div>
     
-
-      <div>
-        <Label className="text-base font-semibold text-gray-900">{title}</Label>
-        <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
+    <div
+      onClick={() => inputRef.current?.click()}
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        e.preventDefault();
+        onFileChange(e.dataTransfer.files);
+      }}
+      className="border-2 border-dashed border-gray-200 hover:border-primary/50 transition-colors duration-200 rounded-2xl p-8 text-center cursor-pointer group hover:bg-primary/5"
+    >
+      <div className="flex flex-col items-center space-y-3">
+        <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+          <Upload className="w-6 h-6 text-primary" />
+        </div>
+        <div>
+          <p className="text-base font-medium text-gray-900">Click to upload or drag & drop</p>
+          <p className="text-sm text-gray-500">Images only (JPG, PNG, GIF, WebP) up to 10MB each</p>
+        </div>
       </div>
       
-      <div
-        onClick={() => inputRef.current?.click()}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          e.preventDefault();
-          onFileChange(e.dataTransfer.files);
-        }}
-        className="border-2 border-dashed border-gray-200 hover:border-primary/50 transition-colors duration-200 rounded-2xl p-8 text-center cursor-pointer group hover:bg-primary/5"
-      >
-        <div className="flex flex-col items-center space-y-3">
-          <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-            <Upload className="w-6 h-6 text-primary" />
-          </div>
-          <div>
-            <p className="text-base font-medium text-gray-900">Click to upload or drag & drop</p>
-            <p className="text-sm text-gray-500">Images only (JPG, PNG, GIF) up to 10MB each</p>
-          </div>
-        </div>
-        
-        <input
-          ref={inputRef}
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={(e) => onFileChange(e.target.files)}
-          className="hidden"
-        />
-      </div>
-
-      {files.length > 0 && (
-        <div className="space-y-2">
-          <Label className="text-sm font-medium text-gray-700">Uploaded Files:</Label>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
-            {files.map((file) => (
-              <div key={file.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                <div className="flex items-center space-x-3">
-                  <div className="p-1.5 rounded-lg bg-primary/10">
-                    <FileText className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-                    <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRemove(file.id);
-                  }}
-                  className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <input
+        ref={inputRef}
+        type="file"
+        multiple
+        accept="image/*"
+        onChange={(e) => onFileChange(e.target.files)}
+        className="hidden"
+      />
     </div>
-  );
+
+    {/* Paste input */}
+    <Input
+      type="text"
+      placeholder="Paste Image here ..."
+      onPaste={onPasteChange}
+    />
+
+    {files.length > 0 && (
+      <div className="space-y-2">
+        <Label className="text-sm font-medium text-gray-700">Uploaded Files:</Label>
+        <div className="space-y-2 max-h-40 overflow-y-auto">
+          {files.map((file) => (
+            <div key={file.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+              <div className="flex items-center space-x-3">
+                <div className="p-1.5 rounded-lg bg-primary/10">
+                  <FileText className="w-4 h-4 text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
+                  <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove(file.id);
+                }}
+                className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-primary/8">
@@ -481,14 +511,15 @@ if (user?.noOfCasesLeft < 1){
                   {/* <p className="text-gray-600">Upload screenshots of the payer denial. Images only (JPG, PNG). (No PHI)</p> */}
                   <p className="text-gray-600">Ensure that the screenshot includes payer denial reason codes - no PHI</p>
                   
-                  <FileUploadZone
-                    files={denialFiles}
-                    onFileChange={(files) => handleFileUpload(files, setDenialFiles, 'denialScreenShots')}
-                    onRemove={(fileId) => removeFile(fileId, setDenialFiles, 'denialScreenShots')}
-                    inputRef={denialInputRef}
-                    title=""
-                    subtitle=""
-                  />
+                 <FileUploadZone
+  files={denialFiles}
+  onFileChange={(files) => handleFileUpload(files, setDenialFiles, "denialScreenShots")}
+  onPasteChange={(e) => handlePaste(e, setDenialFiles, "denialScreenShots")}
+  onRemove={(fileId) => removeFile(fileId, setDenialFiles, "denialScreenShots")}
+  inputRef={denialInputRef}
+  title=""
+  subtitle=""
+/>
                 </div>
 
                 {/* Step 3: Upload Clinical Documentation Screenshots */}
@@ -506,6 +537,7 @@ if (user?.noOfCasesLeft < 1){
                   <FileUploadZone
                     files={encounterFiles}
                     onFileChange={(files) => handleFileUpload(files, setEncounterFiles, 'encounterScreenShots')}
+  onPasteChange={(e) => handlePaste(e, setEncounterFiles, "encounterScreenShots")}
                     onRemove={(fileId) => removeFile(fileId, setEncounterFiles, 'encounterScreenShots')}
                     inputRef={encounterInputRef}
                     title=""
@@ -527,6 +559,7 @@ if (user?.noOfCasesLeft < 1){
                   <FileUploadZone
                     files={diagnosisFiles}
                     onFileChange={(files) => handleFileUpload(files, setDiagnosisFiles, 'diagnosisScreenShots')}
+                      onPasteChange={(e) => handlePaste(e, setDiagnosisFiles, "diagnosisScreenShots")}
                     onRemove={(fileId) => removeFile(fileId, setDiagnosisFiles, 'diagnosisScreenShots')}
                     inputRef={diagnosisInputRef}
                     title=""
@@ -548,7 +581,7 @@ if (user?.noOfCasesLeft < 1){
                   </div>
                   <p className="text-gray-600">Provide claim and past visit details (No PHI)</p>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="currentClaim2">Current Claim Date of Service *</Label>
                       <Input
