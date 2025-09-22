@@ -124,7 +124,7 @@ const Dashboard = () => {
                 <span className="text-white font-bold text-sm">MDA</span>
               </div>
               <h1 className="text-xl font-bold text-black">
-                Mental Denial Analyzer
+                 Denial Analyzer
               </h1>
             </div>
             
@@ -174,7 +174,7 @@ const Dashboard = () => {
             <p className="text-lg text-gray-600">
               {user?.role === 'admin' 
                 ? 'Monitor your platform and manage users with powerful admin tools'
-                : 'Ready to turn medical denials into successful appeals with AI assistance'
+                : 'Lets break down your denial and figure out the smartest path forward.'
               }
             </p>
           </div>
@@ -268,7 +268,7 @@ const Dashboard = () => {
                         </div>
                         
                         <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                          <label className="text-sm font-semibold text-green-700">Cases Remaining</label>
+                          <label className="text-sm font-semibold text-green-700">Claim Remaining</label>
                           <div className="flex items-center space-x-2 mt-1">
                             <FileText className="w-4 h-4 text-green-600" />
                             <span className="text-green-700 font-bold text-lg">{user.noOfCasesLeft}</span>
@@ -287,24 +287,24 @@ const Dashboard = () => {
             {/* Welcome Card */}
             <Card className="border shadow-md bg-white">
               <CardHeader className="pb-4">
-                <CardTitle className="text-2xl font-bold text-black">
-                  Welcome to Mental Denial Analyzer
+                <CardTitle className="text-2xl capitalize font-bold text-black">
+                  Let's get started
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 text-lg mb-8 leading-relaxed">
                   {user?.role === 'admin' 
                     ? 'Welcome back! Monitor platform activity and manage users from your admin panel.'
-                    : 'Ready to appeal a denial? Our AI-powered system will help you analyze your case and identify the best next steps.'
+                    : 'Upload your denial details to receive suggested claim corrections or a draft appeal letter.'
                   }
                 </p>
                 {user?.role === 'user' && (
                   <Button 
                     onClick={handleStartNewCase}
-                    className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-4 rounded-xl"
+                    className="bg-primary capitalize hover:bg-primary/90 text-white font-semibold px-8 py-4 rounded-xl"
                   >
                     <FileText className="w-5 h-5 mr-3" />
-                    Start New Case
+                    Start a new analysis
                     <ArrowRight className="w-4 h-4 ml-3" />
                   </Button>
                 )}
@@ -342,7 +342,7 @@ const Dashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {user?.role === 'user' && (
                     <>
                       <Button 
@@ -353,8 +353,16 @@ const Dashboard = () => {
                         <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center mb-2">
                           <FileText className="w-5 h-5 text-white" />
                         </div>
-                        <span className="font-semibold text-black">New Case</span>
+                        <span className="font-semibold text-black">New Analysis</span>
                       </Button>
+                      <Link to="/history">
+                        <Button variant="outline" className="h-24 w-full flex flex-col items-center justify-center border border-gray-200 bg-gray-50 hover:bg-gray-100">
+                          <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center mb-2">
+                            <CreditCard className="w-5 h-5 text-white" />
+                          </div>
+                          <span className="font-semibold text-black">View Past Claims</span>
+                        </Button>
+                      </Link>
                       <Link to="/plans">
                         <Button variant="outline" className="h-24 w-full flex flex-col items-center justify-center border border-gray-200 bg-gray-50 hover:bg-gray-100">
                           <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center mb-2">

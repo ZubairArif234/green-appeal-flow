@@ -384,7 +384,7 @@ if (user?.noOfCasesLeft < 1){
                   </div>
                   <p className="text-gray-600">Provide claim and past visit details (No PHI)</p>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="currentClaim">Current Claim Date of Service *</Label>
 
@@ -630,7 +630,7 @@ if (user?.noOfCasesLeft < 1){
                   ) : (
                     <>
                       <Send className="w-5 h-5 mr-2" />
-                      Submit Appeal
+                      Analyze
                     </>
                   )}
                 </Button>
