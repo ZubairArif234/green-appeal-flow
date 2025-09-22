@@ -1,6 +1,6 @@
 // API configuration and base setup
-const API_BASE_URL = 'http://localhost:8001';
-// const API_BASE_URL = 'https://deniel-assistance-be.onrender.com';
+// const API_BASE_URL = 'http://localhost:8001';
+const API_BASE_URL = 'https://deniel-assistance-be.onrender.com';
 export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
