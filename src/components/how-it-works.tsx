@@ -1,4 +1,4 @@
-import { FileText, Brain, CheckCircle } from "lucide-react";
+import { FileText, Brain, CheckCircle, BarChart3, Target, Lightbulb, Clock } from "lucide-react";
 
 export const HowItWorks = () => {
   const steps = [
@@ -104,5 +104,126 @@ export const HowItWorks = () => {
         </div>
       </div>
     </section>
+  );
+};
+
+export const HowItWorks2 = () => {
+  
+
+  return (
+    <section className="py-20 bg-gradient-light-green">
+        <div className="container">
+          <div className="mx-auto max-w-2xl text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-balance mb-6 text-foreground">
+              Why Choose Our <span className="text-primary">AI Assistant</span>
+            </h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Streamline your denial appeal process with intelligent automation and expert guidance. Our AI-powered
+              platform transforms complex medical denials into clear, actionable insights.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-center px-14">
+            <div className="space-y-8">
+              <div className="flex items-start space-x-6">
+                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                  <span className="text-primary font-bold text-lg">01</span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg text-foreground">Faster Approvals</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Get your appeals processed 3x faster with AI-powered guidance and automated documentation.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-6">
+                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                  <span className="text-primary font-bold text-lg">02</span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg text-foreground">HIPAA-Conscious Workflow</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Built with privacy in mind. Our system works with redacted documents, no PHI required.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-6">
+                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                  <span className="text-primary font-bold text-lg">03</span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg text-foreground">Built for Providers</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Designed by healthcare professionals who understand the unique challenges of medical billing.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-6">
+                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+                  <span className="text-primary font-bold text-lg">04</span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg text-foreground">No PHI Required</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Upload redacted screenshots and documents. Our AI works without accessing sensitive patient data.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="bg-gradient-primary rounded-2xl p-8 text-white">
+                <div className="flex items-center justify-center mb-6">
+                  <div className="h-16 w-16 rounded-lg bg-white/20 flex items-center justify-center">
+                    <Brain className="h-8 w-8" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-semibold text-center mb-4">AI-Powered Analysis</h3>
+                <div className="space-y-4">
+                  <div className="bg-white/10 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <BarChart3 className="h-4 w-4" />
+                      <span className="text-sm font-medium">Pattern Recognition</span>
+                    </div>
+                    <div className="h-2 bg-white/20 rounded-full">
+                      <div className="h-2 bg-accent rounded-full w-4/5"></div>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Target className="h-4 w-4" />
+                      <span className="text-sm font-medium">Root Cause Analysis</span>
+                    </div>
+                    <div className="h-2 bg-white/20 rounded-full">
+                      <div className="h-2 bg-accent rounded-full w-3/4"></div>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Lightbulb className="h-4 w-4" />
+                      <span className="text-sm font-medium">Actionable Insights</span>
+                    </div>
+                    <div className="h-2 bg-white/20 rounded-full">
+                      <div className="h-2 bg-accent rounded-full w-5/6"></div>
+                    </div>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Clock className="h-4 w-4" />
+                      <span className="text-sm font-medium">Time to Appeal</span>
+                    </div>
+                    <div className="h-2 bg-white/20 rounded-full">
+                      <div className="h-2 bg-accent rounded-full w-[90%]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
   );
 };

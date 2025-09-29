@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, Users, Zap } from "lucide-react";
+import { Card } from "./ui/card";
 
 export const CTASection = () => {
   return (
@@ -62,5 +63,71 @@ export const CTASection = () => {
         </div>
       </div>
     </section>
+  );
+};
+
+export const CTASection2 = () => {
+  return (
+   <section className="py-24 bg-white">
+        <div className="p-8 border-2 border-muted hover:border-primary/20 transition-colors bg-white">
+          <div className="mx-auto max-w-4xl text-center">
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl text-balance mb-6">
+              Ready to <span className="text-primary">Reduce Denials</span> by 60%?
+            </h2>
+            <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
+              Join hundreds of healthcare providers who have transformed their denial management with our AI-powered
+              platform.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+              <Card className="p-8 border-2 border-primary/20 hover:border-primary/30 transition-colors bg-white">
+                <div className="text-center space-y-4">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                    <Zap className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold">Start Free Trial</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Test our AI with 5 free analyses. No credit card required.
+                  </p>
+                  <Button size="lg" className="w-full bg-primary hover:bg-primary/90">
+                    Try Free for 14 Days
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </Card>
+
+              <Card className="p-8 border-2 border-muted hover:border-primary/20 transition-colors bg-white">
+                <div className="text-center space-y-4">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                    <Users className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold">Talk to Our Team</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Get a personalized demo and discuss your specific needs.
+                  </p>
+                  <Button size="lg" variant="outline" className="w-full bg-transparent">
+                    Schedule a Demo
+                  </Button>
+                </div>
+              </Card>
+            </div>
+
+            <div className="mt-12 flex items-center justify-center space-x-8 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-4 w-4 text-primary" />
+                <span>No setup fees</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-4 w-4 text-primary" />
+                <span>Cancel anytime</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-4 w-4 text-primary" />
+                <span>HIPAA compliant</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
   );
 };

@@ -1,4 +1,6 @@
 import { Separator } from "@/components/ui/separator";
+import { Link } from "react-router-dom";
+
 
 export const Footer = () => {
   return (
@@ -74,5 +76,101 @@ export const Footer = () => {
         </div>
       </div>
     </footer>
+  );
+};
+
+export const Footer2 = () => {
+  return (
+   <footer className="border-t bg-background">
+        <div className="container py-12">
+          <div className="grid gap-8 lg:grid-cols-4">
+            <div className="lg:col-span-2">
+              <Link to="/" className="flex items-center space-x-2 mb-4">
+                <div className=" rounded-lg  flex items-center justify-center">
+                   <img 
+                src="/logo.png" 
+                alt="AI Medical Denial Assistant Logo" 
+                className="h-8 w-auto"
+                onError={(e) => {
+                  // Fallback to original design if logo doesn't exist
+                  e.currentTarget.style.display = 'none';
+                  const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (fallback) {
+                    fallback.classList.remove('hidden');
+                    fallback.classList.add('flex');
+                  }
+                }}
+              />
+                </div>
+                <span className="font-bold text-xl">Deniel Management</span>
+              </Link>
+              <p className="text-muted-foreground max-w-md">
+                Transforming healthcare revenue cycle management with AI-powered solutions and expert guidance.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-4">Solutions</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link to="/#solutions" className="hover:text-primary">
+                    Medical Billing
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/#solutions" className="hover:text-primary">
+                    Practice Consulting
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/#solutions" className="hover:text-primary">
+                    Bookkeeping
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/#solutions" className="hover:text-primary">
+                    Administrative Support
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold mb-4">Company</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>
+                  <Link to="/about" className="hover:text-primary">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/denial-analyzer" className="hover:text-primary">
+                    Denial Analyzer
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/eligibility-automation" className="hover:text-primary">
+                    Eligibility Automation
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/contact" className="hover:text-primary">
+                    Contact
+                  </Link>
+                </li>
+                <li>
+                  <Link to="#" className="hover:text-primary">
+                    Privacy Policy
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
+            <p>&copy; 2024 Cove Health Solutions. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
   );
 };

@@ -100,6 +100,15 @@ const Dashboard = () => {
     });
   };
 
+  const handleManageSubscription = async () =>{
+    const res = await apiService.manageSubscription() 
+    console.log(res);
+    if(res.data?.url){
+
+      window.location.href = res.data.url;
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header - Landing Page Style */}
@@ -260,9 +269,9 @@ const Dashboard = () => {
                             <Badge className={`${
                               user.isFreeTrialUser 
                                 ? "bg-gray-600" 
-                                : "bg-primary"
+                                :user?.subscriptionId ? "bg-primary": "bg-red-500"
                             } text-white`}>
-                              {user.isFreeTrialUser ? "Free Trial" : "Subscribed"}
+                              {user.isFreeTrialUser ? "Free Trial" : user?.subscriptionId ? "Subscribed" : "Not subscribed"}
                             </Badge>
                           </div>
                         </div>
@@ -273,6 +282,17 @@ const Dashboard = () => {
                             <FileText className="w-4 h-4 text-green-600" />
                             <span className="text-green-700 font-bold text-lg">{user.noOfCasesLeft}</span>
                           </div>
+                        </div>
+
+                        <div className="p-3 flex justify-center ">
+                          <Button 
+                    onClick={handleManageSubscription}
+                    className="bg-primary capitalize hover:bg-primary/90 text-white font-semibold px-8 py-4 rounded-xl"
+                  >
+                    <FileText className="w-5 h-5 " />
+                    Manage Subscription
+                    {/* <ArrowRight className="w-4 h-4 ml-3" /> */}
+                  </Button>
                         </div>
                       </>
                     )}
@@ -342,7 +362,7 @@ const Dashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {user?.role === 'user' && (
                     <>
                       <Button 
@@ -353,22 +373,30 @@ const Dashboard = () => {
                         <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center mb-2">
                           <FileText className="w-5 h-5 text-white" />
                         </div>
-                        <span className="font-semibold text-black">New Analysis</span>
+                        <span className="font-semibold text-black text-[12px]">New Analysis</span>
                       </Button>
                       <Link to="/history">
                         <Button variant="outline" className="h-24 w-full flex flex-col items-center justify-center border border-gray-200 bg-gray-50 hover:bg-gray-100">
                           <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center mb-2">
                             <CreditCard className="w-5 h-5 text-white" />
                           </div>
-                          <span className="font-semibold text-black">View Past Claims</span>
+                          <span className="font-semibold text-black text-[12px]">View Past Claims</span>
                         </Button>
                       </Link>
+                      {/* <Link to="/plans">
+                        <Button variant="outline" className="h-24 w-full flex flex-col items-center justify-center border border-gray-200 bg-gray-50 hover:bg-gray-100">
+                          <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center mb-2">
+                            <CreditCard className="w-5 h-5 text-white" />
+                          </div>
+                          <span className="font-semibold text-black text-[12px]">Manage Subscription</span>
+                        </Button>
+                      </Link> */}
                       <Link to="/plans">
                         <Button variant="outline" className="h-24 w-full flex flex-col items-center justify-center border border-gray-200 bg-gray-50 hover:bg-gray-100">
                           <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center mb-2">
                             <CreditCard className="w-5 h-5 text-white" />
                           </div>
-                          <span className="font-semibold text-black">View Plans</span>
+                          <span className="font-semibold text-black text-[12px] ">View Plans</span>
                         </Button>
                       </Link>
                     </>
@@ -390,7 +418,7 @@ const Dashboard = () => {
                         <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center mb-2">
                           <Edit className="w-5 h-5 text-white" />
                         </div>
-                        <span className="font-semibold text-black">Edit Profile</span>
+                        <span className="font-semibold text-black text-[12px]">Edit Profile</span>
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px] bg-white">

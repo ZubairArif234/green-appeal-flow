@@ -1,4 +1,5 @@
-import { TrendingDown, Clock, DollarSign, AlertTriangle } from "lucide-react";
+import { TrendingDown, Clock, DollarSign, AlertTriangle, TrendingUp } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 export const ProblemSection = () => {
   const problems = [
@@ -62,5 +63,81 @@ export const ProblemSection = () => {
         </div>
       </div>
     </section>
+  );
+};
+
+export const ProblemSection2 = () =>{ 
+
+  return (
+      <section className="py-20">
+        <div className="container">
+          <div className="mx-auto max-w-2xl text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-balance">
+              Why Medical Providers <span className="text-primary">Struggle with Denials</span>
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              The healthcare industry faces mounting pressure from increasing denial rates and complex appeal processes.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 px-14">
+            <Card className="bg-gradient-primary border-primary/20 text-white">
+              <CardHeader>
+                <div className="h-12 w-12 rounded-lg bg-white/20 flex items-center justify-center mb-4">
+                  <TrendingUp className="h-6 w-6" />
+                </div>
+                <CardTitle className="text-white">Rising Denial Rates</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-white/90">
+                  Medical claim denials have increased by 23% over the past 3 years, eating into provider revenue.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-primary border-primary/20 text-white">
+              <CardHeader>
+                <div className="h-12 w-12 rounded-lg bg-white/20 flex items-center justify-center mb-4">
+                  <Clock className="h-6 w-6" />
+                </div>
+                <CardTitle className="text-white">Time-Consuming Appeals</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-white/90">
+                  Staff spend hours researching denial codes and crafting appeals instead of focusing on patient care.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-primary border-primary/20 text-white">
+              <CardHeader>
+                <div className="h-12 w-12 rounded-lg bg-white/20 flex items-center justify-center mb-4">
+                  <DollarSign className="h-6 w-6" />
+                </div>
+                <CardTitle className="text-white">Lost Revenue</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-white/90">
+                  Providers lose an average of $5M annually due to unresolved denials and missed appeal deadlines.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-primary border-primary/20 text-white">
+              <CardHeader>
+                <div className="h-12 w-12 rounded-lg bg-white/20 flex items-center justify-center mb-4">
+                  <AlertTriangle className="h-6 w-6" />
+                </div>
+                <CardTitle className="text-white">Complex Guidelines</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-white/90">
+                  CMS and AMA guidelines are complex and ever-changing, making it hard to stay compliant.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
   );
 };

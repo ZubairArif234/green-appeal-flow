@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-image.jpg";
+import { Badge } from "@/components/ui/badge"
 
 export const HeroSection = () => {
   return (
@@ -133,3 +134,50 @@ export const HeroSection = () => {
     </section>
   );
 };
+
+
+
+
+export const HeroSection2 = () => {
+  return(
+     <section className="relative py-20 bg-gradient-hero overflow-hidden">
+        <div className="container relative z-10">
+          <div className="mx-auto max-w-4xl text-center">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">AI-Powered Denial Analysis</Badge>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-6xl text-balance">
+              <span>Transform</span> <span className="text-primary">Denial Management</span> with AI
+            </h1>
+            <p className="mt-6 text-xl text-muted-foreground text-balance max-w-3xl mx-auto">
+              Reduce denial rates by up to 60% with our advanced AI system that analyzes patterns, identifies root
+              causes, and provides actionable insights for faster approvals.
+            </p>
+            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="bg-primary hover:bg-primary/90">
+                Start Free Trial
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Button size="lg" variant="outline">
+                Watch Demo
+              </Button>
+            </div>
+
+            {/* Key Stats */}
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">60%</div>
+                <div className="text-sm text-muted-foreground">Reduction in Denials</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">3x</div>
+                <div className="text-sm text-muted-foreground">Faster Processing</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">$5M+</div>
+                <div className="text-sm text-muted-foreground">Revenue Recovered</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+  )
+}

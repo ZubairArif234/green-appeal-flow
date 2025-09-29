@@ -398,6 +398,12 @@ class ApiService {
     });
   }
 
+  async manageSubscription(): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/payment/manage-subscription', {
+      method: 'GET',
+    });
+  }
+
   async updateProfile(profileData: UpdateProfileRequest): Promise<ApiResponse<UserProfile>> {
     return this.makeRequest<UserProfile>('/auth/profile', {
       method: 'PUT',
