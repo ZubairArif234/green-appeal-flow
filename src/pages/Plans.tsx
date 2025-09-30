@@ -193,9 +193,9 @@ const Plans = () => {
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Dashboard
               </Button>
-              <h1 className="text-xl font-bold">Choose Your Plan</h1>
+              <h1 className="text-xl font-bold hidden md:block">Choose Your Plan</h1>
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-sm text-muted-foreground hidden md:block">
               Welcome, {user?.name}
             </div>
           </div>

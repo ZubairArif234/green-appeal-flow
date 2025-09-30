@@ -2229,7 +2229,7 @@ const AdminDashboard = () => {
 
     {/* Transaction Details Modal */}
     <Dialog open={isTransactionModalOpen} onOpenChange={setIsTransactionModalOpen}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-screen overflow-auto">
         <DialogHeader>
           <DialogTitle>Transaction Details</DialogTitle>
           <DialogDescription>Complete transaction information and payment details</DialogDescription>
@@ -2299,13 +2299,13 @@ const AdminDashboard = () => {
                   {selectedTransaction.stripeSessionId && (
                     <div>
                       <span className="font-medium">Stripe Session ID:</span>
-                      <p className="text-xs font-mono text-muted-foreground">{selectedTransaction.stripeSessionId}</p>
+                      <p className="text-xs font-mono text-muted-foreground line-clamp-1">{selectedTransaction.stripeSessionId}</p>
                     </div>
                   )}
                   {selectedTransaction.subscriptionId && (
                     <div>
                       <span className="font-medium">Subscription ID:</span>
-                      <p className="text-xs font-mono text-muted-foreground">{selectedTransaction.subscriptionId}</p>
+                      <p className="text-xs font-mono text-muted-foreground line-clamp-1">{selectedTransaction.subscriptionId}</p>
                     </div>
                   )}
                   <div>

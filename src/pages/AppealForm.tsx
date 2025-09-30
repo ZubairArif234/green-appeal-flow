@@ -456,45 +456,62 @@ if (user?.noOfCasesLeft < 1){
                     <div className="space-y-2">
                       <Label htmlFor="currentClaim">Current Claim Date of Service *</Label>
 
-                      <Input
-                        id="currentClaim"
-                        value={formData.currentClaim}
-                        onChange={(e) => handleInputChange("currentClaim", e.target.value)}
-                        placeholder="MM/DD/YYYY"
-                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                      />
+                       <div className="relative">
+            <input
+              type="date"
+              id="currentClaim"
+              value={formData.currentClaim}
+              onChange={(e) => handleInputChange("currentClaim", e.target.value)}
+              placeholder="MM/DD/YYYY"
+               className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+             
+            />
+          </div>
                     </div>
                     <div className="space-y-2">
 
                       <Label htmlFor="previousClaimDOS">Previous Claim Date of Service (If Applicable)</Label>
 
-                      <Input
-                        id="previousClaimDOS"
-                        value={formData.previousClaimDOS || ""}
-                        onChange={(e) => handleInputChange("previousClaimDOS", e.target.value)}
-                        placeholder="MM/DD/YYYY"
-                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                      />
+                     
+                       <div className="relative">
+            <input
+              type="date"
+              id="previousClaimDOS"
+              value={formData.previousClaimDOS}
+              onChange={(e) => handleInputChange("previousClaimDOS", e.target.value)}
+              placeholder="MM/DD/YYYY"
+              className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+             
+            />
+          </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="previousClaimCPT">Previous Claim CPTs (If Applicable)</Label>
-                      <Input
-                        id="previousClaimCPT"
-                        value={formData.previousClaimCPT || ""}
-                        onChange={(e) => handleInputChange("previousClaimCPT", e.target.value)}
-                        placeholder="CPT codes"
-                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                      />
+                     
+                       <div className="relative">
+            <input
+              id="previousClaimCPT"
+              value={formData.previousClaimCPT}
+              onChange={(e) => handleInputChange("previousClaimCPT", e.target.value)}
+               placeholder="CPT codes"
+              className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+              
+            />
+          </div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="primaryPayer">Primary Payer *</Label>
-                      <Input
-                        id="primaryPayer"
-                        value={formData.primaryPayer}
-                        onChange={(e) => handleInputChange("primaryPayer", e.target.value)}
-                        placeholder="Insurance provider"
-                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                      />
+                      
+                       <div className="relative">
+            <input
+              id="primaryPayer"
+              value={formData.primaryPayer}
+              onChange={(e) => handleInputChange("primaryPayer", e.target.value)}
+               placeholder="Insurance provider"
+              className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+            
+            />
+          </div>
                     </div>
                   </div>
                 </div>
