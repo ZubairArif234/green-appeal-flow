@@ -283,6 +283,7 @@ const Dashboard = () => {
                             <span className="text-green-700 font-bold text-lg">{user.noOfCasesLeft}</span>
                           </div>
                         </div>
+{user?.subscriptionId && (
 
                         <div className="p-3 flex justify-center ">
                           <Button 
@@ -294,6 +295,7 @@ const Dashboard = () => {
                     {/* <ArrowRight className="w-4 h-4 ml-3" /> */}
                   </Button>
                         </div>
+)}
                       </>
                     )}
                   </div>

@@ -2,6 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Check, CheckCircle, Star } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
+import { useEffect, useState } from "react";
+import { apiService } from "@/services/api";
+import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 export const PricingSection = () => {
   const plans = [
@@ -130,54 +134,160 @@ export const PricingSection = () => {
 };
 
 export const PricingSection2 = () => {
-  const plans = [
-    {
-      name: "Free Trial",
-      price: "$0",
-      period: "for 14 days",
-      description: "Perfect for testing our AI capabilities",
-      features: [
-        "5 denial analyses",
-        "Basic appeal guidance", 
-        "Email support",
-        "HIPAA-conscious workflow"
-      ],
-      cta: "Start Free Trial",
-      popular: false
-    },
-    {
-      name: "Pro",
-      price: "$99",
-      period: "per month",
-      description: "Best for small to medium practices",
-      features: [
-        "Unlimited denial analyses",
-        "Advanced AI guidance",
-        "Priority support",
-        "Staff training materials",
-        "Performance analytics",
-        "CMS guideline updates"
-      ],
-      cta: "Choose Pro",
-      popular: true
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      period: "pricing",
-      description: "For large healthcare organizations",
-      features: [
-        "Everything in Pro",
-        "Dedicated account manager",
-        "Custom integrations",
-        "Advanced reporting",
-        "Team training sessions",
-        "SLA guarantees"
-      ],
-      cta: "Contact Sales",
-      popular: false
+
+   const [plans, setPlans] = useState<any>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+    const [billingInterval, setBillingInterval] = useState<"month" | "year">(
+      "month"
+    );
+  
+    useEffect(() => {
+      fetchPlans();
+    }, []);
+  
+    const fetchPlans = async () => {
+      try {
+        const response = await apiService.getAllPlans();
+        if (response.success && response.data) {
+          const activePrices = response.data.prices.data.filter(
+            (price: any) =>
+              price.active && price.product && typeof price.product === "object"
+          );
+  
+          // Group by product (Starter, Pro, Enterprise)
+          const productsMap = new Map<string, any[]>();
+          activePrices.forEach((price: any) => {
+            const plan: any = {
+              id: price.product.id,
+              name: price.product.name || "Plan",
+              description: price.product.description || "",
+              price: price.unit_amount / 100,
+              currency: price.currency.toUpperCase(),
+              interval: price.recurring?.interval || "month",
+              metadata: price.product.metadata || {},
+              popular: price.product.name?.toLowerCase().includes("pro"),
+              priceId: price.id,
+            };
+  
+            if (!productsMap.has(price.product.id)) {
+              productsMap.set(price.product.id, []);
+            }
+            productsMap.get(price.product.id)?.push(plan);
+          });
+  
+          // Build plans correctly
+          const allPlans: any[] = [];
+          productsMap.forEach((prices, productId) => {
+            const productName = prices[0].name.toLowerCase();
+            allPlans.push(...prices);
+  
+            // if (productName.includes("enterprise")) {
+            //   // Always include Enterprise (regardless of interval)
+            // } else {
+            //   // Only keep plan that matches current billingInterval
+            //   const match = prices.find((p) => p.interval === billingInterval);
+            //   if (match) allPlans.push(match);
+            // }
+          });
+  
+          setPlans(allPlans);
+        } else {
+          toast.error(
+            "Failed to load plans: " + (response.error || "Unknown error")
+          );
+        }
+      } catch (error) {
+        toast.error("Failed to load plans");
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    
+  const getPlanFeatures = (planName: string) => {
+    const name = planName.toLowerCase();
+    if (name.includes("starter")) {
+      return ["30 analyses per month", "Standard support"];
     }
-  ];
+    if (name.includes("pro")) {
+      return ["80 analyses per month", "Dedicated support"];
+    }
+    if (name.includes("enterprise")) {
+      return [
+        "Custom pricing tailored to your team's needs",
+        "Team workspace & dashboard",
+        "Unlimited Denial Analysis submissions",
+        "Initial onboarding and team training",
+        "Dedicated support",
+        "BAA available",
+      ];
+    }
+    return ["AI-Powered Analysis", "Professional Reports", "Customer Support"];
+  };
+
+  // Enterprise always included
+  const orderedPlans = plans
+    .filter((p) => {
+      if (p.name.toLowerCase().includes("enterprise")) return true;
+      return p.interval === billingInterval;
+    })
+    .sort((a, b) => {
+      const order = ["starter", "pro", "enterprise"];
+      return (
+        order.indexOf(a.name.toLowerCase()) -
+        order.indexOf(b.name.toLowerCase())
+      );
+    });
+  // const plans = [
+  //   {
+  //     name: "Free Trial",
+  //     price: "$0",
+  //     period: "for 14 days",
+  //     description: "Perfect for testing our AI capabilities",
+  //     features: [
+  //       "5 denial analyses",
+  //       "Basic appeal guidance", 
+  //       "Email support",
+  //       "HIPAA-conscious workflow"
+  //     ],
+  //     cta: "Start Free Trial",
+  //     popular: false
+  //   },
+  //   {
+  //     name: "Pro",
+  //     price: "$99",
+  //     period: "per month",
+  //     description: "Best for small to medium practices",
+  //     features: [
+  //       "Unlimited denial analyses",
+  //       "Advanced AI guidance",
+  //       "Priority support",
+  //       "Staff training materials",
+  //       "Performance analytics",
+  //       "CMS guideline updates"
+  //     ],
+  //     cta: "Choose Pro",
+  //     popular: true
+  //   },
+  //   {
+  //     name: "Enterprise",
+  //     price: "Custom",
+  //     period: "pricing",
+  //     description: "For large healthcare organizations",
+  //     features: [
+  //       "Everything in Pro",
+  //       "Dedicated account manager",
+  //       "Custom integrations",
+  //       "Advanced reporting",
+  //       "Team training sessions",
+  //       "SLA guarantees"
+  //     ],
+  //     cta: "Contact Sales",
+  //     popular: false
+  //   }
+  // ];
 
   return (
      <section className="py-20 bg-gradient-light-green">
@@ -187,134 +297,113 @@ export const PricingSection2 = () => {
               <span className="text-primary">Choose</span> Your Plan
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">Start free, scale as you grow</p>
+            <div className="flex justify-center gap-4 mt-4">
+                        <Button
+                          variant={billingInterval === "month" ? "default" : "outline"}
+                          onClick={() => setBillingInterval("month")}
+                        >
+                          Monthly
+                        </Button>
+                        <Button
+                          variant={billingInterval === "year" ? "default" : "outline"}
+                          onClick={() => setBillingInterval("year")}
+                        >
+                          Yearly
+                        </Button>
+                      </div>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-3 max-w-5xl mx-auto">
-            {/* Free Trial */}
-            <Card className="border-2 border-muted bg-white flex flex-col h-full">
-              <CardHeader className="text-center pb-8">
-                <CardTitle className="text-2xl">Free Trial</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$0</span>
-                  <span className="text-muted-foreground">/for 14 days</span>
-                </div>
-                <CardDescription className="mt-2">Perfect for testing our AI capabilities</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 flex-grow flex flex-col">
-                <div className="space-y-4 flex-grow">
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">5 denial analyses</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Basic appeal guidance</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Email support</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">HIPAA-conscious workflow</span>
-                  </div>
-                </div>
-                <Button className="w-full mt-6 bg-transparent" variant="outline">
-                  Start Free Trial
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Pro Plan */}
-            <Card className="border-2 border-primary bg-white flex flex-col h-full relative">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+ <div className="grid gap-8 lg:grid-cols-3 max-w-5xl mx-auto">
+            {orderedPlans.map((plan) => (
+              <Card
+                key={plan.priceId}
+                className={`border-2  bg-white flex flex-col h-full ${
+                  plan.popular ? "border-primary relative" : "border-muted"
+                }`}
+              >
+                {plan.popular && (
+                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <Badge className="bg-primary text-primary-foreground">
                   <Star className="h-3 w-3 mr-1" />
                   Most Popular
                 </Badge>
               </div>
-              <CardHeader className="text-center pb-8">
-                <CardTitle className="text-2xl">Pro</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">$99</span>
-                  <span className="text-muted-foreground">/per month</span>
-                </div>
-                <CardDescription className="mt-2">Best for small to medium practices</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 flex-grow flex flex-col">
-                <div className="space-y-4 flex-grow">
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Unlimited denial analyses</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Advanced AI guidance</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Priority support</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Staff training materials</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Performance analytics</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">CMS guideline updates</span>
-                  </div>
-                </div>
-                <Button className="w-full mt-6 bg-primary hover:bg-primary/90">Choose Pro</Button>
-              </CardContent>
-            </Card>
+                )}
+                <CardHeader className="text-center pt-8">
+                  {/* <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10">
+                    {getPlanIcon(plan.name)}
+                  </div> */}
+                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+                  <CardDescription>{plan.description}</CardDescription>
+                  {plan.name === "Enterprise" ?(
+                    <div className="mt-4">
+                        <span className="text-4xl font-bold ">
+                     Custom
+                    </span>
+                      </div>
+                  ) :
+                  (
 
-            {/* Enterprise */}
-            <Card className="border-2 border-muted bg-white flex flex-col h-full">
-              <CardHeader className="text-center pb-8">
-                <CardTitle className="text-2xl">Enterprise</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold">Custom</span>
-                  <div className="text-muted-foreground">pricing</div>
-                </div>
-                <CardDescription className="mt-2">For large healthcare organizations</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 flex-grow flex flex-col">
-                <div className="space-y-4 flex-grow">
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Everything in Pro</span>
+                  <div className="mt-4">
+                    <span className="text-4xl font-bold ">
+                      ${plan.price}
+                    </span>
+                    <span className="text-muted-foreground">
+                      /{plan.interval}
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Dedicated account manager</span>
+                  )}
+                </CardHeader>
+
+                <CardContent className="h-[80%] ">
+                  <div className="flex flex-col justify-between items-stretch !h-full">
+                    <ul className="space-y-2 mb-6 h-full">
+                      {getPlanFeatures(plan.name).map((feature, idx) => (
+                        <li key={idx} className="flex items-center space-x-2">
+                           <CheckCircle className="h-4 w-4 text-primary" />
+                          <span className="w-[90%]">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div>
+                      {plan.name === "Enterprise" ? (
+                        <Link to="/auth/login">
+
+                        <Button
+                          className={`w-full ${
+                            plan.popular
+                            ? "bg-primary text-white"
+                            : "bg-primary/10 text-primary hover:bg-primary hover:text-white"
+                            }`}
+                            >
+                          Contact Sales
+                        </Button>
+                          </Link>
+                      ) : (
+                        <Link to="/auth/login">
+                        <Button
+                        variant="outline"
+                        // onClick={() => handleSelectPlan(plan.priceId)}
+                        disabled={processingPlan === plan.priceId}
+                        className={`w-full ${
+                          plan.popular
+                          ? "bg-primary text-white"
+                          : "bg-transparent text-slate-600 hover:bg-primary hover:text-white"
+                          }`}
+                          >
+                         Select Plan
+                        </Button>
+                          </Link>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Custom integrations</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Advanced reporting</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">Team training sessions</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                    <span className="text-sm">SLA guarantees</span>
-                  </div>
-                </div>
-                <Button className="w-full mt-6 bg-transparent" variant="outline">
-                  Contact Sales
-                </Button>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            ))}
           </div>
+
+
+        
         </div>
       </section>
   );

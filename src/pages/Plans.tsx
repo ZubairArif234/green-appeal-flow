@@ -229,8 +229,8 @@ const Plans = () => {
             {orderedPlans.map((plan) => (
               <Card
                 key={plan.priceId}
-                className={`relative border-2 ${
-                  plan.popular ? "border-primary bg-primary/5" : "border-border"
+              className={`border-2  bg-white flex flex-col h-full ${
+                  plan.popular ? "border-primary relative" : "border-muted"
                 }`}
               >
                 {plan.popular && (
@@ -254,7 +254,7 @@ const Plans = () => {
                   </div>
                 </CardHeader>
 
-                <CardContent className="h-[63%]">
+                <CardContent className="h-[80%]">
                   <div className="flex flex-col justify-between items-stretch !h-full">
                     <ul className="space-y-2 mb-6 h-full">
                       {getPlanFeatures(plan.name).map((feature, idx) => (
