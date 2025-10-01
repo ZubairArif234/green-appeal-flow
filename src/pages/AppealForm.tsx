@@ -589,7 +589,7 @@ if (user?.noOfCasesLeft < 1){
               {/* Paste Mode */}
               <TabsContent value="paste" className="space-y-8">
                 {/* Step 1: Claim Information */}
-                <div className="space-y-4">
+                 <div className="space-y-4">
                   <div className="flex items-center space-x-2">
                     <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
                       Step 1
@@ -600,44 +600,64 @@ if (user?.noOfCasesLeft < 1){
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="currentClaim2">Current Claim Date of Service *</Label>
-                      <Input
-                        id="currentClaim2"
-                        value={formData.currentClaim}
-                        onChange={(e) => handleInputChange("currentClaim", e.target.value)}
-                        placeholder="MM/DD/YYYY"
-                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                      />
+                      <Label htmlFor="currentClaim">Current Claim Date of Service *</Label>
+
+                       <div className="relative">
+            <input
+              type="date"
+              id="currentClaim"
+              value={formData.currentClaim}
+              onChange={(e) => handleInputChange("currentClaim", e.target.value)}
+              placeholder="MM/DD/YYYY"
+               className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+             
+            />
+          </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="previousClaimDOS2">Previous Claim Date of Service (If Applicable)</Label>
-                      <Input
-                        id="previousClaimDOS2"
-                        value={formData.previousClaimDOS || ""}
-                        onChange={(e) => handleInputChange("previousClaimDOS", e.target.value)}
-                        placeholder="MM/DD/YYYY"
-                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                      />
+
+                      <Label htmlFor="previousClaimDOS">Previous Claim Date of Service (If Applicable)</Label>
+
+                     
+                       <div className="relative">
+            <input
+              type="date"
+              id="previousClaimDOS"
+              value={formData.previousClaimDOS}
+              onChange={(e) => handleInputChange("previousClaimDOS", e.target.value)}
+              placeholder="MM/DD/YYYY"
+              className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+             
+            />
+          </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="previousClaimCPT2">Previous Claim CPTs (If Applicable)</Label>
-                      <Input
-                        id="previousClaimCPT2"
-                        value={formData.previousClaimCPT || ""}
-                        onChange={(e) => handleInputChange("previousClaimCPT", e.target.value)}
-                        placeholder="CPT codes"
-                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                      />
+                      <Label htmlFor="previousClaimCPT">Previous Claim CPTs (If Applicable)</Label>
+                     
+                       <div className="relative">
+            <input
+              id="previousClaimCPT"
+              value={formData.previousClaimCPT}
+              onChange={(e) => handleInputChange("previousClaimCPT", e.target.value)}
+               placeholder="CPT codes"
+              className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+              
+            />
+          </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="primaryPayer2">Primary Payer *</Label>
-                      <Input
-                        id="primaryPayer2"
-                        value={formData.primaryPayer}
-                        onChange={(e) => handleInputChange("primaryPayer", e.target.value)}
-                        placeholder="Insurance provider"
-                        className="h-12 rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
-                      />
+                      <Label htmlFor="primaryPayer">Primary Payer *</Label>
+                      
+                       <div className="relative">
+            <input
+              id="primaryPayer"
+              value={formData.primaryPayer}
+              onChange={(e) => handleInputChange("primaryPayer", e.target.value)}
+               placeholder="Insurance provider"
+              className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+            
+            />
+          </div>
                     </div>
                   </div>
                 </div>

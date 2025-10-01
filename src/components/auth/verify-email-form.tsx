@@ -13,7 +13,7 @@ export const VerifyEmailForm = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   
-  const { verifyEmail, register, isLoading } = useAuth();
+  const { verifyEmail,resendToken, isLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -72,7 +72,7 @@ export const VerifyEmailForm = () => {
     // This will generate a new OTP and send it to the email
     const userData = location.state?.userData;
     if (userData) {
-      const result = await register(userData);
+      const result = await resendToken(userData);
       if (result.success) {
         setResendTimer(60); // Start 60 second cooldown
         setSuccess("Verification code sent successfully!");

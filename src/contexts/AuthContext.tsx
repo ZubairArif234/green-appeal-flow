@@ -22,6 +22,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (credentials: LoginRequest) => Promise<{ success: boolean; error?: string; user?: User }>;
   register: (userData: RegisterRequest) => Promise<{ success: boolean; error?: string; needsVerification?: boolean }>;
+  resendToken: (userData: RegisterRequest) => Promise<{ success: boolean; error?: string; needsVerification?: boolean }>;
   logout: () => void;
   verifyEmail: (email: string, otp: string) => Promise<{ success: boolean; error?: string }>;
   forgotPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
@@ -143,6 +144,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const resendToken = async (userData: RegisterRequest) => {
+    setIsLoading(true);
+    try {
+      const response = await apiService.resendToken(userData);
+      
+      if (response.success && response.data) {
+        // Registration successful, but user needs to verify email
+        return { 
+          success: true, 
+          needsVerification: true 
+        };
+      } else {
+        return { 
+          success: false, 
+          error: response.error || 'Resend Token failed' 
+        };
+      }
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Resend Token failed' 
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const verifyEmail = async (email: string, otp: string) => {
     setIsLoading(true);
     try {
@@ -254,6 +282,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isLoading,
     isAuthenticated,
     login,
+    resendToken,
     register,
     logout,
     verifyEmail,
