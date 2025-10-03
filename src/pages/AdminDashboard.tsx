@@ -435,12 +435,12 @@ const AdminDashboard = () => {
       {/* Header */}
         <div className="p-8 border-b border-gradient-to-r from-transparent via-slate-200/40 to-transparent">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-center space-x-4">
             <div className="relative">
               <img 
                 src="/logo.png" 
                 alt="Mental Denial Analyzer" 
-                className="w-12 h-12 rounded-xl shadow-lg ring-2 ring-primary/20 object-contain bg-transparent"
+                className=" h-12 object-contain bg-transparent"
                 style={{ 
                   filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))',
                   mixBlendMode: 'multiply'
@@ -453,17 +453,17 @@ const AdminDashboard = () => {
                   if (fallback) fallback.style.display = 'flex';
                 }}
               />
-              <div className="w-12 h-12 bg-gradient-to-br from-primary via-primary-dark to-blue-600 rounded-xl shadow-lg items-center justify-center hidden">
+              {/* <div className="w-12 h-12 bg-gradient-to-br from-primary via-primary-dark to-blue-600 rounded-xl shadow-lg items-center justify-center hidden">
                 <Crown className="w-7 h-7 text-white" />
-              </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full ring-2 ring-white shadow-sm"></div>
+              </div> */}
+              {/* <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full ring-2 ring-white shadow-sm"></div> */}
             </div>
-            <div>
+            {/* <div>
               <h2 className="text-xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 bg-clip-text text-transparent">
                 Admin Panel
               </h2>
               <p className="text-sm text-slate-500 font-medium">Mental Denial Analyzer</p>
-            </div>
+            </div> */}
             </div>
             {/* Mobile Close Button */}
             <button

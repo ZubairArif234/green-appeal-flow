@@ -132,9 +132,9 @@ const Dashboard = () => {
               <div className="hidden w-10 h-10 rounded-lg bg-primary items-center justify-center">
                 <span className="text-white font-bold text-sm">MDA</span>
               </div>
-              <h1 className="text-xl font-bold text-black">
+              {/* <h1 className="text-xl font-bold text-black">
                  Denial Analyzer
-              </h1>
+              </h1> */}
             </div>
             
             <div className="flex items-center space-x-4">

@@ -140,7 +140,7 @@ export const HeroSection = () => {
 
 export const HeroSection2 = () => {
   return(
-     <section className="relative py-20 bg-gradient-hero overflow-hidden">
+     <section className="relative pb-20 pt-36 bg-gradient-hero overflow-hidden">
         <div className="container relative z-10">
           <div className="mx-auto max-w-4xl text-center">
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">AI-Powered Denial Analysis</Badge>
@@ -156,9 +156,9 @@ export const HeroSection2 = () => {
                 Start Free Trial
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button size="lg" variant="outline">
+              {/* <Button size="lg" variant="outline">
                 Watch Demo
-              </Button>
+              </Button> */}
             </div>
 
             {/* Key Stats */}

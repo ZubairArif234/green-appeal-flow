@@ -212,7 +212,7 @@ export const PricingSection2 = () => {
       return ["30 analyses per month", "Standard support"];
     }
     if (name.includes("pro")) {
-      return ["80 analyses per month", "Dedicated support"];
+      return ["80 analyses per month", "Dedicated support","Analysis Export and Share"];
     }
     if (name.includes("enterprise")) {
       return [
@@ -296,7 +296,7 @@ export const PricingSection2 = () => {
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
               <span className="text-primary">Choose</span> Your Plan
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground">Start free, scale as you grow</p>
+            <p className="mt-4 text-lg text-muted-foreground">Price that pays for itself after just one recovered denial</p>
             <div className="flex justify-center gap-4 mt-4">
                         <Button
                           variant={billingInterval === "month" ? "default" : "outline"}
@@ -313,7 +313,75 @@ export const PricingSection2 = () => {
                       </div>
           </div>
 
- <div className="grid gap-8 lg:grid-cols-3 max-w-5xl mx-auto">
+ <div className="grid gap-8 lg:grid-cols-4 max-w-7xl mx-auto">
+{/* free plan */}
+
+ <Card
+                className={`border-2  bg-white flex flex-col h-full ${
+                  false ? "border-primary relative" : "border-muted"
+                }`}
+              >
+                {/* {plan.popular && (
+                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-primary text-primary-foreground">
+                  <Star className="h-3 w-3 mr-1" />
+                  Most Popular
+                </Badge>
+              </div>
+                )} */}
+                <CardHeader className="text-center pt-8">
+                  {/* <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10">
+                    {getPlanIcon(plan.name)}
+                  </div> */}
+                  <CardTitle className="text-2xl font-bold">Free</CardTitle>
+                  {/* <CardDescription>free palns</CardDescription> */}
+                
+
+                  <div className="mt-4">
+                    <span className="text-4xl font-bold ">
+                      $00.0
+                    </span>
+                    <span className="text-muted-foreground">
+                      / {billingInterval}
+                    </span>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="h-[80%] ">
+                  <div className="flex flex-col justify-between items-stretch !h-full">
+                    <ul className="space-y-2 mb-6 h-full">
+                      {["Free Ai analysis"].map((feature, idx) => (
+                        <li key={idx} className="flex items-center space-x-2">
+                           <CheckCircle className="h-4 w-4 text-primary" />
+                          <span className="w-[90%]">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div>
+                      
+                      <p className="text-slate-400 text-center text-sm mb-2">No credit card needed</p>
+                       
+                    
+                        <Link to="/auth/login">
+                        <Button
+                        variant="outline"
+                        // onClick={() => handleSelectPlan(plan.priceId)}
+                        // disabled={processingPlan === plan.priceId}
+                        className={`w-full ${
+                          false
+                          ? "bg-primary text-white"
+                          : "bg-transparent text-slate-600 hover:bg-primary hover:text-white"
+                          }`}
+                          >
+                         Select Plan
+                        </Button>
+                          </Link>
+                      
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
             {orderedPlans.map((plan) => (
               <Card
                 key={plan.priceId}
@@ -353,6 +421,7 @@ export const PricingSection2 = () => {
                     </span>
                   </div>
                   )}
+                  <p className="text-primary">{plan.interval == "year" ? plan.name == "Starter" ? "(Save $29)" :plan.name == "Pro" ? "(Save $89)" : null :null}</p>
                 </CardHeader>
 
                 <CardContent className="h-[80%] ">
@@ -366,6 +435,10 @@ export const PricingSection2 = () => {
                       ))}
                     </ul>
                     <div>
+                       {plan.name !== "Enterprise" && (
+
+                      <p className="text-slate-400 text-center text-sm mb-2">Cancel Anytime</p>
+                       )} 
                       {plan.name === "Enterprise" ? (
                         <Link to="/auth/login">
 
