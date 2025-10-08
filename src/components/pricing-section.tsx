@@ -333,13 +333,13 @@ export const PricingSection2 = () => {
                   {/* <div className="mx-auto mb-4 p-3 rounded-full bg-primary/10">
                     {getPlanIcon(plan.name)}
                   </div> */}
-                  <CardTitle className="text-2xl font-bold">Free</CardTitle>
+                  <CardTitle className="text-2xl font-bold">Free Trial</CardTitle>
                   {/* <CardDescription>free palns</CardDescription> */}
                 
 
                   <div className="mt-4">
                     <span className="text-4xl font-bold ">
-                      $00.0
+                      $0
                     </span>
                     <span className="text-muted-foreground">
                       / {billingInterval}
@@ -350,7 +350,7 @@ export const PricingSection2 = () => {
                 <CardContent className="h-[80%] ">
                   <div className="flex flex-col justify-between items-stretch !h-full">
                     <ul className="space-y-2 mb-6 h-full">
-                      {["Free Ai analysis"].map((feature, idx) => (
+                      {["3 Free Analysis"].map((feature, idx) => (
                         <li key={idx} className="flex items-center space-x-2">
                            <CheckCircle className="h-4 w-4 text-primary" />
                           <span className="w-[90%]">{feature}</span>
@@ -362,18 +362,14 @@ export const PricingSection2 = () => {
                       <p className="text-slate-400 text-center text-sm mb-2">No credit card needed</p>
                        
                     
-                        <Link to="/auth/login">
+                         <Link to="/auth/login">
+
                         <Button
-                        variant="outline"
-                        // onClick={() => handleSelectPlan(plan.priceId)}
-                        // disabled={processingPlan === plan.priceId}
-                        className={`w-full ${
-                          false
-                          ? "bg-primary text-white"
-                          : "bg-transparent text-slate-600 hover:bg-primary hover:text-white"
-                          }`}
-                          >
-                         Select Plan
+                          className={`w-full ${
+                            "bg-primary/10 text-primary hover:bg-primary hover:text-white"
+                            }`}
+                            >
+                          Select Plan
                         </Button>
                           </Link>
                       

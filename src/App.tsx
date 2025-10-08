@@ -21,6 +21,8 @@ import SignUp from "./pages/auth/SignUp";
 import VerifyEmail from "./pages/auth/VerifyEmail";
 import ResetPassword from "./pages/auth/ResetPassword";
 import PastClaims from "./pages/PastClaims";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndCondition";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,8 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-conditions" element={<TermsAndConditions />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/appeal" element={<ProtectedRoute><AppealForm /></ProtectedRoute>} />
               <Route path="/history" element={<ProtectedRoute><PastClaims /></ProtectedRoute>} />

@@ -15,10 +15,11 @@ export const Navigation = () => {
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
+           <Link to={"/"}>
             <img 
               src="/logo.png" 
               alt="AI Medical Denial Assistant Logo" 
-              className="h-10 w-auto"
+              className="h-16 w-auto"
               onError={(e) => {
                 // Fallback to original design if logo doesn't exist
                 e.currentTarget.style.display = 'none';
@@ -29,6 +30,7 @@ export const Navigation = () => {
                 }
               }}
             />
+           </Link>
             <div className="hidden w-8 h-8 rounded-lg bg-gradient-primary items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">AI</span>
             </div>
@@ -45,9 +47,9 @@ export const Navigation = () => {
             <a href="#pricing" className="text-black hover:text-primary transition-smooth font-medium">
               Pricing
             </a>
-            <a href="#faq" className="text-black hover:text-primary transition-smooth font-medium">
+            {/* <a href="#faq" className="text-black hover:text-primary transition-smooth font-medium">
               FAQ
-            </a>
+            </a> */}
           </div>
           
           <div className="flex items-center space-x-4">

@@ -90,8 +90,8 @@ export const ProblemSection2 = () =>{
               </CardHeader>
               <CardContent>
                 <p className="text-white/90">
-                  Medical claim denials have increased by 23% over the past 3 years, eating into provider revenue.
-                </p>
+                 Denial rates have increased more than 20% over the past five years, making payment delays and revenue leakage a growing norm for providers.
+                   </p>
               </CardContent>
             </Card>
 
@@ -104,8 +104,8 @@ export const ProblemSection2 = () =>{
               </CardHeader>
               <CardContent>
                 <p className="text-white/90">
-                  Staff spend hours researching denial codes and crafting appeals instead of focusing on patient care.
-                </p>
+                 The industry benchmark to fully resolve a denial is around 30 days, and up to 60% of deniel claims are never resubmitted.
+                   </p>
               </CardContent>
             </Card>
 
@@ -118,8 +118,8 @@ export const ProblemSection2 = () =>{
               </CardHeader>
               <CardContent>
                 <p className="text-white/90">
-                  Providers lose an average of $5M annually due to unresolved denials and missed appeal deadlines.
-                </p>
+                 The average hospital loses $5 million annually to denials - and every reworked claim costs up to $181 in time and admin overhead.
+                  </p>
               </CardContent>
             </Card>
 
@@ -132,7 +132,7 @@ export const ProblemSection2 = () =>{
               </CardHeader>
               <CardContent>
                 <p className="text-white/90">
-                  CMS and AMA guidelines are complex and ever-changing, making it hard to stay compliant.
+                Constant rule changes from CMS, AMA, and private payers drive denials - 73% of providers say policy confusion is fueling the spike.
                 </p>
               </CardContent>
             </Card>

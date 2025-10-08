@@ -83,14 +83,14 @@ export const Footer2 = () => {
   return (
    <footer className="border-t bg-background">
         <div className="container py-12">
-          <div className="grid gap-8 lg:grid-cols-4">
-            <div className="lg:col-span-2">
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div className="">
               <Link to="/" className="flex items-center space-x-2 mb-4">
                 <div className=" rounded-lg  flex items-center justify-center">
                    <img 
                 src="/logo.png" 
                 alt="AI Medical Denial Assistant Logo" 
-                className="h-8 w-auto"
+                className="h-16 w-auto"
                 onError={(e) => {
                   // Fallback to original design if logo doesn't exist
                   e.currentTarget.style.display = 'none';
@@ -102,7 +102,7 @@ export const Footer2 = () => {
                 }}
               />
                 </div>
-                <span className="font-bold text-xl">Deniel Management</span>
+                {/* <span className="font-bold text-xl">Deniel Management</span> */}
               </Link>
               <p className="text-muted-foreground max-w-md">
                 Transforming healthcare revenue cycle management with AI-powered solutions and expert guidance.
@@ -110,65 +110,30 @@ export const Footer2 = () => {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Solutions</h3>
+              {/* <h3 className="font-semibold mb-4">Solutions</h3> */}
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <Link to="/#solutions" className="hover:text-primary">
-                    Medical Billing
+                  <Link to="/privacy-policy" className="hover:text-primary">
+                   Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link to="/#solutions" className="hover:text-primary">
-                    Practice Consulting
+                  <Link to="/terms-conditions" className="hover:text-primary">
+                    Terms of use
                   </Link>
                 </li>
                 <li>
-                  <Link to="/#solutions" className="hover:text-primary">
-                    Bookkeeping
-                  </Link>
+                 Contact Email : <a>info@covehealthsolutions.com</a>
                 </li>
-                <li>
-                  <Link to="/#solutions" className="hover:text-primary">
-                    Administrative Support
-                  </Link>
-                </li>
+               
               </ul>
             </div>
 
-            <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link to="/about" className="hover:text-primary">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/denial-analyzer" className="hover:text-primary">
-                    Denial Analyzer
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/eligibility-automation" className="hover:text-primary">
-                    Eligibility Automation
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="hover:text-primary">
-                    Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link to="#" className="hover:text-primary">
-                    Privacy Policy
-                  </Link>
-                </li>
-              </ul>
-            </div>
+         
           </div>
 
           <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            <p>&copy; 2024 Cove Health Solutions. All rights reserved.</p>
+            <p>&copy; 2025 Cove Health. All rights reserved.</p>
           </div>
         </div>
       </footer>

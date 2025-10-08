@@ -126,20 +126,20 @@ export const BenefitsSection2 = () => {
   
 
   return (
-   <section className="py-20">
+   <section className="pb-20">
         <div className="container">
-          <div className="mx-auto max-w-2xl text-center mb-16">
+          {/* <div className="mx-auto max-w-2xl text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Comprehensive Denial Analysis</h2>
             <p className="mt-4 text-lg text-muted-foreground">Everything you need to turn denials into approvals</p>
-          </div>
+          </div> */}
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 px-14">
             <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
               <CardHeader>
                 <Brain className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Smart Pattern Detection</CardTitle>
+                <CardTitle>Built for Providers by Providers</CardTitle>
                 <CardDescription>
-                  AI identifies recurring denial patterns and suggests preventive measures
+                Designed by healthcare professionals who understand the realities of billing, compliance, and the grind of denial management.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -155,32 +155,40 @@ export const BenefitsSection2 = () => {
             <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
               <CardHeader>
                 <BarChart3 className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Performance Analytics</CardTitle>
-                <CardDescription>Track success rates, identify trends, and measure ROI</CardDescription>
+                <CardTitle>Works With Any EHR</CardTitle>
+                <CardDescription>
+                  No integration required, Upload PDFs or screenshots from any system, - Epic, Center, Kareo , Availty - and let the AI takes it from there.
+                </CardDescription>
               </CardHeader>
             </Card>
 
             <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
               <CardHeader>
                 <Shield className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>HIPAA Compliant</CardTitle>
-                <CardDescription>Enterprise-grade security with full HIPAA compliance</CardDescription>
+                <CardTitle>HIPAA-Conscious Workflow</CardTitle>
+                <CardDescription>
+                  No PHI required, Our AI works on redacted documents and is built with privacy by design.
+                </CardDescription>
               </CardHeader>
             </Card>
 
             <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
               <CardHeader>
                 <Zap className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Real-time Processing</CardTitle>
-                <CardDescription>Get instant analysis and recommendations for immediate action</CardDescription>
+                <CardTitle>10x Processing</CardTitle>
+                <CardDescription>
+                  Analyze denials and generate appeals in minutes - up to 10x faster than the industry's average manual workflows.
+                </CardDescription>
               </CardHeader>
             </Card>
 
             <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
               <CardHeader>
                 <Users className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>Team Collaboration</CardTitle>
-                <CardDescription>Share insights and coordinate appeals across your entire team</CardDescription>
+                <CardTitle>HIPAA-Conscious Workflow</CardTitle>
+                <CardDescription>
+                  Review, edit, and share AI-generated appeals with your team - making it easy to coordinate across billers and admins.
+                </CardDescription>
               </CardHeader>
             </Card>
           </div>

@@ -118,12 +118,11 @@ export const HowItWorks2 = () => {
               Why Choose Our <span className="text-primary">AI Assistant</span>
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Streamline your denial appeal process with intelligent automation and expert guidance. Our AI-powered
-              platform transforms complex medical denials into clear, actionable insights.
-            </p>
+             Streamline your denial resolution process with intelligent automation and expert-built tools. Our AI platform breaks down complex denials into clear, actionable appeal strategies - in minutes, not days.
+              </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-16 items-center px-14">
+          {/* <div className="grid lg:grid-cols-2 gap-16 items-center px-14">
             <div className="space-y-8">
               <div className="flex items-start space-x-6">
                 <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
@@ -222,7 +221,7 @@ export const HowItWorks2 = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </section>
   );

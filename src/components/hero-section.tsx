@@ -148,8 +148,12 @@ export const HeroSection2 = () => {
               <span>Transform</span> <span className="text-primary">Denial Management</span> with AI
             </h1>
             <p className="mt-6 text-xl text-muted-foreground text-balance max-w-3xl mx-auto">
-              Reduce denial rates by up to 60% with our advanced AI system that analyzes patterns, identifies root
-              causes, and provides actionable insights for faster approvals.
+           Structured, AI-assisted analysis in seconds: a recommended next step
+           (appeal or corrected claim), a clean summary of denial/remark codes, CMS-referenced root-cause findings, step-by-step
+           staff actions, and team education to prevent repeats.
+            </p>
+            <p className="mt-4 text-xl text-muted-foreground text-balance max-w-3xl mx-auto">
+          Everything your team needs to move from denial to submission with speed and confidence.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-primary hover:bg-primary/90">
@@ -164,16 +168,16 @@ export const HeroSection2 = () => {
             {/* Key Stats */}
             <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary">60%</div>
-                <div className="text-sm text-muted-foreground">Reduction in Denials</div>
+                <div className="text-3xl font-bold text-primary">90%+</div>
+                <div className="text-sm text-muted-foreground">Reduction in Cost of Appeals </div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary">3x</div>
+                <div className="text-3xl font-bold text-primary">10x</div>
                 <div className="text-sm text-muted-foreground">Faster Processing</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-primary">$5M+</div>
-                <div className="text-sm text-muted-foreground">Revenue Recovered</div>
+                <div className="text-3xl font-bold text-primary">5x</div>
+                <div className="text-sm text-muted-foreground">More Denials Worked Per Biller</div>
               </div>
             </div>
           </div>

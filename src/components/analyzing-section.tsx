@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { AlertTriangle, BarChart3, Brain, CheckCircle, FileText, Lightbulb, Target, Users, Zap } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, BarChart3, Brain, CheckCircle, FileText, Lightbulb, RefreshCw, Target, Users, Zap } from 'lucide-react'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
 
@@ -16,8 +16,8 @@ const AnalyzingSection = () => {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <Card className="bg-white shadow-xl border-2 border-primary/20">
-              <CardHeader className="bg-gradient-primary text-white rounded-t-lg my-3 py-7">
+            <Card >
+              <CardHeader className="bg-gradient-primary text-white rounded-t-lg mb-3 py-7">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center">
@@ -26,7 +26,7 @@ const AnalyzingSection = () => {
                     <div>
                       <CardTitle className="text-xl text-white">AI Denial Analysis Report</CardTitle>
                       <p className="text-white/80 text-sm">
-                        Claim #: 2024-08-07-001 | Analysis completed in 2.3 seconds
+                        Claim #: 2024-08-07-001 
                       </p>
                     </div>
                   </div>
@@ -130,20 +130,21 @@ const AnalyzingSection = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
-                  <Button className="flex-1 bg-primary hover:bg-primary/90">
-                    <FileText className="h-4 w-4 mr-2" />
-                    Generate Corrected Claim
-                  </Button>
-                  <Button variant="outline" className="flex-1 bg-transparent">
-                    <Users className="h-4 w-4 mr-2" />
-                    Share with Team
-                  </Button>
-                  <Button variant="outline" className="flex-1 bg-transparent">
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    View Analytics
-                  </Button>
-                </div>
+               <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Button
+                 className="flex-1 bg-primary hover:bg-primary-dark text-primary-foreground"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Dashboard
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1 border-primary/20 text-primary hover:bg-primary/5"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Analyze New Denial
+              </Button>
+            </div>
               </CardContent>
             </Card>
 
