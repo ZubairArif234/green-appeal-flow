@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -34,15 +35,27 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
         {/* Content */}
         <div className="relative z-10 flex flex-col justify-center px-16">
           <div className="max-w-md">
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">
-              Welcome to
-              <span className="text-primary block">Medical Denial Analyzer</span>
-            </h2>
-            <p className="text-lg text-gray-600 leading-relaxed">
+             <Link to={"/"}>
+                        <img 
+                          src="/logo.png" 
+                          alt="AI Medical Denial Assistant Logo" 
+                          className="h-[6rem] w-auto"
+                          onError={(e) => {
+                            // Fallback to original design if logo doesn't exist
+                            e.currentTarget.style.display = 'none';
+                            const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (fallback) {
+                              fallback.classList.remove('hidden');
+                              fallback.classList.add('flex');
+                            }
+                          }}
+                        />
+                       </Link>
+            <p className="text-lg ms-4 text-gray-600 leading-relaxed">
               Transform medical denials into success with our AI-powered platform. 
-              HIPAA-compliant and built for healthcare providers.
+             
             </p>
-            <div className="flex flex-wrap gap-6 mt-8">
+            {/* <div className="flex flex-wrap gap-6 mt-8">
               <div className="flex items-center gap-2 text-gray-600">
                 <div className="w-2 h-2 bg-primary rounded-full"></div>
                 <span className="text-sm font-medium">HIPAA Compliant</span>
@@ -51,7 +64,7 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
                 <div className="w-2 h-2 bg-primary rounded-full"></div>
                 <span className="text-sm font-medium">No PHI Required</span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

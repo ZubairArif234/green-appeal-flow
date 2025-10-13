@@ -10,6 +10,9 @@ import { Footer2 } from "@/components/footer";
 import AnalyzingSection from "@/components/analyzing-section";
 
 const Index = () => {
+
+
+  
   return (
     <div className="min-h-screen bg-background">
       <Navigation />

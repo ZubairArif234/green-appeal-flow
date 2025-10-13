@@ -109,7 +109,7 @@ export const Footer2 = () => {
               </p>
             </div>
 
-            <div>
+            <div className="flex flex-col items-start justify-end">
               {/* <h3 className="font-semibold mb-4">Solutions</h3> */}
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
@@ -119,7 +119,7 @@ export const Footer2 = () => {
                 </li>
                 <li>
                   <Link to="/terms-conditions" className="hover:text-primary">
-                    Terms of use
+                    Terms of services
                   </Link>
                 </li>
                 <li>

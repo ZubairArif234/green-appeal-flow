@@ -148,18 +148,19 @@ export const HeroSection2 = () => {
               <span>Transform</span> <span className="text-primary">Denial Management</span> with AI
             </h1>
             <p className="mt-6 text-xl text-muted-foreground text-balance max-w-3xl mx-auto">
-           Structured, AI-assisted analysis in seconds: a recommended next step
-           (appeal or corrected claim), a clean summary of denial/remark codes, CMS-referenced root-cause findings, step-by-step
-           staff actions, and team education to prevent repeats.
+           Structured, AI-assisted analysis in seconds:  Everything your team needs to move from denial to submission with speed and confidence.
+          
             </p>
-            <p className="mt-4 text-xl text-muted-foreground text-balance max-w-3xl mx-auto">
+            {/* <p className="mt-4 text-xl text-muted-foreground text-balance max-w-3xl mx-auto">
           Everything your team needs to move from denial to submission with speed and confidence.
-            </p>
+            </p> */}
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+             <Link to="/auth/signup">
               <Button size="lg" className="bg-primary hover:bg-primary/90">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
+             </Link>
               {/* <Button size="lg" variant="outline">
                 Watch Demo
               </Button> */}

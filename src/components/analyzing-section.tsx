@@ -6,7 +6,7 @@ import { Button } from './ui/button'
 
 const AnalyzingSection = () => {
   return (
-   <section className="py-20 bg-gradient-light-green">
+   <section id="how-it-works" className="py-20 bg-gradient-light-green">
         <div className="container">
           <div className="mx-auto max-w-2xl text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">See Our AI in Action</h2>

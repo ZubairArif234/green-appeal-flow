@@ -13,6 +13,7 @@ export const SignUpForm = () => {
     name: "",
     email: "",
     password: "",
+    terms: false,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -20,8 +21,11 @@ export const SignUpForm = () => {
   const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? checked : value 
+    }));
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
@@ -47,6 +51,10 @@ export const SignUpForm = () => {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
+    }
+    
+    if (!formData.terms) {
+      newErrors.terms = "You must agree to the terms and privacy policy";
     }
     
     setErrors(newErrors);
@@ -103,7 +111,7 @@ export const SignUpForm = () => {
               </svg>
             </div>
             <h2 className="text-xl font-bold text-white mb-1">Create Account</h2>
-            <p className="text-white/80 text-xs">Join Medical Denial Analyzer</p>
+            <p className="text-white/80 text-xs">Take controls of your Denials.</p>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-3">
@@ -194,16 +202,31 @@ export const SignUpForm = () => {
             </div>
             </div>
 
-            {/* Terms and Conditions */}
-            <div className="text-xs text-white/70">
-              By creating an account, you agree to our{" "}
-              <Link to="/terms" className="text-white hover:text-white/90 font-medium underline">
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link to="/privacy" className="text-white hover:text-white/90 font-medium underline">
-                Privacy Policy
-              </Link>
+            {/* Terms and Conditions Checkbox */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  name="terms"
+                  checked={formData.terms}
+                  onChange={handleInputChange}
+                  className="mt-1 w-4 h-4 rounded border-white/30 bg-black/40 text-white focus:ring-2 focus:ring-white/20 cursor-pointer"
+                />
+                <label htmlFor="terms" className="text-xs text-white/70 cursor-pointer">
+                  I agree to the{" "}
+                  <Link to="/terms-conditions" className="text-white hover:text-white/90 font-medium underline">
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link to="/privacy-policy" className="text-white hover:text-white/90 font-medium underline">
+                    Privacy Policy
+                  </Link>
+                </label>
+              </div>
+              {errors.terms && (
+                <p className="text-red-300 text-sm">{errors.terms}</p>
+              )}
             </div>
 
             {/* Submit Button */}

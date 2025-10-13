@@ -5,7 +5,7 @@ const SignUp = () => {
   return (
     <AuthLayout
       title="Create your account"
-      subtitle="Join thousands of healthcare providers using Green Appeal"
+      subtitle="Join our growing network of providers"
     >
       <SignUpForm />
     </AuthLayout>

@@ -6,6 +6,7 @@ import { Input } from "./ui/input";
 import { useForm } from "react-hook-form";
 import { apiService } from "@/services/api";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export const CTASection = () => {
 
@@ -134,10 +135,12 @@ setIsLoading(true)
                   <p className="text-muted-foreground text-sm">
                     Test our AI with 3 free analyses. No credit card required.
                   </p>
+                  <Link className="block" to={"/auth/signup"}>
                   <Button size="lg" className="w-full bg-primary hover:bg-primary/90">
                     Try Free 
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
+                  </Link>
                 </div>
               </Card>
 
@@ -299,7 +302,7 @@ setIsLoading(true)
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-4 w-4 text-primary" />
-                <span>HIPAA compliant</span>
+                <span>Work Flow</span>
               </div>
             </div>
           </div>

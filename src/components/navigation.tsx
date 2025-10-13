@@ -10,6 +10,24 @@ export const Navigation = () => {
     logout();
   };
 
+  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    
+    const element = document.querySelector(sectionId);
+    if (element) {
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset;
+      
+      // Calculate 20% offset of viewport height
+      const viewportOffset = window.innerHeight * 0.2;
+      
+      window.scrollTo({
+        top: offsetPosition - viewportOffset,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-6 py-4">
@@ -19,7 +37,7 @@ export const Navigation = () => {
             <img 
               src="/logo.png" 
               alt="AI Medical Denial Assistant Logo" 
-              className="h-16 w-auto"
+              className="h-[5.5rem] w-auto"
               onError={(e) => {
                 // Fallback to original design if logo doesn't exist
                 e.currentTarget.style.display = 'none';
@@ -38,13 +56,25 @@ export const Navigation = () => {
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-black hover:text-primary transition-smooth font-medium">
+            <a 
+              href="/#features" 
+              onClick={(e) => handleScrollToSection(e, '#features')}
+              className="text-black hover:text-primary transition-smooth font-medium cursor-pointer"
+            >
               Features
             </a>
-            <a href="#how-it-works" className="text-black hover:text-primary transition-smooth font-medium">
+            <a 
+              href="/#how-it-works" 
+              onClick={(e) => handleScrollToSection(e, '#how-it-works')}
+              className="text-black hover:text-primary transition-smooth font-medium cursor-pointer"
+            >
               How It Works
             </a>
-            <a href="#pricing" className="text-black hover:text-primary transition-smooth font-medium">
+            <a 
+              href="/#pricing" 
+              onClick={(e) => handleScrollToSection(e, '#pricing')}
+              className="text-black hover:text-primary transition-smooth font-medium cursor-pointer"
+            >
               Pricing
             </a>
             {/* <a href="#faq" className="text-black hover:text-primary transition-smooth font-medium">

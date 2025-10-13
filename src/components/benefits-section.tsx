@@ -126,7 +126,7 @@ export const BenefitsSection2 = () => {
   
 
   return (
-   <section className="pb-20">
+   <section id="features" className="pb-20">
         <div className="container">
           {/* <div className="mx-auto max-w-2xl text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Comprehensive Denial Analysis</h2>

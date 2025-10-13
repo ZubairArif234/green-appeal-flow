@@ -5,7 +5,7 @@ const Login = () => {
   return (
     <AuthLayout
       title="Sign In"
-      subtitle="Access your medical denial analysis dashboard"
+      subtitle="Access your dashboard"
     >
       <LoginForm />
     </AuthLayout>
