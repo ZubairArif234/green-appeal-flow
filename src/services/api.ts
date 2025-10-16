@@ -1,6 +1,6 @@
 // API configuration and base setup
-// const API_BASE_URL = 'http://localhost:8001';
-const API_BASE_URL = 'https://deniel-assistance-be.onrender.com';
+const API_BASE_URL = 'http://localhost:8001';
+// const API_BASE_URL = 'https://deniel-assistance-be.onrender.com';
 export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
@@ -356,6 +356,13 @@ class ApiService {
     }
   }
 
+   async schedule(userData: any): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/schedule', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  }
+
   // Authentication endpoints
   async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
     return this.makeRequest<LoginResponse>('/auth/login', {
@@ -366,6 +373,13 @@ class ApiService {
 
   async register(userData: RegisterRequest): Promise<ApiResponse<RegisterResponse>> {
     return this.makeRequest<RegisterResponse>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async resendToken(userData: RegisterRequest): Promise<ApiResponse<any>> {
+    return this.makeRequest<any>('/auth/resendToken', {
       method: 'POST',
       body: JSON.stringify(userData),
     });

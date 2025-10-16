@@ -321,6 +321,15 @@ if (user?.noOfCasesLeft < 1){
       <Label className="text-base font-semibold text-gray-900">{title}</Label>
       <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
     </div>
+
+     {/* Paste input */}
+    <Input
+      type="text"
+      placeholder="Paste Image here ... (Image only - JPG, PNG)"
+      onPaste={onPasteChange}
+    />
+
+    <p className="text-sm text-slate-500 text-center my-2">Or click to upload/drag and drop</p>
     
     <div
       onClick={() => inputRef.current?.click()}
@@ -351,12 +360,7 @@ if (user?.noOfCasesLeft < 1){
       />
     </div>
 
-    {/* Paste input */}
-    <Input
-      type="text"
-      placeholder="Paste Image here ..."
-      onPaste={onPasteChange}
-    />
+   
 
     {files.length > 0 && (
       <div className="space-y-2">

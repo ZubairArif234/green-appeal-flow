@@ -244,6 +244,14 @@ const Plans = () => {
                   </div>
                   <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
                   <CardDescription>{plan.description}</CardDescription>
+                  {plan.name === "Enterprise" ?(
+                    <div className="mt-4">
+                        <span className="text-4xl font-bold text-primary">
+                     Custom
+                    </span>
+                      </div>
+                  ) :(
+
                   <div className="mt-4">
                     <span className="text-4xl font-bold text-primary">
                       ${plan.price}
@@ -252,6 +260,7 @@ const Plans = () => {
                       /{plan.interval}
                     </span>
                   </div>
+                  )}
                 </CardHeader>
 
                 <CardContent className="h-[80%]">
