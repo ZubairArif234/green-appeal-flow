@@ -291,7 +291,7 @@ fetchCases()
                 </CardContent>
               </Card>
 
-              {(selectedCase?.case.denialScreenShots?.length || selectedCase?.case?.encounterScreenShots?.length) && (
+              {(selectedCase?.case.denialScreenShots?.length > 0 || selectedCase?.case?.encounterScreenShots?.length > 0) && (
                 <Card>
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg">Screenshots</CardTitle>
