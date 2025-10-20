@@ -154,7 +154,9 @@ setIsLoading(true)
                     Get a personalized demo and discuss your specific needs.
                   </p>
 
-                   <Dialog >
+                   <Dialog onOpenChange={(open) => {
+    if (!open) {setIsSubmitted(false); reset()};
+  }}>
       {/* Trigger — button to open dialog */}
       <DialogTrigger asChild>
                   <Button size="lg" variant="outline" className="w-full bg-transparent">
