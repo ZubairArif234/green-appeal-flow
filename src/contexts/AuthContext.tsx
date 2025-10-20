@@ -4,7 +4,7 @@ import { apiService, LoginRequest, RegisterRequest } from '@/services/api';
 interface User {
   _id: string;
   name: string;
-  email: string;
+  email?: string;
   isEmailVerified: boolean;
   role: 'user' | 'admin';
   isFreeTrialUser: boolean;
@@ -28,7 +28,7 @@ interface AuthContextType {
   forgotPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
   resetPassword: (email: string, otp: string, password: string) => Promise<{ success: boolean; error?: string }>;
   refreshUser: () => Promise<void>;
-  updateProfile: (profileData: { name: string; email: string }) => Promise<{ success: boolean; error?: string }>;
+  updateProfile: (profileData: { name: string; email?: string }) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -254,7 +254,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     await getCurrentUser(true);
   };
 
-  const updateProfile = async (profileData: { name: string; email: string }) => {
+  const updateProfile = async (profileData: { name: string; email?: string }) => {
     try {
       const response = await apiService.updateProfile(profileData);
       

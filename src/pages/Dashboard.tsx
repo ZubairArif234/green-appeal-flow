@@ -71,7 +71,7 @@ const Dashboard = () => {
     try {
       const result = await updateProfile({
         name: editingProfile.name,
-        email: editingProfile.email
+        // email: editingProfile.email
       });
 
       if (result.success) {
@@ -450,6 +450,8 @@ const Dashboard = () => {
                           </Label>
                           <Input
                             id="email"
+                            readOnly
+                            disabled
                             type="email"
                             value={editingProfile.email}
                             onChange={(e) => handleProfileInputChange('email', e.target.value)}

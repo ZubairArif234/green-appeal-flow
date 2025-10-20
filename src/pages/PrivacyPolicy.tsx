@@ -1,13 +1,18 @@
 import { Footer2 } from "@/components/footer";
 import { Navigation } from "@/components/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 const PrivacyPolicy = () => {
+
+  useEffect(() => {
+    window.scrollTo(0,0)
+
+  }, []);
   return (
     <div>
         <Navigation />
 
-      <div className="mb-20 mt-40 max-w-6xl mx-auto">
+      <div className="mb-20 px-4 mt-40 max-w-6xl mx-auto">
         <b className="text-2xl block mb-6">Privacy Policy</b>
 
         <p className="mb-4"><b>Effective Date: October 1, 2025</b></p>
