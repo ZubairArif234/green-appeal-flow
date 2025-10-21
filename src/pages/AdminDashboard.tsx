@@ -831,16 +831,16 @@ const AdminDashboard = () => {
                     <CardDescription>Latest payment transactions</CardDescription>
             </CardHeader>
             <CardContent>
-                    {adminStats?.recentTransactions && adminStats.recentTransactions.length > 0 ? (
+                    {adminStats?.recentTransactions && adminStats?.recentTransactions?.length > 0 ? (
                       <div className="space-y-3">
-                        {adminStats.recentTransactions.map((transaction) => (
+                        {adminStats?.recentTransactions?.map((transaction) => (
                           <div key={transaction._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                             <div>
                               <p className="font-medium text-gray-900">
-                                {transaction.user.name}
+                                {transaction?.user?.name}
                               </p>
                               <p className="text-sm text-gray-500 truncate max-w-48">
-                                {transaction.amountTotal 
+                                {transaction?.amountTotal 
                                   ? `$${(transaction.amountTotal / 100).toFixed(2)} ${(transaction.currency || 'USD').toUpperCase()}`
                                   : 'Amount not available'
                                 }
