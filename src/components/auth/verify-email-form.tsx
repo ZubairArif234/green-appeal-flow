@@ -6,6 +6,7 @@ import { Mail, ArrowRight, RefreshCw } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { apiService } from "@/services/api";
 
 export const VerifyEmailForm = () => {
   const [otp, setOtp] = useState("");
@@ -60,12 +61,28 @@ export const VerifyEmailForm = () => {
       
       // Determine redirect based on user role from the login result
      
-      if (loginResult.user?.role === 'admin') {
-      navigate("/admin")
-      }else{
-       navigate(`/dashboard?plan=${location.state.priceId}`)
+      //  const selectPlan = async (priceId) => {
+         const response = await apiService.createPaymentSession({
+               productId: location.state.priceId, // Backend expects 'productId' but we're sending priceId
+             });
+             if (response.success && response.data?.url) {
+               window.location.href = response.data.url;
+             } else {
+               toast.error("Failed to create payment session");
+             }
+      //  }
+     
+    //    useEffect(()=>{
+    //  if (priceId !== null){
+    //    selectPlan(priceId)
+    //  }
+    //    },[priceId])
+      // if (loginResult.user?.role === 'admin') {
+      // navigate("/admin")
+      // }else{
+      //  navigate(`/dashboard?plan=${location.state.priceId}`)
 
-      }
+      // }
     }
       // setTimeout(() => {
       //   navigate("/auth/login");

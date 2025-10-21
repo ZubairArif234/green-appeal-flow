@@ -27,22 +27,6 @@ const Dashboard = () => {
   const queryParams = new URLSearchParams(location.search);
   const priceId = queryParams.get("plan");
 
-  const selectPlan = async (priceId) => {
-    const response = await apiService.createPaymentSession({
-          productId: priceId, // Backend expects 'productId' but we're sending priceId
-        });
-        if (response.success && response.data?.url) {
-          window.location.href = response.data.url;
-        } else {
-          toast.error("Failed to create payment session");
-        }
-  }
-
-  useEffect(()=>{
-if (priceId !== null){
-  selectPlan(priceId)
-}
-  },[priceId])
 
   useEffect(() => {
     if (user?.role === 'user') {
