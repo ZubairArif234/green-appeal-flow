@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
@@ -15,6 +15,9 @@ export const SignUpForm = () => {
     password: "",
     terms: false,
   });
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search);
+  const priceId = queryParams.get("plan");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { register, isLoading } = useAuth();
@@ -74,7 +77,8 @@ export const SignUpForm = () => {
         state: { 
           email: formData.email, 
           fromSignup: true,
-          userData: formData 
+          userData: formData,
+          priceId
         } 
       });
     } else if (result.success) {

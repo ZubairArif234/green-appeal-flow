@@ -72,7 +72,7 @@ const PaymentSuccess = () => {
                 Thank you for your purchase, {user?.name}!
               </p>
               <p className="text-sm">
-                Your subscription has been activated and you now have access to all premium features.
+                Your subscription has been activated.
               </p>
             </div>
 
@@ -81,9 +81,9 @@ const PaymentSuccess = () => {
                 <CheckCircle className="w-5 h-5" />
                 <span className="font-semibold">Subscription Active</span>
               </div>
-              <p className="text-sm text-green-700 mt-1">
+              {/* <p className="text-sm text-green-700 mt-1">
                 You can now create unlimited cases and access advanced AI analysis.
-              </p>
+              </p> */}
             </div>
 
             <div className="space-y-3">
@@ -105,12 +105,12 @@ const PaymentSuccess = () => {
               </Button>
             </div>
 
-            <div className="text-xs text-gray-500 pt-4 border-t">
+            {/* <div className="text-xs text-gray-500 pt-4 border-t">
               <p>
                 You'll receive a confirmation email shortly. If you have any questions, 
                 please contact our support team.
               </p>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>

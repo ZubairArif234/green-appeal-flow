@@ -37,7 +37,7 @@ export const Navigation = () => {
             <img 
               src="/logo.png" 
               alt="AI Medical Denial Assistant Logo" 
-              className="h-[5.5rem] w-auto"
+              className="h-[4.5rem] w-auto"
               onError={(e) => {
                 // Fallback to original design if logo doesn't exist
                 e.currentTarget.style.display = 'none';

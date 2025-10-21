@@ -118,8 +118,8 @@ setIsLoading(true)
    <section className="py-24 bg-white">
         <div className="p-8 border-2 border-muted hover:border-primary/20 transition-colors bg-white">
           <div className="mx-auto max-w-4xl text-center">
-            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl text-balance mb-6">
-              Ready to <span className="text-primary">Take Control</span> of your denials?
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl  mb-6">
+              Ready to <span className="text-primary">Take Control</span> of your Denials?
             </h2>
             <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
               Join our growing network of forward-thinking billing teams already using our AI to simplify appeals, recover revenue faster, and cut down an manual work.

@@ -687,7 +687,7 @@ const AdminDashboard = () => {
             <div className="space-y-8">
         {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-blue-50/30">
+                <Card onClick={() => handlePageChange('users')} className="cursor-pointer group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-blue-50/30">
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-indigo-500/5"></div>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
                     <CardTitle className="text-sm font-semibold text-slate-600">Total Users</CardTitle>
@@ -732,7 +732,7 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-                <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-emerald-50/30">
+                <Card onClick={() => handlePageChange('cases')} className="cursor-pointer group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-emerald-50/30">
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-green-500/5"></div>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
                     <CardTitle className="text-sm font-semibold text-slate-600">Total Submissions</CardTitle>
@@ -750,7 +750,7 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-                <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-amber-50/30">
+                <Card onClick={() => handlePageChange('feedback')} className="cursor-pointer group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-amber-50/30">
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-orange-500/5"></div>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
                     <CardTitle className="text-sm font-semibold text-slate-600">Customer Feedback</CardTitle>
@@ -768,7 +768,7 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-                <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-purple-50/30">
+                <Card onClick={() => handlePageChange('transactions')} className="cursor-pointer group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-white via-white to-purple-50/30">
                   <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-violet-500/5"></div>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
                     <CardTitle className="text-sm font-semibold text-slate-600">Transactions</CardTitle>

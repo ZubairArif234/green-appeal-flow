@@ -119,7 +119,7 @@ export const Footer2 = () => {
                 </li>
                 <li>
                   <Link to="/terms-conditions" className="hover:text-primary">
-                    Terms of services
+                    Terms of Services
                   </Link>
                 </li>
                 <li>

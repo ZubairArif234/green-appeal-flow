@@ -134,7 +134,8 @@ export const BenefitsSection2 = () => {
           </div> */}
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 px-14">
-            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
+            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-all duration-700 transform hover:scale-105 bg-light-green"
+>
               <CardHeader>
                 <Brain className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>Built for Providers by Providers</CardTitle>
@@ -144,7 +145,8 @@ export const BenefitsSection2 = () => {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
+            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-all duration-700 transform hover:scale-105 bg-light-green"
+>
               <CardHeader>
                 <FileText className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>Automated Documentation</CardTitle>
@@ -152,7 +154,8 @@ export const BenefitsSection2 = () => {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
+            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-all duration-700 transform hover:scale-105 bg-light-green"
+>
               <CardHeader>
                 <BarChart3 className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>Works With Any EHR</CardTitle>
@@ -162,7 +165,8 @@ export const BenefitsSection2 = () => {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
+            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-all duration-700 transform hover:scale-105 bg-light-green"
+>
               <CardHeader>
                 <Shield className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>HIPAA-Conscious Workflow</CardTitle>
@@ -172,7 +176,8 @@ export const BenefitsSection2 = () => {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
+            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-all duration-700 transform hover:scale-105 bg-light-green"
+>
               <CardHeader>
                 <Zap className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>10x Processing</CardTitle>
@@ -182,7 +187,8 @@ export const BenefitsSection2 = () => {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-colors bg-light-green">
+            <Card className="border-2 border-primary/10 hover:border-primary/20 transition-all duration-700 transform hover:scale-105 bg-light-green"
+>
               <CardHeader>
                 <Users className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>HIPAA-Conscious Workflow</CardTitle>

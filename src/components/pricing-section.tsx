@@ -1,11 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Check, CheckCircle, Star } from "lucide-react";
+import { Check, CheckCircle, CircleCheckBig, Star } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { useEffect, useState } from "react";
 import { apiService } from "@/services/api";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Input } from "./ui/input";
+import { useForm } from "react-hook-form";
 
 export const PricingSection = () => {
   const plans = [
@@ -135,8 +138,46 @@ export const PricingSection = () => {
 
 export const PricingSection2 = () => {
 
+  const [isLoading , setIsLoading] = useState(false)
+  const [isSubmitted , setIsSubmitted] = useState(false)
+      const {
+      register,
+      handleSubmit,
+      formState: { errors },
+      reset,
+    } = useForm({
+      defaultValues: {
+        fullName: "",
+        email: "",
+        company: "",
+        employees: "",
+        role: "",
+      },
+    });
+  
+     const onSubmit = async (data:any) => {
+      try{
+  setIsLoading(true)
+        console.log("✅ Form Values:", data);
+        const response = await apiService.schedule(data);
+        if(response){
+          setIsLoading(false)
+          setIsSubmitted(true)
+        }
+      }catch(err){
+        console.log(err , "error");
+        setIsLoading(false)
+        
+      }finally{
+        setIsLoading(false)
+  
+      }
+            
+      // You can now send this data to your backend or API
+    };
+
    const [plans, setPlans] = useState<any>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
     const [processingPlan, setProcessingPlan] = useState<string | null>(null);
     const [billingInterval, setBillingInterval] = useState<"month" | "year">(
       "month"
@@ -436,9 +477,25 @@ export const PricingSection2 = () => {
                       <p className="text-slate-400 text-center text-sm mb-2">Cancel Anytime</p>
                        )} 
                       {plan.name === "Enterprise" ? (
-                        <Link to="/auth/login">
+                       
+                        // <Button
+                        
+                        //   className={`w-full ${
+                        //     plan.popular
+                        //     ? "bg-primary text-white"
+                        //     : "bg-primary/10 text-primary hover:bg-primary hover:text-white"
+                        //     }`}
+                        //     >
+                        //   Contact Sales
+                        // </Button>
 
-                        <Button
+                          <Dialog onOpenChange={(open) => {
+    if (!open) {setIsSubmitted(false); reset()};
+  }}>
+      {/* Trigger — button to open dialog */}
+      <DialogTrigger asChild>
+         <Button
+                        
                           className={`w-full ${
                             plan.popular
                             ? "bg-primary text-white"
@@ -447,9 +504,138 @@ export const PricingSection2 = () => {
                             >
                           Contact Sales
                         </Button>
-                          </Link>
+                  {/* <Button size="lg" variant="outline" className="w-full bg-transparent">
+                    Schedule a Demo
+                  </Button> */}
+        {/* <Button>Open Dialog</Button> */}
+      </DialogTrigger>
+
+      {/* Content — what appears inside the modal */}
+      <DialogContent className="max-h-[95%] overflow-auto">
+        <DialogHeader>
+          <DialogTitle>Talk to Our Team</DialogTitle>
+          <DialogDescription>
+            Get a personalized demo and discuss your specific needs.
+          </DialogDescription>
+        </DialogHeader>
+{!isSubmitted ? (
+
+         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 ">
+      {/* Full Name */}
+      <label>
+        <p>Full name:</p>
+        <Input
+          type="text"
+          placeholder="Jane Doe"
+          className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+          {...register("fullName", { required: "Full name is required" })}
+        />
+        {errors.fullName && (
+          <span className="text-red-500 text-sm">{errors.fullName.message}</span>
+        )}
+      </label>
+
+      {/* Work Email */}
+      <label>
+        <p>Work email:</p>
+        <Input
+          type="email"
+          placeholder="jane@midtownhealth.com"
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+              message: "Enter a valid email address",
+            },
+          })}
+          className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+        />
+        {errors.email && (
+          <span className="text-red-500 text-sm">{errors.email.message}</span>
+        )}
+      </label>
+
+      {/* Company Name */}
+      <label>
+        <p>Company or Practice Name:</p>
+        <Input
+          type="text"
+          placeholder="Midtown Family Health"
+          {...register("company", { required: "Company name is required" })}
+          className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+        />
+        {errors.company && (
+          <span className="text-red-500 text-sm">{errors.company.message}</span>
+        )}
+      </label>
+
+      {/* Employees */}
+      <label>
+        <p>Number of Full-Time Employees:</p>
+        <select
+          {...register("employees", { required: "Please select a range" })}
+          className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+        >
+          <option value="">Select</option>
+          <option>0 - 10</option>
+          <option>11 - 50</option>
+          <option>51 - 100</option>
+          <option>101 - 200</option>
+          <option>201+</option>
+        </select>
+        {errors.employees && (
+          <span className="text-red-500 text-sm">{errors.employees.message}</span>
+        )}
+      </label>
+
+      {/* Role */}
+      <label>
+        <p>Your Role:</p>
+        <Input
+          type="text"
+          placeholder="Billing Manager, Practice Owner, Rev Cycle Lead"
+          {...register("role", { required: "Role is required" })}
+          className="w-full ring-offset-0 !outline-none px-3 py-2 rounded-xl border border-gray-200 focus:border-primary focus:ring-primary/20"
+        />
+        {errors.role && (
+          <span className="text-red-500 text-sm">{errors.role.message}</span>
+        )}
+      </label>
+
+      {/* Buttons */}
+      <div className="flex justify-end gap-4">
+        {/* <Button
+          type="button"
+          variant="outline"
+          onClick={() => reset()}
+        >
+          Cancel
+        </Button> */}
+        <Button
+        disabled={isLoading}
+          type="submit"
+          className="!bg-primary-700 !text-white"
+        >
+          {isLoading ? "Submitting..." : "Submit"}
+          
+        </Button>
+      </div>
+    </form>
+):
+(
+  <div className="flex flex-col items-center gap-2 py-20">
+    <CircleCheckBig  size={120} className="text-primary"/>
+    <p className="text-primary text-2xl font-semibold">Request Submitted!</p>
+    <p className="text-center text-slate-500 text-sm">Thank you for your submission. A member of our team will reach out soon!.</p>
+    </div>
+) }
+
+
+       
+      </DialogContent>
+    </Dialog>
                       ) : (
-                        <Link to="/auth/login">
+                        <Link to={`/auth/signup?plan=${plan.priceId}`}   >
                         <Button
                         variant="outline"
                         // onClick={() => handleSelectPlan(plan.priceId)}

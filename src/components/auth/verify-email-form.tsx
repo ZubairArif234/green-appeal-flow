@@ -13,7 +13,7 @@ export const VerifyEmailForm = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   
-  const { verifyEmail,resendToken, isLoading } = useAuth();
+  const { verifyEmail,resendToken,login, isLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -54,9 +54,22 @@ export const VerifyEmailForm = () => {
     if (result.success) {
       setSuccess("Email verified successfully! Redirecting...");
       toast.success("Email verified successfully!");
-      setTimeout(() => {
-        navigate("/auth/login");
-      }, 1500);
+      const loginResult = await login(location.state.userData);
+
+        if (loginResult.success) {
+      
+      // Determine redirect based on user role from the login result
+     
+      if (loginResult.user?.role === 'admin') {
+      navigate("/admin")
+      }else{
+       navigate(`/dashboard?plan=${location.state.priceId}`)
+
+      }
+    }
+      // setTimeout(() => {
+      //   navigate("/auth/login");
+      // }, 1500);
     } else {
       setError(result.error || "Verification failed");
       toast.error(result.error || "Verification failed");

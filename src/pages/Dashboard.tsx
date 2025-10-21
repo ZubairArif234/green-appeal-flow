@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User, Mail, Shield, LogOut, FileText, ArrowRight, Crown, CreditCard, AlertCircle, Eye, Calendar, DollarSign, Edit, Settings } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { apiService, CaseResponse, TransactionResponse, UpdateProfileRequest } from "@/services/api";
@@ -15,6 +15,7 @@ import { apiService, CaseResponse, TransactionResponse, UpdateProfileRequest } f
 const Dashboard = () => {
   const { user, logout, isAuthenticated, updateProfile } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [userCases, setUserCases] = useState<CaseResponse[]>([]);
   const [userTransactions, setUserTransactions] = useState<TransactionResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +24,25 @@ const Dashboard = () => {
     name: user?.name || '',
     email: user?.email || ''
   });
+  const queryParams = new URLSearchParams(location.search);
+  const priceId = queryParams.get("plan");
+
+  const selectPlan = async (priceId) => {
+    const response = await apiService.createPaymentSession({
+          productId: priceId, // Backend expects 'productId' but we're sending priceId
+        });
+        if (response.success && response.data?.url) {
+          window.location.href = response.data.url;
+        } else {
+          toast.error("Failed to create payment session");
+        }
+  }
+
+  useEffect(()=>{
+if (priceId !== null){
+  selectPlan(priceId)
+}
+  },[priceId])
 
   useEffect(() => {
     if (user?.role === 'user') {
