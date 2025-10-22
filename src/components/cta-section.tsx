@@ -122,7 +122,7 @@ setIsLoading(true)
               Ready to <span className="text-primary">Take Control</span> of your Denials?
             </h2>
             <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-              Join our growing network of forward-thinking billing teams already using our AI to simplify appeals, recover revenue faster, and cut down an manual work.
+              Join our growing network of forward-thinking billing teams already using our AI to simplify appeals, recover revenue faster, and cut down on manual work.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
@@ -304,7 +304,7 @@ setIsLoading(true)
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-4 w-4 text-primary" />
-                <span>Work Flow</span>
+                <span>HIPAA conscious workflow</span>
               </div>
             </div>
           </div>

@@ -100,7 +100,7 @@ const PaymentSuccess = () => {
                 variant="outline"
                 className="w-full border-primary text-primary hover:bg-primary hover:text-white"
               >
-                Start New Case
+                Start New Analysis
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>

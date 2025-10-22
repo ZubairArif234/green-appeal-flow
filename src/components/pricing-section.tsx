@@ -403,7 +403,7 @@ export const PricingSection2 = () => {
                       <p className="text-slate-400 text-center text-sm mb-2">No credit card needed</p>
                        
                     
-                         <Link to="/auth/login">
+                         <Link to="/auth/signup">
 
                         <Button
                           className={`w-full ${
