@@ -1,6 +1,7 @@
 // API configuration and base setup
-// const API_BASE_URL = 'http://localhost:8001';
-const API_BASE_URL = 'https://analyzemydenial.com/api';
+const API_BASE_URL = 'https://deniel-assistance-be.onrender.com/api';
+// const API_BASE_URL = 'http://localhost:8001/api';
+// const API_BASE_URL = 'https://82.197.94.94/api';
 export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
@@ -223,7 +224,7 @@ export interface PaymentResponse {
 export interface UserProfile {
   _id: string;
   name: string;
-  email: string;
+  email?: string;
   role: 'user' | 'admin';
   isFreeTrialUser: boolean;
   noOfCasesLeft: number;
