@@ -86,6 +86,10 @@ export const VerifyEmailForm = () => {
   
       // }
     }
+      }else{
+         setTimeout(() => {
+        navigate("/auth/login");
+      }, 1500);
       }
 
       // setTimeout(() => {
