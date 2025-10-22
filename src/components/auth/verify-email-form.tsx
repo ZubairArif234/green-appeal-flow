@@ -57,6 +57,8 @@ export const VerifyEmailForm = () => {
       toast.success("Email verified successfully!");
       const loginResult = await login(location.state.userData);
 
+      if (location.state.priceId){
+
         if (loginResult.success) {
       
       // Determine redirect based on user role from the login result
@@ -81,9 +83,11 @@ export const VerifyEmailForm = () => {
       // navigate("/admin")
       // }else{
       //  navigate(`/dashboard?plan=${location.state.priceId}`)
-
+  
       // }
     }
+      }
+
       // setTimeout(() => {
       //   navigate("/auth/login");
       // }, 1500);
