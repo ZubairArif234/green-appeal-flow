@@ -39,6 +39,11 @@ if (user?.noOfCasesLeft < 1){
   navigate("/dashboard")
 }
   },[])
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  },[])
+
   const [denialFiles, setDenialFiles] = useState<FileWithId[]>([]);
 
   const [encounterFiles, setEncounterFiles] = useState<FileWithId[]>([]);

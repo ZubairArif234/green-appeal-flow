@@ -391,7 +391,7 @@ export const PricingSection2 = () => {
                 <CardContent className="h-[80%] ">
                   <div className="flex flex-col justify-between items-stretch !h-full">
                     <ul className="space-y-2 mb-6 h-full">
-                      {["3 Free Analysis"].map((feature, idx) => (
+                      {["3 Free Analyses"].map((feature, idx) => (
                         <li key={idx} className="flex items-center space-x-2">
                            <CheckCircle className="h-4 w-4 text-primary" />
                           <span className="w-[90%]">{feature}</span>

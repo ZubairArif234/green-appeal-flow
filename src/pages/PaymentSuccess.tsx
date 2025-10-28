@@ -16,7 +16,7 @@ const PaymentSuccess = () => {
   useEffect(() => {
     const verifyPayment = async () => {
       if (sessionId) {
-        console.log('✅ Payment session ID:', sessionId);
+        // console.log('✅ Payment session ID:', sessionId);
         try {
           // Refresh user data to get updated subscription status
           await refreshUser();

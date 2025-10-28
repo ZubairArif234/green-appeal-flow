@@ -287,7 +287,7 @@ const Plans = () => {
                       ) : (
                         <Button
                           onClick={() => handleSelectPlan(plan.priceId)}
-                          disabled={processingPlan === plan.priceId}
+                          disabled={processingPlan === plan.priceId || (user?.subscriptionId && user?.planType === plan?.name)}
                           className={`w-full ${
                             plan.popular
                               ? "bg-primary text-white"
@@ -299,7 +299,7 @@ const Plans = () => {
                               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                               Processing...
                             </>
-                          ) : (
+                          ) : user?.subscriptionId && user?.planType === plan?.name ?("Subscribed"): (
                             "Select Plan"
                           )}
                         </Button>

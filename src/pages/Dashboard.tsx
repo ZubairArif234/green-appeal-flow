@@ -253,12 +253,12 @@ const Dashboard = () => {
                       </div>
                     </div>
                     
-                    <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                      <label className="text-sm font-semibold text-green-700">Email Status</label>
+                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <label className="text-sm font-semibold ">Email Status</label>
                       <div className="flex items-center space-x-2 mt-1">
-                        <Shield className={`w-4 h-4 ${user?.isEmailVerified ? 'text-green-600' : 'text-gray-500'}`} />
-                        <div className={`w-2 h-2 ${user?.isEmailVerified ? 'bg-green-600' : 'bg-gray-400'} rounded-full`}></div>
-                        <span className="text-green-700 font-medium">
+                        <Shield className={`w-4 h-4 ${user?.isEmailVerified ? 'text-gray-600' : 'text-gray-500'}`} />
+                        <div className={`w-2 h-2 ${user?.isEmailVerified ? 'bg-gray-600' : 'bg-gray-400'} rounded-full`}></div>
+                        <span className="text-gray-700 font-medium">
                           {user?.isEmailVerified ? 'Verified' : 'Not Verified'}
                         </span>
                       </div>
@@ -275,16 +275,16 @@ const Dashboard = () => {
                                 ? "bg-gray-600" 
                                 :user?.subscriptionId ? "bg-primary": "bg-red-500"
                             } text-white`}>
-                              {user.isFreeTrialUser ? "Free Trial" : user?.subscriptionId ? "Subscribed" : "Not subscribed"}
+                              {user.isFreeTrialUser ? "Free Trial" : user?.subscriptionId ? `Subscribed to ${user?.planType}` : "Not subscribed"}
                             </Badge>
                           </div>
                         </div>
                         
-                        <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                          <label className="text-sm font-semibold text-green-700">Claim Remaining</label>
+                        <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                          <label className="text-sm font-semibold text-gray-700">Claim Remaining</label>
                           <div className="flex items-center space-x-2 mt-1">
-                            <FileText className="w-4 h-4 text-green-600" />
-                            <span className="text-green-700 font-bold text-lg">{user.noOfCasesLeft}</span>
+                            <FileText className="w-4 h-4 text-gray-600" />
+                            <span className="text-gray-700 font-bold text-lg">{user.noOfCasesLeft}</span>
                           </div>
                         </div>
 {user?.subscriptionId && (
@@ -413,7 +413,7 @@ const Dashboard = () => {
                     <DialogTrigger asChild>
                       <Button 
                         variant="outline" 
-                        className="h-24 flex flex-col items-center justify-center border border-green-200 bg-green-50 hover:bg-green-100"
+                        className="h-24 flex flex-col items-center justify-center border border-gray-200 bg-gray-50 hover:bg-gray-100"
                         onClick={() => {
                           setEditingProfile({
                             name: user?.name || '',
@@ -421,7 +421,7 @@ const Dashboard = () => {
                           });
                         }}
                       >
-                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center mb-2">
+                        <div className="w-10 h-10 bg-gray-600 rounded-xl flex items-center justify-center mb-2">
                           <Edit className="w-5 h-5 text-white" />
                         </div>
                         <span className="font-semibold text-black text-[12px]">Edit Profile</span>

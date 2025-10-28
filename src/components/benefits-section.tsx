@@ -160,7 +160,7 @@ export const BenefitsSection2 = () => {
                 <BarChart3 className="h-8 w-8 text-primary mb-2" />
                 <CardTitle>Works With Any EHR</CardTitle>
                 <CardDescription>
-                  No integration required, Upload PDFs or screenshots from any system, - Epic, Center, Kareo , Availty - and let the AI takes it from there.
+                  No integration required. Upload PDFs or screenshots from any system, - Epic, Center, Kareo , Availty - and let the AI take it from there.
                 </CardDescription>
               </CardHeader>
             </Card>

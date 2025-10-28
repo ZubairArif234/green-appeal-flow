@@ -104,7 +104,7 @@ export const ProblemSection2 = () =>{
               </CardHeader>
               <CardContent>
                 <p className="text-white/90">
-                 The industry benchmark to fully resolve a denial is around 30 days, and up to 60% of deniel claims are never resubmitted.
+                 The industry benchmark to fully resolve a denial is around 30 days, and up to 60% of denial claims are never resubmitted.
                    </p>
               </CardContent>
             </Card>

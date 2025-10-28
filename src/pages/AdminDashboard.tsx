@@ -1923,6 +1923,168 @@ const AdminDashboard = () => {
                   </Card>
                 )}
               </div>
+
+              {(selectedCase?.case.denialScreenShots?.length  > 0 || selectedCase?.case?.encounterScreenShots?.length > 0) && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg">Screenshots</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {selectedCase?.case.denialScreenShots?.length && (
+                      <div>
+                        <span className="font-medium">Denial Screenshots ({selectedCase?.case.denialScreenShots.length}):</span>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                          {selectedCase?.case.denialScreenShots.map((screenshot, index) => (
+                            <img key={index} src={screenshot} alt={`Denial ${index + 1}`} className="w-full h-24 object-cover rounded border" />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {selectedCase?.case.encounterScreenShots?.length && (
+                      <div>
+                        <span className="font-medium">Encounter Screenshots ({selectedCase?.case.encounterScreenShots.length}):</span>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                          {selectedCase?.case.encounterScreenShots.map((screenshot, index) => (
+                            <img key={index} src={screenshot} alt={`Encounter ${index + 1}`} className="w-full h-24 object-cover rounded border" />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Analysis Sections */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Recommended Pathway */}
+                {selectedCase.analysis?.recommended_pathway && (
+                  <div className="bg-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-blue-600 bg-gradient-to-r from-blue-50 to-white">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Target className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900">Recommended Action</h3>
+                    </div>
+                    <div className="space-y-4">
+                      {selectedCase.analysis.recommended_pathway.type && (
+                        <div className="flex items-center space-x-3">
+                          <div className="flex items-center space-x-2 text-blue-600 font-semibold text-lg">
+                            <CheckCircle className="w-6 h-6" />
+                            <span>{selectedCase.analysis.recommended_pathway.type}</span>
+                          </div>
+                        </div>
+                      )}
+                      {selectedCase.analysis.recommended_pathway.instruction && (
+                        <div className="p-4 bg-blue-50 rounded-xl border-l-4 border-blue-600">
+                          <p className="text-gray-800 leading-relaxed font-medium">
+                            {selectedCase.analysis.recommended_pathway.instruction}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Denial Summary */}
+                {selectedCase.analysis?.denial_summary && (
+                  <div className="bg-gradient-to-r from-orange-50 to-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-orange-500">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="p-2 bg-red-100 rounded-lg">
+                        <FileText className="w-6 h-6 text-red-600" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900">Denial Summary</h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-orange-100 border border-gray-200 rounded-xl p-4 text-center">
+                        <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Reason Code</div>
+                        <div className="text-lg font-bold text-gray-900">
+                          {selectedCase.analysis.denial_summary.reason_code || 'N/A'}
+                        </div>
+                      </div>
+                      <div className="bg-orange-100 border border-gray-200 rounded-xl p-4 text-center">
+                        <div className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Remark Code</div>
+                        <div className="text-lg font-bold text-gray-900">
+                          {selectedCase.analysis.denial_summary.remark_code || 'N/A'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Root Cause Analysis */}
+                {selectedCase.analysis?.root_cause_analysis && (
+                  <div className="bg-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-yellow-500 bg-gradient-to-r from-yellow-50 to-white">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="p-2 bg-yellow-100 rounded-lg">
+                        <Target className="w-6 h-6 text-yellow-500" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900">Root Cause Analysis</h3>
+                    </div>
+                    <div className="space-y-4">
+                      {selectedCase.analysis.root_cause_analysis.issue_identified && (
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                          <div className="text-sm font-semibold text-yellow-800 mb-2">Issue Identified:</div>
+                          <div className="text-yellow-900 font-medium leading-relaxed">
+                            {selectedCase.analysis.root_cause_analysis.issue_identified}
+                          </div>
+                        </div>
+                      )}
+                      {selectedCase.analysis.root_cause_analysis.cms_guidelines && (
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                          <div className="text-sm font-semibold text-yellow-800 mb-2">CMS Guidelines:</div>
+                          <div className="text-yellow-900 font-medium leading-relaxed">
+                            {selectedCase.analysis.root_cause_analysis.cms_guidelines}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Staff Instructions */}
+                {selectedCase.analysis?.staff_instructions && (
+                  <div className="bg-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-purple-500 bg-gradient-to-r from-purple-50 to-white">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <User className="w-6 h-6 text-purple-600" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900">Staff Instructions</h3>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="bg-purple-50 border border-gray-200 rounded-xl p-4">
+                        <div className="text-sm font-semibold text-purple-600 mb-2">
+                          {selectedCase.analysis.staff_instructions.instruction_type || 'Submit Corrected Claim'}:
+                        </div>
+                        <div className="text-purple-800 font-medium leading-relaxed">
+                          {selectedCase.analysis.staff_instructions.detail || 'No specific instructions provided'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Provider Education */}
+                {selectedCase.analysis?.provider_education && (
+                  <div className="bg-white rounded-2xl p-6 mb-6 shadow-lg border-l-4 border-indigo-500 bg-gradient-to-r from-indigo-50 to-white">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="p-2 bg-indigo-100 rounded-lg">
+                        <Sparkles className="w-6 h-6 text-indigo-600" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900">Provider Education</h3>
+                    </div>
+                    <div className="space-y-4">
+                      {selectedCase.analysis.provider_education.future_prevention && (
+                        <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+                          <div className="text-sm font-semibold text-indigo-800 mb-2">Future Prevention:</div>
+                          <div className="text-indigo-900 font-medium leading-relaxed">
+                            {selectedCase.analysis.provider_education.future_prevention}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
           </div>
         )}
       </DialogContent>
