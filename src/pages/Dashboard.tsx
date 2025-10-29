@@ -281,7 +281,7 @@ const Dashboard = () => {
                         </div>
                         
                         <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                          <label className="text-sm font-semibold text-gray-700">Claim Remaining</label>
+                          <label className="text-sm font-semibold text-gray-700">Claims Remaining</label>
                           <div className="flex items-center space-x-2 mt-1">
                             <FileText className="w-4 h-4 text-gray-600" />
                             <span className="text-gray-700 font-bold text-lg">{user.noOfCasesLeft}</span>

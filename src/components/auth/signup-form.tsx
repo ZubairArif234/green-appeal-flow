@@ -115,7 +115,7 @@ export const SignUpForm = () => {
               </svg>
             </div>
             <h2 className="text-xl font-bold text-white mb-1">Create Account</h2>
-            <p className="text-white/80 text-xs">Take controls of your Denials.</p>
+            <p className="text-white/80 text-xs">Take control of your denials.</p>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-3">
