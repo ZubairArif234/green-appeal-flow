@@ -209,7 +209,7 @@ export const VerifyEmailForm = () => {
               "Verify Email"
             )}
           </Button>
-
+ <p className="text-white/80 text-xs text-center mb-3"><b>Didn’t get the email?</b> Check your spam or junk folder.</p>
           {/* Resend Code */}
           <div className="text-center pt-4 border-t border-white/20">
             <p className="text-white/80 mb-3">Didn't receive the code?</p>

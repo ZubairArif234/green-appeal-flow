@@ -191,7 +191,7 @@ export const BenefitsSection2 = () => {
 >
               <CardHeader>
                 <Users className="h-8 w-8 text-primary mb-2" />
-                <CardTitle>HIPAA-Conscious Workflow</CardTitle>
+                <CardTitle>Team Collaboration</CardTitle>
                 <CardDescription>
                   Review, edit, and share AI-generated appeals with your team - making it easy to coordinate across billers and admins.
                 </CardDescription>
